@@ -10,13 +10,25 @@
 #include "SimpleSound.h"
 #include "SimpleController.h"
 
+#include "../Point.h"
+#include "../Line.h"
+#include "../ColouredLine.h"
+
 //---------------------------------------------------------------------------------
 // Utils and externals for system info.
 #define APP_VIRTUAL_TO_NATIVE_COORDS(_x_,_y_)			_x_ = ((_x_ / APP_VIRTUAL_WIDTH )*2.0f) - 1.0f; _y_ = ((_y_ / APP_VIRTUAL_HEIGHT)*2.0f) - 1.0f;
 #define APP_NATIVE_TO_VIRTUAL_COORDS(_x_,_y_)			_x_ = ((_x_ + 1.0f) * APP_VIRTUAL_WIDTH) / 2.0f; _y_ = ((_y_ + 1.0f) * APP_VIRTUAL_HEIGHT) / 2.0f;
 
 namespace App
-{	
+{
+	void DrawLine(const CPoint & start, const CPoint & end, float r, float g, float b)
+	{
+		DrawLine(start.x, start.y, end.x, end.y, r, g, b);
+	}
+	void DrawLine(const CLine & line, float r, float g, float b)
+	{
+		DrawLine(line.p1x, line.p1y, line.p2x, line.p2y, r, g, b);
+	}
 	void DrawLine(float sx, float sy, float ex, float ey, float r, float g, float b)
 	{
 #if APP_USE_VIRTUAL_RES		
@@ -28,6 +40,10 @@ namespace App
 		glVertex2f(sx, sy);
 		glVertex2f(ex, ey);
 		glEnd();
+	}
+	void DrawColouredLine(const CColouredLine& colouredLine)
+	{
+		DrawLine(colouredLine.p1x, colouredLine.p1y, colouredLine.p2x, colouredLine.p2y, colouredLine.r, colouredLine.g, colouredLine.b);
 	}
     void DrawQuad(float sx, float sy, float ex, float ey, float r, float g, float b)
     {

@@ -25,6 +25,12 @@
     <Filter Include="Source Files\Expansions\Math">
       <UniqueIdentifier>{2bf27a5b-d107-4fd6-9a1b-3dbf2c0eb369}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Expansions\Systems">
+      <UniqueIdentifier>{91016eac-041e-4ce0-812c-a295b9a95807}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Questionable Code">
+      <UniqueIdentifier>{dbf7f06f-33f5-4649-972b-d1dad758da20}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -54,8 +60,20 @@
     <ClInclude Include="SimpleTileMap.h">
       <Filter>Source Files\Out of the box API</Filter>
     </ClInclude>
-    <ClInclude Include="Math\Point.h">
+    <ClInclude Include="Point.h">
       <Filter>Source Files\Expansions\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math.h">
+      <Filter>Source Files\Expansions\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Line.h">
+      <Filter>Source Files\Expansions\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexedType.h">
+      <Filter>Questionable Code</Filter>
+    </ClInclude>
+    <ClInclude Include="ColouredLine.h">
+      <Filter>Questionable Code</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -80,8 +98,14 @@
     <ClCompile Include="GameTest.cpp">
       <Filter>Source Files\App</Filter>
     </ClCompile>
-    <ClCompile Include="Math\Point.cpp">
+    <ClCompile Include="Point.cpp">
       <Filter>Source Files\Expansions\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Line.cpp">
+      <Filter>Source Files\Expansions\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="ColouredLine.cpp">
+      <Filter>Questionable Code</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

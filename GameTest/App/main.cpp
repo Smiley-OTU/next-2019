@@ -186,6 +186,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, 	_In_opt_ HINSTANCE hPrevInstanc
 	
 	// Call user defined init.
 	Init();
+	//Make game window in front of console window
+	BringWindowToTop(MAIN_WINDOW_HANDLE);
 
 	// Enter glut the event-processing loop				
 	glutMainLoop();
