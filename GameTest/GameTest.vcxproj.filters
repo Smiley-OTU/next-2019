@@ -69,9 +69,6 @@
     <ClInclude Include="Line.h">
       <Filter>Source Files\Expansions\Math</Filter>
     </ClInclude>
-    <ClInclude Include="IndexedType.h">
-      <Filter>Questionable Code</Filter>
-    </ClInclude>
     <ClInclude Include="ColouredLine.h">
       <Filter>Questionable Code</Filter>
     </ClInclude>

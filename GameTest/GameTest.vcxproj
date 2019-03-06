@@ -189,7 +189,6 @@
     <ClInclude Include="App\main.h" />
     <ClInclude Include="App\SimpleController.h" />
     <ClInclude Include="App\SimpleSound.h" />
-    <ClInclude Include="IndexedType.h" />
     <ClInclude Include="ColouredLine.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="Math.h" />

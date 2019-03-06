@@ -65,7 +65,7 @@ void Render()
 	App::DrawLine(l1);
 	App::DrawLine(l2);
 	CPoint poi{ Math::intersect(l1, l2) };
-	printf("Intersection at %f %f.\n", poi.x, poi.y);
+	printf("Intersection at %f %f.\n", poi[0], poi[1]);
 }
 
 //------------------------------------------------------------------------
