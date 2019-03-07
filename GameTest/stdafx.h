@@ -29,3 +29,6 @@
 
 //A header for every aspiring engine developer.
 #include <memory>
+
+//Game programming is math heavy!
+#include "Math.h"

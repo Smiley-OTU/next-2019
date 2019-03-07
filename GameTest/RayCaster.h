@@ -2,10 +2,15 @@
 class CRayCaster
 {
 public:
-	CRayCaster();
+	CRayCaster(float, float, float = 1.0f);
 	~CRayCaster();
 
-private:
+	void Render();
 
+	//Vertical position of rays.
+	float rayOriginY;
+
+private:
+	const float m_start, m_range, m_step, m_thickness;
 };
 

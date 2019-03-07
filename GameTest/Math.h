@@ -28,6 +28,16 @@ namespace Math {
 #endif
 	}
 
+	//Convert value between (-1.0, 1.0f) to (0.0, 1.0).
+	inline float bias(float value) {
+		return (value + 1.0f) * 0.5f;
+	}
+
+	//Convert value between (0.0, 1.0f) to (-1.0, 1.0).
+	inline float unbias(float value) {
+		return value * 2.0f - 1.0f;
+	}
+
 	//a.b (2d vector dot product).
 	inline float dot(const CPoint& a, const CPoint& b) {
 		return a.x * b.x + a.y * b.y;
@@ -59,6 +69,11 @@ namespace Math {
 		float xDelta = line.p2x - line.p1x;
 		float yDelta = line.p2y - line.p1y;
 		return sqrtf(xDelta * xDelta + yDelta * yDelta);
+	}
+
+	//Creates a point with a length of one in the direciton of the passed in point.
+	inline CPoint normalize(const CPoint& point) {
+		return CPoint{ point / l2norm(point) };
 	}
 
 	//Projects A onto B, returning the length the projection.
