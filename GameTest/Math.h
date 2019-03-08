@@ -38,6 +38,11 @@ namespace Math {
 		return value * 2.0f - 1.0f;
 	}
 
+	//Converts a value from its original range to the desire range (think lerp).
+	inline float map(float value, float inMin, float inMax, float outMin, float outMax) {
+		return ((value - inMin) / (inMax - inMin)) * (outMax - outMin) + outMin;
+	}
+
 	//a.b (2d vector dot product).
 	inline float dot(const CPoint& a, const CPoint& b) {
 		return a.x * b.x + a.y * b.y;

@@ -23,7 +23,7 @@ static const float TUNNEL_FILL_PERCENT = 80;
 //(Use "static" to remove naming conflicts among translation units. Most likely no need so currently not worth extra keystrokes.
 CSimpleTileMap g_map(MAP_SIZE);
 //CRayCaster g_rayCaster{ 0.0f, APP_VIRTUAL_WIDTH };
-CRayCaster g_rayCaster{ APP_VIRTUAL_WIDTH * 0.2f, APP_VIRTUAL_WIDTH * 0.8f, 31.0f };
+CRayCaster g_rayCaster{ APP_VIRTUAL_WIDTH * 0.25f, APP_VIRTUAL_WIDTH * 0.75f, 4.0f };
 
 //------------------------------------------------------------------------
 // Called before first update. Do any initial setup here.
@@ -47,6 +47,7 @@ void Update(float deltaTime)
     {
         g_map.RandomMap(TUNNEL_FILL_PERCENT, TUNNEL_LEN);
     }
+	g_rayCaster.Update();
 }
 
 //------------------------------------------------------------------------

@@ -1,0 +1,1 @@
+Although its less efficient, have the RayCaster store a colour buffer and a height buffer. That way, we can decouple update() from render().

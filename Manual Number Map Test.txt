@@ -1,0 +1,14 @@
+Let's think about this intuitively.
+Percents are independent of ranges.
+We start by finding the % x is between initial min and max.
+From there, we can figure out where that lies along resultant min and max (think lerp)!
+Lastly, we have to add resultant min (again, think lerp) because although we've figured out how far between resultant min and max we are in "resultant" space, we still have to translate cause we're not necessarily at the origin.
+
+Now step by step with some numbers.
+x = 1.2, initial range is (0, 3), resultant range is (-15, 15). 
+1.2 / 3 = 0.4 -> x is 40% of the range.
+range(result) = rMax - rMin = 15 - -15 = 30.
+30 * 0.4 (40%) = 12 -> 12 units along the line from its start.
+result = -15 + 12 = -3. Makes sense.
+
+I wonder why the formula has the extra step of subtracting the input minimum from the input value. The reason it does so is because it accounts for the initial range not starting at 0. For example, if the range is (-3, 2) and the initial value is -1, -1 / 6
