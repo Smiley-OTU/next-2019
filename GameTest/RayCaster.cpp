@@ -1,13 +1,15 @@
 #include "stdafx.h"
 #include "RayCaster.h"
 #include "App/app.h"
+//This is defined in app.cpp so putting it in the header would give unnecessary access, plus I would prefer to return than reference parameters.
+//((_x_ / APP_VIRTUAL_WIDTH )*2.0f) - 1.0f;
 
-CRayCaster::CRayCaster(float xMin, float xMax, float thickness) :
-	m_xMin(xMin), m_xMax(xMax), m_range(xMax - xMin), m_step((thickness * 2.0f) / (xMax - xMin)), m_thickness(thickness), m_count((size_t)m_range)
+CRayCaster::CRayCaster(float thickness) :
+	m_count(APP_VIRTUAL_WIDTH / (size_t)thickness), m_thickness(thickness), m_step((float)m_count * thickness), m_rayOriginY(APP_VIRTUAL_HEIGHT / 2.0f)
 {	//Make sure thickness is between 1 and 32.
 	assert(thickness > 0.0f && thickness <= 31.0f);
-	m_colourBuffer.resize(m_range);
-	m_heightBuffer.resize(m_range);
+	m_colourBuffer.resize(m_count);
+	m_heightBuffer.resize(m_count);
 }
 
 CRayCaster::~CRayCaster()
@@ -15,45 +17,37 @@ CRayCaster::~CRayCaster()
 }
 
 void CRayCaster::Update()
-{
-	/*for (size_t i = 0; i < (size_t)m_range; i++) {
-		float c = Math::map((float)i, 0.0f, m_range, -1.0f, 1.0f);
-		printf("%f\n", c);
-	}*/
-	float value = -1.0f;
-	for (float i = -1.0f; i < 1.0f; i += m_step) {
-		value += m_step;
-		size_t x = Math::map(i, -1.0f, 1.0f, m_xMin, m_xMax);
-		x -= m_xMin;
-		x /= m_thickness;
-		//Can optimize out the -outMax at the end cause we want to start from 0. Verify that the resultant start will always be 0 in Math::map.
-
-		m_colourBuffer[x].Randomize();
-		m_heightBuffer[x] = FRAND_RANGE(0.0f, APP_VIRTUAL_HEIGHT / 2.0f);
+{	//Don't iterate with floats. Mapping from floats to indices may fail due to percision errors.
+	for (size_t i = 0; i < m_count; i++) {
+		//float c = indexToStep(i);
+		//TODO: assign colour based on colour of poi tile.
+		m_colourBuffer[i].Randomize();
+		//TODO: assign height based on projected and real height of poi tile.
+		m_heightBuffer[i] = FRAND_RANGE(0.0f, APP_VIRTUAL_HEIGHT / 2.0f);
 	}
 }
 
 void CRayCaster::Render()
 {
+	float x = 0.0f;
 	glLineWidth(m_thickness);
-	for (float i = -1.0f; i < 1.0f; i += m_step) {
-		float c = Math::bias(i) * m_range + m_xMin;
-		size_t x = Math::map(i, -1.0f, 1.0f, m_xMin, m_xMax);
-		x -= m_xMin;
-		x /= m_thickness;
-		App::DrawLine(c, rayOriginY - m_heightBuffer[x], c, rayOriginY + m_heightBuffer[x], m_colourBuffer[x].r, m_colourBuffer[x].g, m_colourBuffer[x].b);
+	for (size_t i = 0; i < m_count; i++) {
+		float c = Math::bias(indexToStep(i));
+		App::DrawLine(x, m_rayOriginY - m_heightBuffer[i], x, m_rayOriginY + m_heightBuffer[i], m_colourBuffer[i].r, m_colourBuffer[i].g, m_colourBuffer[i].b);
+		//Increment x after render so we start at 0.0.
+		x = c * m_step;
 	}
 	
 	//The actual algorithm will do dy over dx based on ray direction, not directly from step.
 	//What will happen is rayAngle = playerAngle + step, then do cos and sin for direction.
 }
 
-inline float CRayCaster::mapToStep(size_t index)
+inline float CRayCaster::indexToStep(size_t index)
 {
-	return 0.0f;
+	return Math::map(index, 0.0f, m_count, -1.0f, 1.0f);
 }
 
-inline size_t CRayCaster::mapToIndex(float step)
+inline size_t CRayCaster::stepToIndex(float step)
 {
-	return size_t();
+	return Math::map(step, -1.0f, 1.0f, 0.0, m_count);
 }

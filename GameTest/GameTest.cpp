@@ -23,7 +23,7 @@ static const float TUNNEL_FILL_PERCENT = 80;
 //(Use "static" to remove naming conflicts among translation units. Most likely no need so currently not worth extra keystrokes.
 CSimpleTileMap g_map(MAP_SIZE);
 //CRayCaster g_rayCaster{ 0.0f, APP_VIRTUAL_WIDTH };
-CRayCaster g_rayCaster{ APP_VIRTUAL_WIDTH * 0.25f, APP_VIRTUAL_WIDTH * 0.75f, 4.0f };
+CRayCaster g_rayCaster{ 4.0f };
 
 //------------------------------------------------------------------------
 // Called before first update. Do any initial setup here.
@@ -55,20 +55,25 @@ void Update(float deltaTime)
 // See App.h 
 //------------------------------------------------------------------------
 void Render()
-{	 
-    g_map.Render();
+{
+	static float halfWidth = (float)APP_VIRTUAL_WIDTH / 2.0f;
+	static float halfHeight = (float)APP_VIRTUAL_HEIGHT / 2.0f;
+	//P1, top left.
+	glViewport(0.0f, halfHeight, halfWidth, halfHeight);
 	g_rayCaster.Render();
-	CLine l1{ 100.0f, 100.0f, 100.0f, 500.0f };
-	CLine l2{ 50.0f, 300.0f, 700.0f, 300.0f };
-	CLine l3{ APP_VIRTUAL_WIDTH * 0.2f, 100, APP_VIRTUAL_WIDTH * 0.2f, 500 };
+	//P2, top right.
+	glViewport(halfWidth, halfHeight, halfWidth, halfHeight);
+	g_rayCaster.Render();
+	//P3, bottom left.
+	glViewport(0.0f, 0.0f, halfWidth, halfHeight);
+	g_rayCaster.Render();
+	//P4, bottom right.
+	glViewport(halfWidth, 0.0f, halfWidth, halfHeight);
+	g_rayCaster.Render();
+
 	//Intersection algorithm doesn't take thickness into account. That would need an OOBB check!
-	glLineWidth(100.0f);
-	App::DrawLine(l1);
-	App::DrawLine(l2);
-	App::DrawLine(l3);
-	CPoint poi{ Math::intersect(l1, l2) };
+	//CPoint poi{ Math::intersect(l1, l2) };
 	//printf("Intersection at %f %f.\n", poi[0], poi[1]);
-	g_rayCaster.rayOriginY = APP_VIRTUAL_HEIGHT / 2.0f;
 }
 
 //------------------------------------------------------------------------

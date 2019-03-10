@@ -73,7 +73,7 @@ public:
 	{
 		char textBuffer[64];
 		sprintf(textBuffer, "%s: %0.4f ms", text,m_elapsedTime);
-		App::Print(x, y, textBuffer,1.0f,0.0f,1.0f, GLUT_BITMAP_HELVETICA_10);
+		App::Print(x, y, textBuffer,1.0f,0.0f,1.0f, GLUT_BITMAP_HELVETICA_18);
 	}
 private:	
 	double m_startTime;
@@ -107,6 +107,8 @@ void Display()
 	gUserRenderProfiler.Stop();
 	if (gRenderUpdateTimes)
 	{
+		glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+		App::DrawQuad(0.0f, 0.0f, 220.0f, 60.0f, 0.5f, 0.5f, 0.5f);
 		gUpdateDeltaTime.Print	 (10, 40, "Update");
 		gUserRenderProfiler.Print(10, 25, "User Render");
 		gUserUpdateProfiler.Print(10, 10, "User Update");
