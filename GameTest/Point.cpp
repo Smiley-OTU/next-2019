@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Point.h"
+#include "Math.h"
 //Make this sentinel more obscure if we run into trouble.
 #define DEFAULT_VALUE 9001.0f
 

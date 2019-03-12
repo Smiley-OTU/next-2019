@@ -28,6 +28,45 @@ namespace Math {
 #endif
 	}
 
+	inline float degrees(float radians) {
+		return radians * 57.2957795130823f;
+	}
+
+	inline float radians(float degrees) {
+		return degrees * 0.0174532925199f;
+	}
+
+	//Forms an angle measured in degrees relative to the origin based on the input vector in degrees.
+	inline float angle(float dy, float dx) {
+		return degrees(atan2f(radians(dy), radians(dx)));
+	}
+
+	//Forms an angle measured in degrees relative to the origin based on the input vector in degrees.
+	inline float angle(const CPoint& direction) {
+		return angle(direction.y, direction.x);
+	}
+
+	//Forms a two-component direction vector measured in degrees relative to the origin based on the input angle in radians.
+	inline CPoint direction(float angle) {
+		angle = radians(angle);
+		return CPoint{ degrees(cosf(angle)), degrees(sinf(angle)) };
+	}
+
+	//Forms an angle in radians relative to the origin based on the input vector in radians.
+	inline float angle_r(float dy, float dx) {
+		return atan2f(dy, dx);
+	}
+
+	//Forms an angle in radians relative to the origin based on the input vector in radians.
+	inline float angle_r(const CPoint& direction) {
+		return angle_r(direction.y, direction.x);
+	}
+
+	//Forms a two-component direction vector in radians relative to the origin based on the input angle in radians.
+	inline CPoint direction_r(float angle) {
+		return CPoint{ cosf(angle), sinf(angle) };
+	}
+
 	//Convert value between (-1.0, 1.0f) to (0.0, 1.0).
 	inline float bias(float value) {
 		return (value + 1.0f) * 0.5f;

@@ -189,6 +189,7 @@
     <ClInclude Include="App\main.h" />
     <ClInclude Include="App\SimpleController.h" />
     <ClInclude Include="App\SimpleSound.h" />
+    <ClInclude Include="Entity.h" />
     <ClInclude Include="Colour.h" />
     <ClInclude Include="ColouredLine.h" />
     <ClInclude Include="RayCaster.h" />
@@ -204,6 +205,7 @@
     <ClCompile Include="App\main.cpp" />
     <ClCompile Include="App\SimpleController.cpp" />
     <ClCompile Include="App\SimpleSound.cpp" />
+    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Colour.cpp" />
     <ClCompile Include="ColouredLine.cpp" />
     <ClCompile Include="RayCaster.cpp" />

@@ -56,7 +56,9 @@ void Update(float deltaTime)
 //------------------------------------------------------------------------
 void Render()
 {
-	static float halfWidth = (float)APP_VIRTUAL_WIDTH / 2.0f;
+	g_map.Render();
+	//g_rayCaster.Render(g_map, CPoint{ 0.0f, 0.0f }, CPoint{ 0.0f, 0.0f });
+	/*static float halfWidth = (float)APP_VIRTUAL_WIDTH / 2.0f;
 	static float halfHeight = (float)APP_VIRTUAL_HEIGHT / 2.0f;
 	//P1, top left.
 	glViewport(0.0f, halfHeight, halfWidth, halfHeight);
@@ -69,7 +71,7 @@ void Render()
 	g_rayCaster.Render();
 	//P4, bottom right.
 	glViewport(halfWidth, 0.0f, halfWidth, halfHeight);
-	g_rayCaster.Render();
+	g_rayCaster.Render();*/
 
 	//Intersection algorithm doesn't take thickness into account. That would need an OOBB check!
 	//CPoint poi{ Math::intersect(l1, l2) };
@@ -82,7 +84,4 @@ void Render()
 //------------------------------------------------------------------------
 void Shutdown()
 {	//No leaks will be tolorated!!!
-#if _DEBUG
-	FreeConsole();
-#endif
 }

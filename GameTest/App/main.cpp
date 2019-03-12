@@ -181,26 +181,32 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, 	_In_opt_ HINSTANCE hPrevInstanc
 	glutIdleFunc(Idle);
 	glutDisplayFunc(Display);       // Register callback handler for window re-paint event	
 	glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);
-	InitGL();                       // Our own OpenGL initialization
+	InitGL();                       // Our own OpenGL initialization -> from the 90s??? ;) I wish I had modern gl!
 
 	// Init sounds system.
 	CSimpleSound::GetInstance().Initialize(MAIN_WINDOW_HANDLE);
-	
-	// Call user defined init.
-	Init();
+
 #if _DEBUG
 	//Make a console window for debug logs.
 	AllocConsole();
 	freopen("CONOUT$", "w", stdout);
-	//Make game window in front of console window
+	//Make game window in front of console window.
 	BringWindowToTop(MAIN_WINDOW_HANDLE);
 #endif
+	
+	// Call user defined init.
+	Init();
 
 	// Enter glut the event-processing loop				
 	glutMainLoop();
 	
 	// Call user shutdown.
-	Shutdown();	
+	Shutdown();
+
+#if _DEBUG
+	//Might as well be consistent and clean the console up here.
+	FreeConsole();
+#endif
 
 	// Shutdown sound system.
 	CSimpleSound::GetInstance().Shutdown();

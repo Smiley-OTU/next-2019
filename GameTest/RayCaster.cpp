@@ -1,8 +1,7 @@
 #include "stdafx.h"
 #include "RayCaster.h"
 #include "App/app.h"
-//This is defined in app.cpp so putting it in the header would give unnecessary access, plus I would prefer to return than reference parameters.
-//((_x_ / APP_VIRTUAL_WIDTH )*2.0f) - 1.0f;
+#define DRAW_2D true
 
 CRayCaster::CRayCaster(float thickness) :
 	m_count(APP_VIRTUAL_WIDTH / (size_t)thickness), m_thickness(thickness), m_step((float)m_count * thickness), m_rayOriginY(APP_VIRTUAL_HEIGHT / 2.0f)
@@ -27,8 +26,11 @@ void CRayCaster::Update()
 	}
 }
 
-void CRayCaster::Render()
+void CRayCaster::Render(const CSimpleTileMap& map, const CPoint& position, const CPoint& direction)
 {
+#if DRAW_2D
+
+#else
 	float x = 0.0f;
 	glLineWidth(m_thickness);
 	for (size_t i = 0; i < m_count; i++) {
@@ -37,9 +39,10 @@ void CRayCaster::Render()
 		//Increment x after render so we start at 0.0.
 		x = c * m_step;
 	}
-	
+
 	//The actual algorithm will do dy over dx based on ray direction, not directly from step.
 	//What will happen is rayAngle = playerAngle + step, then do cos and sin for direction.
+#endif
 }
 
 inline float CRayCaster::indexToStep(size_t index)

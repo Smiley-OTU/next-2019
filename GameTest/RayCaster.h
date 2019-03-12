@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 #include "Colour.h"
+class CSimpleTileMap;
+class CPoint;
 class CRayCaster
 {
 public:
@@ -8,7 +10,7 @@ public:
 	~CRayCaster();
 
 	void Update();
-	void Render();
+	void Render(const CSimpleTileMap& map, const CPoint& position, const CPoint& direction);
 
 private:
 	std::vector<CColour> m_colourBuffer;

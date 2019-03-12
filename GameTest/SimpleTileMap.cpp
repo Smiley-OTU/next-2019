@@ -42,6 +42,7 @@ void CSimpleTileMap::Create()
     for (int i = 0; i < m_mapSize; i++)
         m_tileMap[i].resize(m_mapSize, EMapValue::WALL);
 
+	//This doesn't take resize events into account so I'm guessing its safe to use these defines without being penalized in my code.
     m_tileWidth = (float)APP_VIRTUAL_WIDTH / (float)m_mapSize;
     m_tileHeight = (float)APP_VIRTUAL_HEIGHT / (float)m_mapSize;
 }
