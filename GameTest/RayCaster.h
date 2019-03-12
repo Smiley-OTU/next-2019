@@ -25,5 +25,7 @@ private:
 
 	//Maps a step (-1.0, 1.0) to an index (0 to xMax).
 	inline size_t stepToIndex(float step);
+
+	inline void march(const CSimpleTileMap& map, const CPoint& position, const CPoint& direction);
 };
 

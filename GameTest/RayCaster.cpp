@@ -1,14 +1,14 @@
 #include "stdafx.h"
 #include "RayCaster.h"
 #include "App/app.h"
+#include "SimpleTileMap.h"
 #include "Viewer.h"
 #include "Line.h"
-#define DRAW_2D true
 
 CRayCaster::CRayCaster(float thickness) :
 	m_count(APP_VIRTUAL_WIDTH / (size_t)thickness), m_thickness(thickness), m_step((float)m_count * thickness), m_rayOriginY(APP_VIRTUAL_HEIGHT / 2.0f)
 {	//Make sure thickness is between 1 and 32.
-	assert(thickness > 0.0f && thickness <= 31.0f);
+	assert(thickness >= 1.0f && thickness <= 31.0f);
 	m_colourBuffer.resize(m_count);
 	m_heightBuffer.resize(m_count);
 }
@@ -28,34 +28,39 @@ void CRayCaster::Update()
 	}
 }
 
-void CRayCaster::Render(const CSimpleTileMap& map, const CViewer& viewer)
+void CRayCaster::Render(const CSimpleTileMap& map, const CViewer& viewer)//Ensure the viewer's angle never exceeds 360.
 {
-#if DRAW_2D
-	//Placeholder till we can intersect.
-	const static float rayDistance = 100.0f;
+	march(map, viewer.m_position, Math::direction(viewer.m_angle));
+	//Ensure the rotation is between 0 and 360 so the quadrant check works.
+	//float clampedAngle = fmodf(viewer.m_angle, 360.0f);
+	//if (clampedAngle < 0.0f)
+	//	clampedAngle += 360.0f;
 	const float angleStep = viewer.m_fov / (float)m_count;
-	const float raysStart = viewer.m_angle - viewer.m_fov * 0.5f;
+	const float raysStart = /*clampedAngle*/viewer.m_angle - viewer.m_fov * 0.5f;
 	//Another way to do this would be viewer.m_angle + halfFov * indexToStep(i); The current way is more straight forward and less expensive. 
 	for (size_t i = 0; i < m_count; i++) {
 		//Angle of the ray, relative to the world origin (calculated based on the viewer's angle).
 		float rayAngle = raysStart + angleStep * (float)i;
-		CPoint rayDirection{ Math::direction(rayAngle) };
-		CLine ray{ viewer.m_position.x, viewer.m_position.y, viewer.m_position.x + rayDirection.x * rayDistance, viewer.m_position.y + rayDirection.y * rayDistance };
-		App::DrawLine(ray);
-	}
-#else
-	float x = 0.0f;
-	glLineWidth(m_thickness);
-	for (size_t i = 0; i < m_count; i++) {
-		float c = Math::bias(indexToStep(i));
-		App::DrawLine(x, m_rayOriginY - m_heightBuffer[i], x, m_rayOriginY + m_heightBuffer[i], m_colourBuffer[i].r, m_colourBuffer[i].g, m_colourBuffer[i].b);
-		//Increment x after render so we start at 0.0.
-		x = c * m_step;
+		//bool up = rayAngle < 180.0f;
+		//bool right = rayAngle -> something about less than 90 but greater than 270 (impossible).
+		//In conclusion, fuck this stupid janky marching algorithm.
+		//Its not performant, elegant, nor personal!
+		//I'm gonna extend rays till they hit the edge of the map, then step (using the known point algorithm) till I pick up a wall tile.
+		//Get some visuals going on in a separate function maybe.
+
+		//2D render:
+		//CPoint rayDirection{ Math::direction(rayAngle) };
+		//CLine ray{ viewer.m_position.x, viewer.m_position.y, viewer.m_position.x + rayDirection.x * 100.0f, viewer.m_position.y + rayDirection.y * 100.0f };
+		//App::DrawLine(ray);
 	}
 
-	//The actual algorithm will do dy over dx based on ray direction, not directly from step.
-	//What will happen is rayAngle = playerAngle + step, then do cos and sin for direction.
-#endif
+	//3D render:
+	/*float x = 0.0f;
+	glLineWidth(m_thickness);
+	for (size_t i = 0; i < m_count; i++) {
+		App::DrawLine(x, m_rayOriginY - m_heightBuffer[i], x, m_rayOriginY + m_heightBuffer[i], m_colourBuffer[i].r, m_colourBuffer[i].g, m_colourBuffer[i].b);
+		x += m_thickness;
+	}*/
 }
 
 inline float CRayCaster::indexToStep(size_t index)
@@ -66,4 +71,41 @@ inline float CRayCaster::indexToStep(size_t index)
 inline size_t CRayCaster::stepToIndex(float step)
 {
 	return Math::map(step, -1.0f, 1.0f, 0.0, m_count);
+}
+
+
+/*
+float difX = end.x - start.x;
+float difY = end.y - start.y;
+float dist = abs(difX) + abs(difY);
+
+float dx = difX / dist;
+float dy = difY / dist;
+
+for (int i = 0, int x, int y; i <= ceil(dist); i++) {
+	x = floor(start.x + dx * i);
+	y = floor(start.y + dy * i);
+	draw(x,y);
+}
+return true;
+*/
+inline void CRayCaster::march(const CSimpleTileMap & map, const CPoint& position, const CPoint& direction)
+{
+	CLine ray{ position, direction * 500.0f };
+	glLineWidth(15.0f);
+	App::DrawLine(ray, 0.0f, 1.0f, 0.0f);
+	CPoint poi;
+	float shortestDistance = 9001.0f;//Over 9000.
+	for (unsigned char i = 0; i < map.s_numBorders; i++) {
+		CPoint result;
+		if (Math::intersect(ray, map.borders[i], result)) {
+			float distance = Math::l1norm(CLine{ position, result });
+			if (distance < shortestDistance) {
+				shortestDistance = distance;
+				poi = result;
+			}
+		}
+	}
+	glLineWidth(5.0f);
+	App::DrawLine(CLine{ position, poi }, 1.0f, 0.0f, 0.0f);
 }

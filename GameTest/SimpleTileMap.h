@@ -6,6 +6,7 @@
 // If you do not use this then you should provide an alternative that represents a pac-man style map.
 //------------------------------------------------------------------------
 #include "stdafx.h"
+#include "Line.h"
 // Values that can be written into the tile map.
 enum EMapValue
 {
@@ -22,13 +23,8 @@ public:
     //--------------------------------------------------------------------------------------------
     // Constructor just creates a tile map of mapSize x mapSize.
     //--------------------------------------------------------------------------------------------
-    CSimpleTileMap(const int mapSize) : m_mapSize(mapSize)
-    {
-        Create();
-    }
-    ~CSimpleTileMap()
-    {
-    }
+	CSimpleTileMap(const int mapSize);
+	~CSimpleTileMap();
     //--------------------------------------------------------------------------------------------
     // This will generate a new random map.
     // targetFloorPercentage is how much floor space you want to be open (as a percentage)
@@ -57,7 +53,13 @@ public:
     //--------------------------------------------------------------------------------------------
     void Render() const;
     // Return size of the map.
-    int GetMapSize() const { return m_mapSize; }    
+    int GetMapSize() const { return m_mapSize; }
+
+	float getTileWidth();
+	float getTileHeight();
+	CLine borders[4];
+	static const unsigned char s_numBorders;
+
 private:
     // Create a new map.
     void Create();

@@ -16,6 +16,7 @@
 #include "RayCaster.h"
 #include "Viewer.h"
 
+//16x16 grid.
 static const int MAP_SIZE = 16;
 static const int TUNNEL_LEN = 12;
 static const float TUNNEL_FILL_PERCENT = 80;

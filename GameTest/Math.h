@@ -130,6 +130,7 @@ namespace Math {
 		return CPoint{ b * projecf(a, b) };
 	}
 
+	//Writes the point of intersection to the output point (poi), returns a boolean to indicate intersection.
 	inline bool intersect(const CLine& a, const CLine& b, CPoint& poi) {
 		const CPoint r{ a.p2.x - a.p1.x, a.p2.y - a.p1.y };
 		const CPoint s{ b.p2.x - b.p1.x, b.p2.y - b.p1.y };
@@ -141,18 +142,14 @@ namespace Math {
 		float t = (cross(b.p1, s) - cross(a.p1, s)) / d;
 
 		if ((0 <= u) && (u <= 1) && (0 <= t) && (t <= 1)) {
-			//Can't assign due to const so we must resort to hacks!
-			//poi = CPoint{ r.x * t + a.p1.x, r.y * t + a.p1.y };
-			CPoint tmp{ r.x * t + a.p1.x, r.y * t + a.p1.y };
-			memmove(&poi, &tmp, sizeof(CPoint));
-
-			//Kind of a bottleneck so I'll make a function that returns rather than overwrites.
+			poi = CPoint{ r.x * t + a.p1.x, r.y * t + a.p1.y };
 			return true;
 		}
 
 		return false;
 	}
 
+	//Returns the point of intersection between lines a and b.
 	inline CPoint intersect(const CLine& a, const CLine& b) {
 		const CPoint r{ a.p2.x - a.p1.x, a.p2.y - a.p1.y };
 		const CPoint s{ b.p2.x - b.p1.x, b.p2.y - b.p1.y };

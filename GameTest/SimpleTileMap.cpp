@@ -12,6 +12,7 @@
 #include "app\app.h"
 #include "SimpleTileMap.h"
 
+const unsigned char CSimpleTileMap::s_numBorders = 4;
 static const int NUM_MAP_DEFS = 6;
 
 // Color mapping for render. Indexed based on tile value.
@@ -103,6 +104,29 @@ void CSimpleTileMap::Render() const
             App::DrawQuad(xPos, yPos, xPos + w, yPos + h, g_tileMapDef[index][0], g_tileMapDef[index][1], g_tileMapDef[index][2]);
         }
     }
+}
+
+float CSimpleTileMap::getTileWidth()
+{
+	return m_tileWidth;
+}
+
+float CSimpleTileMap::getTileHeight()
+{
+	return m_tileHeight;
+}
+
+CSimpleTileMap::CSimpleTileMap(const int mapSize) : m_mapSize(mapSize)
+{	//Top, bottom, left, right:
+	borders[0] = CLine{ 0.0f, APP_VIRTUAL_HEIGHT, APP_VIRTUAL_WIDTH, APP_VIRTUAL_HEIGHT };
+	borders[1] = CLine{ 0.0f, 0.0f, APP_VIRTUAL_WIDTH, 0.0f };
+	borders[2] = CLine{ 0.0f, 0.0f, 0.0f, APP_VIRTUAL_HEIGHT };
+	borders[3] = CLine{ APP_VIRTUAL_WIDTH, 0.0f, APP_VIRTUAL_WIDTH, APP_VIRTUAL_HEIGHT };
+	Create();
+}
+
+CSimpleTileMap::~CSimpleTileMap()
+{
 }
 
 //------------------------------------------------------------------------
