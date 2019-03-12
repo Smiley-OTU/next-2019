@@ -3,7 +3,7 @@
 //Make this sentinel more obscure if we run into trouble.
 #define DEFAULT_VALUE 9002.0f
 
-const unsigned int CLine::s_components = 4;
+const unsigned char CLine::s_components = 4;
 
 CLine::CLine(const CPoint & a_p1, const CPoint & a_p2) :
 	p1(a_p1), p2(a_p2)
@@ -34,7 +34,7 @@ bool CLine::initialized() const
 	return p1.initialized() && p2.initialized();
 }
 
-float CLine::operator[](unsigned int index) const
+float CLine::operator[](unsigned char index) const
 {
 #if _DEBUG
 	assert(index < s_components);

@@ -14,6 +14,7 @@
 #include "Line.h"
 #include "ColouredLine.h"
 #include "RayCaster.h"
+#include "Viewer.h"
 
 static const int MAP_SIZE = 16;
 static const int TUNNEL_LEN = 12;
@@ -22,8 +23,8 @@ static const float TUNNEL_FILL_PERCENT = 80;
 //No "Game" class so everything will be global for the sake of communicating between GLUT render and update callbacks.
 //(Use "static" to remove naming conflicts among translation units. Most likely no need so currently not worth extra keystrokes.
 CSimpleTileMap g_map(MAP_SIZE);
-//CRayCaster g_rayCaster{ 0.0f, APP_VIRTUAL_WIDTH };
 CRayCaster g_rayCaster{ 4.0f };
+CViewer g_player;
 
 //------------------------------------------------------------------------
 // Called before first update. Do any initial setup here.
@@ -31,6 +32,9 @@ CRayCaster g_rayCaster{ 4.0f };
 void Init()
 {
     g_map.RandomMap(TUNNEL_FILL_PERCENT, TUNNEL_LEN);
+	g_player.setFov(60.0f);
+	g_player.setPosition(500.0f, 250.0f);
+	g_player.setDirection(135.0f);
 }
 
 //------------------------------------------------------------------------
@@ -57,7 +61,7 @@ void Update(float deltaTime)
 void Render()
 {
 	g_map.Render();
-	//g_rayCaster.Render(g_map, CPoint{ 0.0f, 0.0f }, CPoint{ 0.0f, 0.0f });
+	g_rayCaster.Render(g_map, g_player);
 	/*static float halfWidth = (float)APP_VIRTUAL_WIDTH / 2.0f;
 	static float halfHeight = (float)APP_VIRTUAL_HEIGHT / 2.0f;
 	//P1, top left.

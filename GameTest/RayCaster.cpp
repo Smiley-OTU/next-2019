@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "RayCaster.h"
 #include "App/app.h"
+#include "Viewer.h"
+#include "Line.h"
 #define DRAW_2D true
 
 CRayCaster::CRayCaster(float thickness) :
@@ -26,10 +28,21 @@ void CRayCaster::Update()
 	}
 }
 
-void CRayCaster::Render(const CSimpleTileMap& map, const CPoint& position, const CPoint& direction)
+void CRayCaster::Render(const CSimpleTileMap& map, const CViewer& viewer)
 {
 #if DRAW_2D
-
+	//Placeholder till we can intersect.
+	const static float rayDistance = 100.0f;
+	const float angleStep = viewer.m_fov / (float)m_count;
+	const float raysStart = viewer.m_angle - viewer.m_fov * 0.5f;
+	//Another way to do this would be viewer.m_angle + halfFov * indexToStep(i); The current way is more straight forward and less expensive. 
+	for (size_t i = 0; i < m_count; i++) {
+		//Angle of the ray, relative to the world origin (calculated based on the viewer's angle).
+		float rayAngle = raysStart + angleStep * (float)i;
+		CPoint rayDirection{ Math::direction(rayAngle) };
+		CLine ray{ viewer.m_position.x, viewer.m_position.y, viewer.m_position.x + rayDirection.x * rayDistance, viewer.m_position.y + rayDirection.y * rayDistance };
+		App::DrawLine(ray);
+	}
 #else
 	float x = 0.0f;
 	glLineWidth(m_thickness);

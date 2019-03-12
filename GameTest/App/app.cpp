@@ -41,10 +41,7 @@ namespace App
 		glVertex2f(ex, ey);
 		glEnd();
 	}
-	void DrawColouredLine(const CColouredLine& colouredLine)
-	{
-		DrawLine(colouredLine.p1x, colouredLine.p1y, colouredLine.p2x, colouredLine.p2y, colouredLine.r, colouredLine.g, colouredLine.b);
-	}
+
     void DrawQuad(float sx, float sy, float ex, float ey, float r, float g, float b)
     {
 #if APP_USE_VIRTUAL_RES		

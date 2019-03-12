@@ -4,7 +4,7 @@
 //Make this sentinel more obscure if we run into trouble.
 #define DEFAULT_VALUE 9001.0f
 
-const unsigned int CPoint::s_components = 2;
+const unsigned char CPoint::s_components = 2;
 
 //*NOTE* Constructor doesn't actually get called when using list initialization ie Point{1, 2}.
 CPoint::CPoint(float a_x, float a_y) :
@@ -51,7 +51,7 @@ CPoint CPoint::operator/(float s) const
 	return CPoint{ x / s, y / s };
 }
 
-/*void CPoint::operator+=(const CPoint &p)
+void CPoint::operator+=(const CPoint &p)
 {
 	x += p.x;
 	y += p.y;
@@ -73,9 +73,9 @@ void CPoint::operator/=(float s)
 {
 	x *= s;
 	y *= s;
-}*/
+}
 
-float CPoint::operator[](unsigned int index) const
+float CPoint::operator[](unsigned char index) const
 {
 #if _DEBUG
 	assert(index < s_components);

@@ -19,20 +19,14 @@
     <Filter Include="Source Files\Out of the box API">
       <UniqueIdentifier>{62540299-942e-477c-9d07-8dc38357a411}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Expansions">
-      <UniqueIdentifier>{9144de40-f2cd-46d6-ae4f-a092387394db}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Expansions\Math">
+    <Filter Include="Source Files\Math">
       <UniqueIdentifier>{2bf27a5b-d107-4fd6-9a1b-3dbf2c0eb369}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Expansions\Systems">
-      <UniqueIdentifier>{91016eac-041e-4ce0-812c-a295b9a95807}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Questionable Code">
-      <UniqueIdentifier>{dbf7f06f-33f5-4649-972b-d1dad758da20}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Actors">
+    <Filter Include="Source Files\Actors">
       <UniqueIdentifier>{cd857ca6-0231-41c2-8737-cee67a089f97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Visuals">
+      <UniqueIdentifier>{c81b28ef-2182-40b0-9abe-35951114e435}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -64,25 +58,25 @@
       <Filter>Source Files\Out of the box API</Filter>
     </ClInclude>
     <ClInclude Include="Point.h">
-      <Filter>Source Files\Expansions\Math</Filter>
+      <Filter>Source Files\Math</Filter>
     </ClInclude>
     <ClInclude Include="Math.h">
-      <Filter>Source Files\Expansions\Math</Filter>
+      <Filter>Source Files\Math</Filter>
     </ClInclude>
     <ClInclude Include="Line.h">
-      <Filter>Source Files\Expansions\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="ColouredLine.h">
-      <Filter>Questionable Code</Filter>
-    </ClInclude>
-    <ClInclude Include="RayCaster.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Colour.h">
-      <Filter>Header Files</Filter>
+      <Filter>Source Files\Math</Filter>
     </ClInclude>
     <ClInclude Include="Entity.h">
-      <Filter>Actors</Filter>
+      <Filter>Source Files\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Viewer.h">
+      <Filter>Source Files\Actors</Filter>
+    </ClInclude>
+    <ClInclude Include="Colour.h">
+      <Filter>Source Files\Visuals</Filter>
+    </ClInclude>
+    <ClInclude Include="RayCaster.h">
+      <Filter>Source Files\Visuals</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -108,22 +102,22 @@
       <Filter>Source Files\App</Filter>
     </ClCompile>
     <ClCompile Include="Point.cpp">
-      <Filter>Source Files\Expansions\Math</Filter>
+      <Filter>Source Files\Math</Filter>
     </ClCompile>
     <ClCompile Include="Line.cpp">
-      <Filter>Source Files\Expansions\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="ColouredLine.cpp">
-      <Filter>Questionable Code</Filter>
-    </ClCompile>
-    <ClCompile Include="RayCaster.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Colour.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Math</Filter>
     </ClCompile>
     <ClCompile Include="Entity.cpp">
-      <Filter>Actors</Filter>
+      <Filter>Source Files\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Viewer.cpp">
+      <Filter>Source Files\Actors</Filter>
+    </ClCompile>
+    <ClCompile Include="Colour.cpp">
+      <Filter>Source Files\Visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="RayCaster.cpp">
+      <Filter>Source Files\Visuals</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

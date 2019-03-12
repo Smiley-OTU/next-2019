@@ -3,11 +3,12 @@
 //Faster to do so rather than reallocate memory and re-initialize.
 //Points & Lines will probably have to become non-constant too.
 struct CColour {
-	CColour() : r(1.0f), g(1.0f), b(1.0f), a(1.0f) {}
-	CColour(float a_r, float a_g, float a_b) : r(a_r), g(a_g), b(a_b), a(1.0f) {}
+	CColour();
+	CColour(float a_r, float a_g, float a_b);
 
-	void Randomize();
 	static CColour Random();
+	void Randomize();
+	float operator[](unsigned char index);
 
 	union {
 		struct {
@@ -17,4 +18,6 @@ struct CColour {
 			float values[4];
 		};
 	};
+
+	static const unsigned char s_components;
 };

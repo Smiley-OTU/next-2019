@@ -12,21 +12,21 @@ struct CLine
 	bool initialized() const;
 
 	//Member variable access ie start y is[1], max of [3].
-	float operator[](unsigned int index) const;
+	float operator[](unsigned char index) const;
 
 	//Immutable for now for defensive programming.
 	union {
 		struct {
-			const CPoint p1, p2;
+			CPoint p1, p2;
 		};
 		struct {
-			const float p1x, p1y, p2x, p2y;
+			float p1x, p1y, p2x, p2y;
 		};
 		struct {
-			const float values[4];
+			float values[4];
 		};
 	};
 
-	const static unsigned int s_components;
+	const static unsigned char s_components;
 };
 

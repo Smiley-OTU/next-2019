@@ -14,19 +14,19 @@ struct CPoint
 	CPoint operator*(float) const;
 	CPoint operator/(float) const;
 
-	//Can't have these if we want our members to be constant.
-	//void operator+=(const CPoint&);
-	//void operator-=(const CPoint&);
-	//void operator*=(float);
-	//void operator/=(float);
+	//Decided to go with no chaining (returning CPoint&s) to prevent error and preserve legibility.
+	void operator+=(const CPoint&);
+	void operator-=(const CPoint&);
+	void operator*=(float);
+	void operator/=(float);
 
 	//Member variable access ie y is [1], max of [1].
-	float operator[](unsigned int index) const;
+	float operator[](unsigned char index) const;
 
 	union {
-		struct { const float x, y; };
-		struct { const float values[2]; };
+		struct { float x, y; };
+		struct { float values[2]; };
 	};
 
-	static const unsigned int s_components;
+	static const unsigned char s_components;
 };
