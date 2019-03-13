@@ -74,23 +74,9 @@ inline size_t CRayCaster::stepToIndex(float step)
 }
 
 
-/*
-float difX = end.x - start.x;
-float difY = end.y - start.y;
-float dist = abs(difX) + abs(difY);
-
-float dx = difX / dist;
-float dy = difY / dist;
-
-for (int i = 0, int x, int y; i <= ceil(dist); i++) {
-	x = floor(start.x + dx * i);
-	y = floor(start.y + dy * i);
-	draw(x,y);
-}
-return true;
-*/
 inline void CRayCaster::march(const CSimpleTileMap & map, const CPoint& position, const CPoint& direction)
 {
+	//1. Find the nearest point of intersection with the edges of the map.
 	CLine ray{ position, direction * 500.0f };
 	glLineWidth(15.0f);
 	App::DrawLine(ray, 0.0f, 1.0f, 0.0f);
@@ -106,6 +92,24 @@ inline void CRayCaster::march(const CSimpleTileMap & map, const CPoint& position
 			}
 		}
 	}
+	//Correct the ray to end at the poi rather than *infinity*.
+	ray.p2 = poi;
 	glLineWidth(5.0f);
-	App::DrawLine(CLine{ position, poi }, 1.0f, 0.0f, 0.0f);
+	App::DrawLine(ray, 1.0f, 0.0f, 0.0f);
+
+	//2. Step through tiles that ray passes through to find the nearest non-air tile.
+	float deltaX = ray.p2x - ray.p1x;
+	float deltaY = ray.p2y - ray.p1y;
+	float distance = Math::l2norm(deltaX, deltaY);
+	float dx = deltaX / distance;
+	float dy = deltaY / distance;
+	//These are small because we're currently stepping per-pixel (not okay) rather than per-index.
+	//printf("%f %f\n", dx, dy);
+	
+	for (int i = 0; i <= ceil(distance); i++) {
+		float x = floor(ray.p1x + dx * i);
+		float y = floor(ray.p1y + dy * i);
+		//printf("%f %f\n", x, y);
+	}
+	printf("");
 }

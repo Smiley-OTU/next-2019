@@ -93,13 +93,23 @@ namespace Math {
 	}
 
 	//Manhattan distance of a vector.
+	inline float l1norm(float x, float y) {
+		return fabs(x) + fabs(y);
+	}
+
+	//Manhattan distance of a vector.
 	inline float l1norm(const CPoint& point) {
-		return fabs(point.x) + fabs(point.y);
+		return l1norm(point.x, point.y);
 	}
 
 	//Manhattan distance of a line.
 	inline float l1norm(const CLine& line) {
-		return fabs(line.p2y) - fabs(line.p1y) + fabs(line.p2x) - fabs(line.p1x);
+		return l1norm(line.p2x - line.p1x, line.p2y - line.p1y);
+	}
+
+	//Euclidean distance of a vector.
+	inline float l2norm(float x, float y) {
+		return sqrtf(x * x + y * y);
 	}
 
 	//Euclidean distance of a vector.
