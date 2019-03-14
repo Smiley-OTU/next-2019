@@ -106,12 +106,12 @@ void CSimpleTileMap::Render() const
     }
 }
 
-float CSimpleTileMap::getTileWidth()
+float CSimpleTileMap::getTileWidth() const
 {
 	return m_tileWidth;
 }
 
-float CSimpleTileMap::getTileHeight()
+float CSimpleTileMap::getTileHeight() const
 {
 	return m_tileHeight;
 }

@@ -21,6 +21,16 @@
 
 namespace App
 {
+	void DrawPoint(const CPoint & point, float border, float r, float g, float b)
+	{
+		float halfBorder = border * 0.5f;
+		DrawQuad(point.x - halfBorder, point.y - halfBorder, point.x + halfBorder, point.y + halfBorder, r, g, b);
+	}
+	void DrawPoint(float x, float y, float border, float r, float g, float b)
+	{
+		float halfBorder = border * 0.5f;
+		DrawQuad(x - halfBorder, y - halfBorder, x + halfBorder, y + halfBorder, r, g, b);
+	}
 	void DrawLine(const CPoint & start, const CPoint & end, float r, float g, float b)
 	{
 		DrawLine(start.x, start.y, end.x, end.y, r, g, b);
@@ -36,7 +46,7 @@ namespace App
 		APP_VIRTUAL_TO_NATIVE_COORDS(ex, ey);
 #endif
 		glBegin(GL_LINES);
-		glColor3f(r, g, b); // Yellow
+		glColor3f(r, g, b);
 		glVertex2f(sx, sy);
 		glVertex2f(ex, ey);
 		glEnd();
@@ -49,7 +59,7 @@ namespace App
         APP_VIRTUAL_TO_NATIVE_COORDS(ex, ey);
 #endif
         glBegin(GL_TRIANGLES);
-        glColor3f(r, g, b); // Yellow
+        glColor3f(r, g, b);
         glVertex2f(sx, sy);
         glVertex2f(ex, sy);
         glVertex2f(ex, ey);

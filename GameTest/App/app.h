@@ -24,12 +24,14 @@ namespace App
 	//-------------------------------------------------------------------------------------------
 	// void DrawLine( float sx, float sy, float ex, float ey, float r = 1.0f, float g = 1.0f, float b = 1.0f );
 	//-------------------------------------------------------------------------------------------
-	// Draw a 2D Line from sx,sy to ex, ey using color r = red, g = green, b=blue.
+	// Draw a 2D Line from sx,sy to ex, ey using color r = red, g = green, b = blue.
 	//-------------------------------------------------------------------------------------------
+	void DrawPoint(const CPoint& point, float border = 1.0f, float r = 1.0f, float g = 1.0f, float b = 1.0f);
+	void DrawPoint(float x, float y, float border = 1.0f, float r = 1.0f, float g = 1.0f, float b = 1.0f);
 	void DrawLine(const CPoint& start, const CPoint& end, float r = 1.0f, float g = 1.0f, float b = 1.0f);
 	void DrawLine(const CLine& line, float r = 1.0f, float g = 1.0f, float b = 1.0f);
 	void DrawLine(float sx, float sy, float ex, float ey, float r = 1.0f, float g = 1.0f, float b = 1.0f);
-    void DrawQuad(float sx, float sy, float ex, float ey, float r, float g, float b);
+    void DrawQuad(float sx, float sy, float ex, float ey, float r = 1.0f, float g = 1.0f, float b = 1.0f);
 	//-------------------------------------------------------------------------------------------
 	// void Print(float x, float y, const char *text, float r = 1.0f, float g = 1.0f, float b = 1.0f, void *font = GLUT_BITMAP_HELVETICA_18);
 	//-------------------------------------------------------------------------------------------

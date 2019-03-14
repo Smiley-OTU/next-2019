@@ -63,6 +63,10 @@ void Render()
 {
 	g_map.Render();
 	g_rayCaster.Render(g_map, g_player);
+	for (float i = 0.0f; i < APP_VIRTUAL_HEIGHT; i += g_map.getTileHeight())
+		App::DrawLine(0.0f, i, APP_VIRTUAL_WIDTH, i);
+	for (float j = 0.0f; j < APP_VIRTUAL_WIDTH; j += g_map.getTileWidth())
+		App::DrawLine(j, 0.0f, j, APP_VIRTUAL_HEIGHT);
 	/*static float halfWidth = (float)APP_VIRTUAL_WIDTH / 2.0f;
 	static float halfHeight = (float)APP_VIRTUAL_HEIGHT / 2.0f;
 	//P1, top left.

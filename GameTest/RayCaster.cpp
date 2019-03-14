@@ -75,41 +75,45 @@ inline size_t CRayCaster::stepToIndex(float step)
 
 
 inline void CRayCaster::march(const CSimpleTileMap & map, const CPoint& position, const CPoint& direction)
-{
-	//1. Find the nearest point of intersection with the edges of the map.
-	CLine ray{ position, direction * 500.0f };
-	glLineWidth(15.0f);
-	App::DrawLine(ray, 0.0f, 1.0f, 0.0f);
-	CPoint poi;
-	float shortestDistance = 9001.0f;//Over 9000.
-	for (unsigned char i = 0; i < map.s_numBorders; i++) {
-		CPoint result;
-		if (Math::intersect(ray, map.borders[i], result)) {
-			float distance = Math::l1norm(CLine{ position, result });
-			if (distance < shortestDistance) {
-				shortestDistance = distance;
-				poi = result;
-			}
-		}
-	}
-	//Correct the ray to end at the poi rather than *infinity*.
-	ray.p2 = poi;
-	glLineWidth(5.0f);
-	App::DrawLine(ray, 1.0f, 0.0f, 0.0f);
+{	//Returns out of bounds if outside the border -> store previous value, if we hit oob, assign to previous value (only case is air, so maybe just direct assign, no save)
+	EMapValue result = EMapValue::OUTOFBOUNDS;
+	float tileWidth = map.getTileWidth();
+	float tileHeight = map.getTileHeight();
 
-	//2. Step through tiles that ray passes through to find the nearest non-air tile.
-	float deltaX = ray.p2x - ray.p1x;
-	float deltaY = ray.p2y - ray.p1y;
-	float distance = Math::l2norm(deltaX, deltaY);
-	float dx = deltaX / distance;
-	float dy = deltaY / distance;
-	//These are small because we're currently stepping per-pixel (not okay) rather than per-index.
-	//printf("%f %f\n", dx, dy);
-	
-	for (int i = 0; i <= ceil(distance); i++) {
-		float x = floor(ray.p1x + dx * i);
-		float y = floor(ray.p1y + dy * i);
-		//printf("%f %f\n", x, y);
+	float xRemainder = (int)position.x % (int)tileWidth;
+	float xEdge = direction.x >= 0.0f ? position.x + tileWidth - xRemainder : position.x - xRemainder;
+	float xStep = xEdge - position.x;
+
+	float yRemainder = fmodf(position.y, tileHeight);
+	float yEdge = direction.y >= 0.0f ? position.y + tileHeight - yRemainder : position.y - yRemainder;
+	float yStep = yEdge - position.y;
+
+	//if x = 40, y = 40 * unitRise.
+	float unitRise = direction.y / direction.x;
+	//if y = 30, x = 30 * unitRun.
+	float unitRun = direction.x / direction.y;
+
+	CPoint poi;
+	if (abs(yStep) < abs(xStep)) {
+		poi.y = position.y + yStep;
+		poi.x = position.x + yStep * unitRun;
 	}
-	printf("");
+	else {
+		poi.x = position.x + xStep;
+		poi.y = position.y + xStep * unitRise;
+	}
+	
+	static bool print = true;
+	if (print) {
+		//Tiles are 64x48.
+		Math::print(position);
+		Math::print(poi);
+		printf("x remainder: %f, x edge: %f, x step: %f.\n", xRemainder, xEdge, xStep);
+		printf("y remainder: %f, y edge: %f, y step: %f.\n", yRemainder, yEdge, yStep);
+		print = false;
+	}
+
+	App::DrawLine(position, CPoint{ direction.x * 500.0f, direction.y * 500.0f });
+	App::DrawPoint(position, 5.0f);
+	App::DrawPoint(poi, 5.0f, 0.0f, 1.0f, 0.0f);
 }

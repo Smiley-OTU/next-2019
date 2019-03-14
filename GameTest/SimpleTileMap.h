@@ -55,8 +55,8 @@ public:
     // Return size of the map.
     int GetMapSize() const { return m_mapSize; }
 
-	float getTileWidth();
-	float getTileHeight();
+	float getTileWidth() const;
+	float getTileHeight() const;
 	CLine borders[4];
 	static const unsigned char s_numBorders;
 

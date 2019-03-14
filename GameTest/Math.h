@@ -130,6 +130,12 @@ namespace Math {
 		return CPoint{ point / l2norm(point) };
 	}
 
+	//Creates a point with a length of one in the direciton of the passed in line.
+	inline CPoint normalize(const CLine& line) {
+		CPoint delta = line.p2 - line.p1;
+		return CPoint{ delta / l2norm(delta) };
+	}
+
 	//Projects A onto B, returning the length the projection.
 	inline float projecf(const CPoint& a, const CPoint& b) {
 		return dot(a, b) / l2norm(b);
