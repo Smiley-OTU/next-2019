@@ -14,7 +14,7 @@
 #include "Line.h"
 #include "ColouredLine.h"
 #include "RayCaster.h"
-#include "Viewer.h"
+#include "Player.h"
 
 //16x16 grid.
 static const int MAP_SIZE = 16;
@@ -25,7 +25,7 @@ static const float TUNNEL_FILL_PERCENT = 80;
 //(Use "static" to remove naming conflicts among translation units. Most likely no need so currently not worth extra keystrokes.
 CSimpleTileMap g_map(MAP_SIZE);
 CRayCaster g_rayCaster{ 4.0f };
-CViewer g_player;
+CPlayer g_player;
 
 //------------------------------------------------------------------------
 // Called before first update. Do any initial setup here.
@@ -34,8 +34,9 @@ void Init()
 {
     g_map.RandomMap(TUNNEL_FILL_PERCENT, TUNNEL_LEN);
 	g_player.setFov(60.0f);
-	g_player.setPosition(500.0f, 250.0f);
-	g_player.setDirection(135.0f);
+	//g_player.setPosition(408.0f, 408.0f);
+	g_player.setPosition(390.0f, 431.0f);
+	g_player.setDirection(251.0f);
 }
 
 //------------------------------------------------------------------------
@@ -53,6 +54,7 @@ void Update(float deltaTime)
         g_map.RandomMap(TUNNEL_FILL_PERCENT, TUNNEL_LEN);
     }
 	g_rayCaster.Update();
+	g_player.Update(deltaTime);
 }
 
 //------------------------------------------------------------------------

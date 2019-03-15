@@ -80,36 +80,57 @@ inline void CRayCaster::march(const CSimpleTileMap & map, const CPoint& position
 	float tileWidth = map.getTileWidth();
 	float tileHeight = map.getTileHeight();
 
-	float xRemainder = (int)position.x % (int)tileWidth;
+	//float xRemainder = (int)position.x % (int)tileWidth;
+	float xRemainder = fmodf(position.x, tileWidth);
 	float xEdge = direction.x >= 0.0f ? position.x + tileWidth - xRemainder : position.x - xRemainder;
-	float xStep = xEdge - position.x;
+	float xDistance = xEdge - position.x;
+	float unitRun = direction.x / direction.y;//if y = 1, x = 1 * unitRun.
+	float xRate = xDistance / unitRun;
+	//x2 +y2 = 1.
+	//x = sqrt(1 - y2)
+	float unitRun2 = sqrt(1.0f - Math::radians(direction.y) * Math::radians(direction.y));
+	float xRate2 = xDistance / unitRun2;
 
+	//float yRemainder = (int)position.y % (int)tileHeight;
 	float yRemainder = fmodf(position.y, tileHeight);
 	float yEdge = direction.y >= 0.0f ? position.y + tileHeight - yRemainder : position.y - yRemainder;
-	float yStep = yEdge - position.y;
-
-	//if x = 40, y = 40 * unitRise.
-	float unitRise = direction.y / direction.x;
-	//if y = 30, x = 30 * unitRun.
-	float unitRun = direction.x / direction.y;
+	float yDistance = yEdge - position.y;
+	float unitRise = direction.y / direction.x;//if x = 1, y = 1 * unitRise.
+	float yRate = yDistance / unitRise;
+	float unitRise2 = sqrt(1.0f - Math::radians(direction.x) * Math::radians(direction.x));
+	float yRate2 = yDistance / unitRise2;
 
 	CPoint poi;
-	if (abs(yStep) < abs(xStep)) {
-		poi.y = position.y + yStep;
-		poi.x = position.x + yStep * unitRun;
+	if (abs(yRate2) < abs(xRate2)) {
+		poi.y = position.y + yDistance;
+		poi.x = position.x + yDistance * unitRun;
 	}
 	else {
-		poi.x = position.x + xStep;
-		poi.y = position.y + xStep * unitRise;
+		poi.x = position.x + xDistance;
+		poi.y = position.y + xDistance * unitRise;
 	}
+	/*if (abs(yRate) < abs(xRate)) {
+		poi.y = position.y + yDistance;
+		poi.x = position.x + yDistance * unitRun;
+	}
+	else {
+		poi.x = position.x + xDistance;
+		poi.y = position.y + xDistance * unitRise;
+	}*/
+	//Remember to start from poi next iteration.
+	//Also, we only need to check the direction once rather than every iteration cause it doesn't change between tiles.
+	//Could try changing up the way the calculation is done but for now the branch condition needs to stay.
 	
 	static bool print = true;
 	if (print) {
 		//Tiles are 64x48.
-		Math::print(position);
-		Math::print(poi);
-		printf("x remainder: %f, x edge: %f, x step: %f.\n", xRemainder, xEdge, xStep);
-		printf("y remainder: %f, y edge: %f, y step: %f.\n", yRemainder, yEdge, yStep);
+		//x remainder : 52.000000, x edge : 512.000000, x step : 12.000000.
+		//y remainder : 10.000000, y edge : 288.000000, y step : 38.000000.
+		Math::print(poi, "Poi:\t\t");
+		printf("x remainder: %f, x edge: %f, x distance: %f, unit run:  %f, x rate: %f.\n", xRemainder, xEdge, xDistance, unitRun, xRate);
+		printf("y remainder: %f, y edge: %f, y distance: %f, unit rise: %f, y rate: %f.\n", yRemainder, yEdge, yDistance, unitRise, yRate);
+		printf("Unit run  %f Unit rate x2%f\n", unitRun2, xRate2);
+		printf("Unit rise %f Unit rate y2%f\n", unitRise2, yRate2);
 		print = false;
 	}
 

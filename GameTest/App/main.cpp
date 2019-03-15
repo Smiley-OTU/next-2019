@@ -190,8 +190,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, 	_In_opt_ HINSTANCE hPrevInstanc
 	//Make a console window for debug logs.
 	AllocConsole();
 	freopen("CONOUT$", "w", stdout);
+	SetWindowPos(GetConsoleWindow(), HWND_TOP, APP_VIRTUAL_WIDTH + 75, 200, 800, 800, SWP_SHOWWINDOW);
 	//Make game window in front of console window.
-	BringWindowToTop(MAIN_WINDOW_HANDLE);
+	//BringWindowToTop(MAIN_WINDOW_HANDLE);
+	SetWindowPos(MAIN_WINDOW_HANDLE, HWND_TOP, 25, 200, APP_VIRTUAL_WIDTH, APP_VIRTUAL_HEIGHT, SWP_SHOWWINDOW);
 #endif
 	
 	// Call user defined init.

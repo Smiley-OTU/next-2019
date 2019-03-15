@@ -14,17 +14,17 @@
 //No matrices necessary for the ray caster / game in general cause no transformations other than translations (thus no need to concatenate transformations)! 
 namespace Math {
 
-	inline void print(const CPoint& point)
+	inline void print(const CPoint& point, const std::string& message = "")
 	{
 #if LOG
-		printf("x: %f, y: %f.\n", point.x, point.y);
+		printf("%sx: %f, y: %f.\n", message.c_str(), point.x, point.y);
 #endif
 	}
 
-	inline void print(const CLine& line)
+	inline void print(const CLine& line, const std::string& message = "")
 	{
 #if LOG
-		printf("p1x: %f, p1y: %f, p2x: %f, p2y %f.\n", line.p1x, line.p1y, line.p2x, line.p2y);
+		printf("%sp1x: %f, p1y: %f, p2x: %f, p2y %f.\n", message.c_str(), line.p1x, line.p1y, line.p2x, line.p2y);
 #endif
 	}
 
