@@ -49,7 +49,8 @@ namespace Math {
 	//Forms a two-component direction vector measured in degrees relative to the origin based on the input angle in radians.
 	inline CPoint direction(float angle) {
 		angle = radians(angle);
-		return CPoint{ degrees(cosf(angle)), degrees(sinf(angle)) };
+		//return CPoint{ degrees(cosf(angle)), degrees(sinf(angle)) };
+		return CPoint{ cosf(angle), sinf(angle) };
 	}
 
 	//Forms an angle in radians relative to the origin based on the input vector in radians.
