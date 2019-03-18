@@ -5,6 +5,10 @@
 #include "Viewer.h"
 #include "Line.h"
 
+//Increase distance till point of intersection by 10% so that the ray is guaranteed to exceed its current cell.
+#define DISTANCE_MULTIPLIER 1.1f
+#define MAX_STEPS 8
+
 CRayCaster::CRayCaster(float thickness) :
 	m_count(APP_VIRTUAL_WIDTH / (size_t)thickness), m_thickness(thickness), m_step((float)m_count * thickness), m_rayOriginY(APP_VIRTUAL_HEIGHT / 2.0f)
 {	//Make sure thickness is between 1 and 32.
@@ -54,59 +58,47 @@ void CRayCaster::Render(const CSimpleTileMap& map, const CViewer& viewer)//Ensur
 	}*/
 }
 
-inline float CRayCaster::indexToStep(size_t index)
-{
-	return Math::map(index, 0.0f, m_count, -1.0f, 1.0f);
-}
-
-inline size_t CRayCaster::stepToIndex(float step)
-{
-	return Math::map(step, -1.0f, 1.0f, 0.0, m_count);
-}
-
-
 inline void CRayCaster::march(const CSimpleTileMap & map, const CPoint& position, const CPoint& direction)
-{	//Returns out of bounds if outside the border -> store previous value, if we hit oob, assign to previous value (only case is air, so maybe just direct assign, no save)
-	EMapValue result = EMapValue::OUTOFBOUNDS;
+{
+	App::DrawLine(position, CPoint{ position.x + direction.x * 500.0f, position.y + direction.y * 500.0f }, 1.0f, 0.0f, 0.0f);
 	float tileWidth = map.getTileWidth();
 	float tileHeight = map.getTileHeight();
 
-	float xRemainder = fmodf(position.x, tileWidth);
-	float xEdge = direction.x >= 0.0f ? position.x + tileWidth - xRemainder : position.x - xRemainder;
-	float xDistance = xEdge - position.x;
-	float unitRun = direction.x / direction.y;//if y = 1, x = 1 * unitRun.
-	float xRate = xDistance / unitRun;
-	float xRate2 = xDistance / direction.x;
+	float unitRise = direction.y / direction.x;
+	float unitRun = direction.x / direction.y;
 
-	float yRemainder = fmodf(position.y, tileHeight);
-	float yEdge = direction.y >= 0.0f ? position.y + tileHeight - yRemainder : position.y - yRemainder;
-	float yDistance = yEdge - position.y;
-	float unitRise = direction.y / direction.x;//if x = 1, y = 1 * unitRise.
-	float yRate = yDistance / unitRise;
-	float yRate2 = yDistance / direction.y;
+	CPoint poi = position;
 
-	CPoint poi;
-	if (abs(yRate2) < abs(xRate2)) {
-		poi.y = position.y + yDistance;
-		poi.x = position.x + yDistance * unitRun;
-	}
-	else {
-		poi.x = position.x + xDistance;
-		poi.y = position.y + xDistance * unitRise;
-	}
-	//Remember to start from poi next iteration.
-	//Also, we only need to check the direction once rather than every iteration cause it doesn't change between tiles.
-	//Could try changing up the way the calculation is done but for now the branch condition needs to stay.
-	
-	static bool print = true;
-	if (print) {
-		printf("Unit run:  %f, x rate: %f.\n", unitRun, xRate);
-		printf("Unit rise: %f, y rate: %f.\n", unitRise, yRate);
-		printf("Direction x: %f, direction y: %f.\n", direction.x, direction.y);
-		print = false;
+	//Continue searching until we find anything but a floor (air) or go outside the map.
+	EMapValue tileValue = EMapValue::FLOOR;
+	while (tileValue == EMapValue::FLOOR) {
+		float xRemainder = fmodf(poi.x, tileWidth);
+		float xEdge = direction.x >= 0.0f ? poi.x + tileWidth - xRemainder : poi.x - xRemainder;
+		float xDistance = xEdge - poi.x;
+		float xRate = xDistance / direction.x;
+
+		float yRemainder = fmodf(poi.y, tileHeight);
+		float yEdge = direction.y >= 0.0f ? poi.y + tileHeight - yRemainder : poi.y - yRemainder;
+		float yDistance = yEdge - poi.y;
+		float yRate = yDistance / direction.y;
+
+		if (abs(yRate) < abs(xRate)) {
+			yDistance *= DISTANCE_MULTIPLIER;
+			poi.y = poi.y + yDistance;
+			poi.x = poi.x + yDistance * unitRun;
+		}
+		else {
+			xDistance *= DISTANCE_MULTIPLIER;
+			poi.x = poi.x + xDistance;
+			poi.y = poi.y + xDistance * unitRise;
+		}
+
+		tileValue = map.GetTileMapValue(poi.x, poi.y);
+
+		App::DrawPoint(poi, 15.0f, 1.0f, 0.0f, 0.0f);
 	}
 
-	App::DrawLine(position, CPoint{ position.x + direction.x * 500.0f, position.y + direction.y * 500.0f }, 1.0f, 0.0f, 0.0f);
-	App::DrawPoint(position, 5.0f);
-	App::DrawPoint(poi, 5.0f, 0.0f, 1.0f, 0.0f);
+	//If we're exceeded the grid, render a wall in place of the border (this should never happen, should always hit a wall at the very least).
+	if (tileValue = EMapValue::OUTOFBOUNDS)
+		tileValue = EMapValue::WALL;
 }
