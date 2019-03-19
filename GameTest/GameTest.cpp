@@ -63,13 +63,8 @@ void Update(float deltaTime)
 //------------------------------------------------------------------------
 void Render()
 {
-	//Top-down:
-	glViewport(APP_VIRTUAL_WIDTH * 0.5f, 0.0f, APP_VIRTUAL_WIDTH * 0.5f, APP_VIRTUAL_HEIGHT);
-	g_map.Render();
-	g_rayCaster.Debug(g_map, g_player);
 
 	//Fake 3D:
-	glViewport(0.0f, 0.0f, APP_VIRTUAL_WIDTH * 0.5f, APP_VIRTUAL_HEIGHT);
 	g_rayCaster.Render(g_map, g_player);
 
 	//Grid lines:
