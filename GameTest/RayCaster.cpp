@@ -28,7 +28,14 @@ void CRayCaster::Update(const CSimpleTileMap& map, const CViewer& viewer)
 	const float raysStart = viewer.m_angle - viewer.m_fov * 0.5f;
 	for (uint32_t i = 0; i < m_count; i++) {
 		const float rayAngle = raysStart + angleStep * (float)i;
-		march(map, viewer.m_position, rayAngle, viewer.m_angle, i);
+		const CPoint poi = march(map, viewer.m_position, Math::direction(rayAngle));
+		m_indexBuffer[i] = map.GetTileMapValue(poi.x, poi.y);
+		m_heightBuffer[i] = Math::l2norm(poi - viewer.m_position) * cosf(Math::radians(viewer.m_angle - rayAngle));
+
+#if DRAW_2D
+		//Store debug information.
+		m_positionBuffer[i] = poi;
+#endif
 	}
 }
 
@@ -58,12 +65,20 @@ void CRayCaster::Render(const CSimpleTileMap& map, const CViewer& viewer)
 	}
 }
 
-inline void CRayCaster::march(const CSimpleTileMap & map, const CPoint& position, const float rayAngle, const float viewerAngle, uint32_t index)
+void CRayCaster::RenderSprite(const CSimpleTileMap& map, const CViewer & viewer, const CPoint& spritePosition)
+{
+	CPoint toViewer{ spritePosition - viewer.m_position };
+	//Check if within fov here.
+
+	//Now depth test here.
+
+}
+
+inline CPoint CRayCaster::march(const CSimpleTileMap& map, const CPoint& position, const CPoint& direction)
 {
 	const float tileWidth = map.getTileWidth();
 	const float tileHeight = map.getTileHeight();
 
-	const CPoint direction = Math::direction(rayAngle);
 	const float unitRise = direction.y / direction.x;
 	const float unitRun = direction.x / direction.y;
 
@@ -104,13 +119,5 @@ inline void CRayCaster::march(const CSimpleTileMap & map, const CPoint& position
 		}
 	}
 
-	//Store the index for lookup later (during rendering) rather than copying values.
-	m_indexBuffer[index] = tileValue;
-	//Calculate the distance from player to point of intersection, than correct fisheye by reducing rays that aren't straight ahead.
-	m_heightBuffer[index] = Math::l2norm(poi - position) * cosf(Math::radians(rayAngle - viewerAngle));
-
-#if DRAW_2D
-	//Store debug information.
-	m_positionBuffer[index] = poi;
-#endif
+	return poi;
 }

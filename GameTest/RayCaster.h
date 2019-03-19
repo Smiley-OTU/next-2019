@@ -9,6 +9,7 @@ public:
 
 	void Update(const CSimpleTileMap& map, const CViewer& viewer);
 	void Render(const CSimpleTileMap& map, const CViewer& viewer);
+	void RenderSprite(const CSimpleTileMap& map, const CViewer& viewer, const CPoint& spritePosition);
 
 private:
 	//At least I can pretend to use modern gl through naming conventions ;)
@@ -24,6 +25,6 @@ private:
 	//Values that depend on each other at initialization time.
 	const float m_thickness, m_step, m_rayOriginY;
 
-	inline void march(const CSimpleTileMap& map, const CPoint& position, const float rayAngle, const float viewerAngle, uint32_t index);
+	inline CPoint march(const CSimpleTileMap& map, const CPoint& position, const CPoint& direction);
 };
 

@@ -53,7 +53,7 @@ void Update(float deltaTime)
         g_map.RandomMap(TUNNEL_FILL_PERCENT, TUNNEL_LEN);
     }
 
-	g_player.Update(deltaTime);
+	g_player.Update(g_map, deltaTime);
 	g_rayCaster.Update(g_map, g_player);
 }
 
