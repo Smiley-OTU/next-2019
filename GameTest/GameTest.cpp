@@ -35,7 +35,7 @@ void Init()
     g_map.RandomMap(TUNNEL_FILL_PERCENT, TUNNEL_LEN);
 	g_player.setFov(60.0f);
 	g_player.setPosition(390.0f, 431.0f);
-	g_player.setDirection(251.0f);
+	g_player.setDirection(90.0f);
 }
 
 //------------------------------------------------------------------------

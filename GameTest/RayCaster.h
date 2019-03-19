@@ -19,11 +19,11 @@ private:
 	std::vector<CPoint> m_positionBuffer;
 
 	//Number of rays.
-	const size_t m_count;
+	const uint32_t m_count;
 
 	//Values that depend on each other at initialization time.
 	const float m_thickness, m_step, m_rayOriginY;
 
-	inline void march(const CSimpleTileMap& map, const CPoint& position, const CPoint& direction, size_t index);
+	inline void march(const CSimpleTileMap& map, const CPoint& position, const float rayAngle, const float viewerAngle, uint32_t index);
 };
 
