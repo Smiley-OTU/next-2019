@@ -34,7 +34,6 @@ void Init()
 {
     g_map.RandomMap(TUNNEL_FILL_PERCENT, TUNNEL_LEN);
 	g_player.setFov(60.0f);
-	//g_player.setPosition(408.0f, 408.0f);
 	g_player.setPosition(390.0f, 431.0f);
 	g_player.setDirection(251.0f);
 }
@@ -53,8 +52,9 @@ void Update(float deltaTime)
     {
         g_map.RandomMap(TUNNEL_FILL_PERCENT, TUNNEL_LEN);
     }
-	g_rayCaster.Update();
+
 	g_player.Update(deltaTime);
+	g_rayCaster.Update(g_map, g_player);
 }
 
 //------------------------------------------------------------------------
@@ -63,12 +63,22 @@ void Update(float deltaTime)
 //------------------------------------------------------------------------
 void Render()
 {
+	//Top-down:
+	glViewport(APP_VIRTUAL_WIDTH * 0.5f, 0.0f, APP_VIRTUAL_WIDTH * 0.5f, APP_VIRTUAL_HEIGHT);
 	g_map.Render();
+	g_rayCaster.Debug(g_map, g_player);
+
+	//Fake 3D:
+	glViewport(0.0f, 0.0f, APP_VIRTUAL_WIDTH * 0.5f, APP_VIRTUAL_HEIGHT);
 	g_rayCaster.Render(g_map, g_player);
-	for (float i = 0.0f; i < APP_VIRTUAL_HEIGHT; i += g_map.getTileHeight())
+
+	//Grid lines:
+	/*for (float i = 0.0f; i < APP_VIRTUAL_HEIGHT; i += g_map.getTileHeight())
 		App::DrawLine(0.0f, i, APP_VIRTUAL_WIDTH, i);
 	for (float j = 0.0f; j < APP_VIRTUAL_WIDTH; j += g_map.getTileWidth())
-		App::DrawLine(j, 0.0f, j, APP_VIRTUAL_HEIGHT);
+		App::DrawLine(j, 0.0f, j, APP_VIRTUAL_HEIGHT);*/
+
+	//Split screen:
 	/*static float halfWidth = (float)APP_VIRTUAL_WIDTH / 2.0f;
 	static float halfHeight = (float)APP_VIRTUAL_HEIGHT / 2.0f;
 	//P1, top left.

@@ -1,19 +1,19 @@
 #include "stdafx.h"
 #include "RayCaster.h"
 #include "App/app.h"
-#include "SimpleTileMap.h"
 #include "Viewer.h"
 #include "Line.h"
 
-//Increase distance till point of intersection by 10% so that the ray is guaranteed to exceed its current cell.
-#define DISTANCE_MULTIPLIER 1.1f
-#define MAX_STEPS 8
+//Increase distance till point of intersection by 5% so that the ray is guaranteed to exceed its current cell.
+#define DISTANCE_MULTIPLIER 1.05f
+#define MAX_STEPS 32
+#define DEBUG_DRAW true
 
 CRayCaster::CRayCaster(float thickness) :
-	m_count(APP_VIRTUAL_WIDTH / (size_t)thickness), m_thickness(thickness), m_step((float)m_count * thickness), m_rayOriginY(APP_VIRTUAL_HEIGHT / 2.0f)
+	m_count(APP_VIRTUAL_WIDTH / (size_t)thickness), m_thickness(thickness), m_step((float)m_count * thickness), m_rayOriginY(APP_VIRTUAL_HEIGHT * 0.5f)
 {	//Make sure thickness is between 1 and 32.
 	assert(thickness >= 1.0f && thickness <= 31.0f);
-	m_colourBuffer.resize(m_count);
+	m_indexBuffer.resize(m_count);
 	m_heightBuffer.resize(m_count);
 }
 
@@ -21,46 +21,40 @@ CRayCaster::~CRayCaster()
 {
 }
 
-void CRayCaster::Update()
-{	//Don't iterate with floats. Mapping from floats to indices may fail due to percision errors.
-	for (size_t i = 0; i < m_count; i++) {
-		//float c = indexToStep(i);
-		//TODO: assign colour based on colour of poi tile.
-		m_colourBuffer[i].Randomize();
-		//TODO: assign height based on projected and real height of poi tile.
-		m_heightBuffer[i] = FRAND_RANGE(0.0f, APP_VIRTUAL_HEIGHT / 2.0f);
-	}
+void CRayCaster::Update(const CSimpleTileMap& map, const CViewer& viewer)
+{
 }
 
-void CRayCaster::Render(const CSimpleTileMap& map, const CViewer& viewer)//Ensure the viewer's angle never exceeds 360.
+void CRayCaster::Render(const CSimpleTileMap& map, const CViewer& viewer)
 {
-	//Consider clamping the angle between 0 and 360, or -360 and 360. Can use Math::map() or %. 
-	const float angleStep = viewer.m_fov / (float)m_count;
-	const float raysStart = viewer.m_angle - viewer.m_fov * 0.5f;
-	//Another way to do this would be viewer.m_angle + halfFov * indexToStep(i); The current way is more straight forward and less expensive. 
-	for (size_t i = 0; i < m_count; i++) {
-		//Angle of the ray, relative to the world origin (calculated based on the viewer's angle).
-		float rayAngle = raysStart + angleStep * (float)i;
+	float halfFov = viewer.m_fov * 0.5f;
+	//Half resolution divided by right triangle based on fov gives adj of right triangle (which is projection distance).
+	float projectionDistance = (APP_VIRTUAL_WIDTH * 0.5f) / tan(halfFov);
 
-		//2D render:
-		CPoint rayDirection{ Math::direction(rayAngle) };
-		CLine ray{ viewer.m_position.x, viewer.m_position.y, viewer.m_position.x + rayDirection.x * 1000.0f, viewer.m_position.y + rayDirection.y * 1000.0f };
-		App::DrawLine(ray);
-	}
-
-	march(map, viewer.m_position, Math::direction(viewer.m_angle));
-	//3D render:
-	/*float x = 0.0f;
+	float x = 0.0f;
 	glLineWidth(m_thickness);
 	for (size_t i = 0; i < m_count; i++) {
-		App::DrawLine(x, m_rayOriginY - m_heightBuffer[i], x, m_rayOriginY + m_heightBuffer[i], m_colourBuffer[i].r, m_colourBuffer[i].g, m_colourBuffer[i].b);
+		const CTile& tile = CTile::tiles[m_indexBuffer[i]];
+		//Projected height = actual height / distance to poi * distance to projection plane.
+		float projectedHeight = (tile.height / m_heightBuffer[i]) * projectionDistance;
+		App::DrawLine(x, m_rayOriginY - projectedHeight, x, m_rayOriginY + projectedHeight, tile.r, tile.g, tile.b);
 		x += m_thickness;
-	}*/
+		//App::DrawLine(x, m_rayOriginY - m_heightBuffer[i], x, m_rayOriginY + m_heightBuffer[i], tile.r, tile.g, tile.b);
+	}
 }
 
-inline void CRayCaster::march(const CSimpleTileMap & map, const CPoint& position, const CPoint& direction)
+void CRayCaster::Debug(const CSimpleTileMap & map, const CViewer & viewer)
 {
-	App::DrawLine(position, CPoint{ position.x + direction.x * 500.0f, position.y + direction.y * 500.0f }, 1.0f, 0.0f, 0.0f);
+	const float angleStep = viewer.m_fov / (float)m_count;
+	const float raysStart = viewer.m_angle - viewer.m_fov * 0.5f;
+	for (size_t i = 0; i < m_count; i++) {
+		float rayAngle = raysStart + angleStep * (float)i;
+		march(map, viewer.m_position, Math::direction(rayAngle), i);
+	}
+}
+
+inline void CRayCaster::march(const CSimpleTileMap & map, const CPoint& position, const CPoint& direction, size_t index)
+{
 	float tileWidth = map.getTileWidth();
 	float tileHeight = map.getTileHeight();
 
@@ -69,8 +63,9 @@ inline void CRayCaster::march(const CSimpleTileMap & map, const CPoint& position
 
 	CPoint poi = position;
 
-	//Continue searching until we find anything but a floor (air) or go outside the map.
+	//Continue searching until we find anything but a floor (air).
 	EMapValue tileValue = EMapValue::FLOOR;
+	uint32_t count = 0;
 	while (tileValue == EMapValue::FLOOR) {
 		float xRemainder = fmodf(poi.x, tileWidth);
 		float xEdge = direction.x >= 0.0f ? poi.x + tileWidth - xRemainder : poi.x - xRemainder;
@@ -94,11 +89,22 @@ inline void CRayCaster::march(const CSimpleTileMap & map, const CPoint& position
 		}
 
 		tileValue = map.GetTileMapValue(poi.x, poi.y);
-
-		App::DrawPoint(poi, 15.0f, 1.0f, 0.0f, 0.0f);
+		count++;
+		if (count > MAX_STEPS) {
+			tileValue = EMapValue::WALL;
+			break;
+		}
 	}
 
-	//If we're exceeded the grid, render a wall in place of the border (this should never happen, should always hit a wall at the very least).
-	if (tileValue = EMapValue::OUTOFBOUNDS)
-		tileValue = EMapValue::WALL;
+	//The poi should be being corrected, but the stepping is irregular which makes it impossible to effectively compensate.
+	m_indexBuffer[index] = tileValue;
+	m_heightBuffer[index] = Math::l2norm(poi - position);
+	//Could calculate projected height here, but it makes the most sense to do this while rendering.
+	//Jk. We need to calculate it here cause we need the angle.
+	//It would be most efficient to render here, seeing as we have all the info we need,
+	//but decoupling is worth the minor overhead plus evenly distributing the work will better utilize parallel processing.
+
+#if DEBUG_DRAW
+	App::DrawLine(position, poi);
+#endif
 }

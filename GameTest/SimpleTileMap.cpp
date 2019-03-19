@@ -12,7 +12,6 @@
 #include "app\app.h"
 #include "SimpleTileMap.h"
 
-const unsigned char CSimpleTileMap::s_numBorders = 4;
 static const int NUM_MAP_DEFS = 6;
 
 // Color mapping for render. Indexed based on tile value.
@@ -34,6 +33,14 @@ static int g_dirLookup[4][2] =
     {  1, 0 },	// Up
     {  0,-1 },	// Down
     {  0, 1 }	// Right
+};
+
+const CTile CTile::tiles[NUM_TILES] = {
+	CTile{0.0f, 1.0f, 0.0f, 100.0f},	//Border
+	CTile{0.0f, 0.0f, 0.0f, 0.0f},		//Floor (air)
+	CTile{0.0f, 1.0f, 0.0f, 100.0f},	//Wall (same as border)
+	CTile{0.8f, 0.8f, 0.0f, 25.0f},		//Pip (whatever that is)
+	CTile{0.2f, 0.2f, 0.2f, 15.0f}		//Pill
 };
 
 void CSimpleTileMap::Create()
@@ -117,11 +124,7 @@ float CSimpleTileMap::getTileHeight() const
 }
 
 CSimpleTileMap::CSimpleTileMap(const int mapSize) : m_mapSize(mapSize)
-{	//Top, bottom, left, right:
-	borders[0] = CLine{ 0.0f, APP_VIRTUAL_HEIGHT, APP_VIRTUAL_WIDTH, APP_VIRTUAL_HEIGHT };
-	borders[1] = CLine{ 0.0f, 0.0f, APP_VIRTUAL_WIDTH, 0.0f };
-	borders[2] = CLine{ 0.0f, 0.0f, 0.0f, APP_VIRTUAL_HEIGHT };
-	borders[3] = CLine{ APP_VIRTUAL_WIDTH, 0.0f, APP_VIRTUAL_WIDTH, APP_VIRTUAL_HEIGHT };
+{
 	Create();
 }
 

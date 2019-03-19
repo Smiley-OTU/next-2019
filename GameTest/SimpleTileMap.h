@@ -5,16 +5,22 @@
 // Feel free to use this for your entry if you want but you don't have to.
 // If you do not use this then you should provide an alternative that represents a pac-man style map.
 //------------------------------------------------------------------------
-#include "stdafx.h"
-#include "Line.h"
-// Values that can be written into the tile map.
+#include <vector>
+
 enum EMapValue
 {
-    OUTOFBOUNDS = -1,   // If a GetTileMapValue() call is ourside the bounds of the map it will return this.
-    BORDER,
-    FLOOR,
-    WALL,
-    PIP,
+	OUTOFBOUNDS = -1,   // If a GetTileMapValue() call is ourside the bounds of the map it will return this.
+	BORDER,
+	FLOOR,
+	WALL,
+	PIP,
+	PILL,
+	NUM_TILES
+};
+
+struct CTile {
+	const float r, g, b, height;
+	static const CTile tiles[NUM_TILES];
 };
 
 class CSimpleTileMap
@@ -57,8 +63,6 @@ public:
 
 	float getTileWidth() const;
 	float getTileHeight() const;
-	CLine borders[4];
-	static const unsigned char s_numBorders;
 
 private:
     // Create a new map.
@@ -70,7 +74,4 @@ private:
     float m_tileHeight;
     std::vector<std::vector<EMapValue>> m_tileMap;  //Vector of vectors of map values, Holds the tile map data.
 };
-
 #endif
-
-

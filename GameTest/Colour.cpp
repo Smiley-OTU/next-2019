@@ -4,13 +4,13 @@
 #include "App/AppSettings.h"
 #define RAND_COL FRAND_RANGE(0.0f, 1.0f)
 
-const unsigned char CColour::s_components = 4;
+const unsigned char CColour::s_components = 3;//4;
 
-CColour::CColour() : r(1.0f), g(1.0f), b(1.0f), a(1.0f)
+CColour::CColour() : r(1.0f), g(1.0f), b(1.0f)//, a(1.0f)
 {
 }
 
-CColour::CColour(float a_r, float a_g, float a_b) : r(a_r), g(a_g), b(a_b), a(1.0f)
+CColour::CColour(float a_r, float a_g, float a_b) : r(a_r), g(a_g), b(a_b)//, a(1.0f)
 {
 }
 
