@@ -71,26 +71,25 @@ void CRayCaster::RenderSprite(const CSimpleTileMap& map, const CViewer & viewer,
 	CPoint toSprite{ spritePosition - viewer.m_position };
 	float toSpriteDistance = Math::l2norm(toSprite);
 	toSprite /= toSpriteDistance;
-	CPoint viewDirection{ Math::direction(viewer.m_angle) };
-	bool inFov = Math::dot(toSprite, viewDirection) > cosf(Math::radians(viewer.m_fov) * 0.5f);
+
+	//Return if the sprite isn't within the viewer's field of view.
+	if (Math::dot(toSprite, Math::direction(viewer.m_angle)) <= cosf(Math::radians(viewer.m_fov) * 0.5f))
+		return;
 
 	//Occlusion culling:
-	/*CPoint poi = march(map, viewer.m_position, viewDirection);
+	CPoint poi = march(map, viewer.m_position, toSprite);
 	float poiDistance = Math::l2norm(poi - viewer.m_position);
 
 	//Return if the sprite is behind a wall (occluded).
 	if (poiDistance < toSpriteDistance)
-		return;*/
+		return;
 
 #if DRAW_2D
 	glViewport(APP_VIRTUAL_WIDTH * 0.5f, 0.0f, APP_VIRTUAL_WIDTH * 0.5f, APP_VIRTUAL_HEIGHT);
 	App::DrawLine(viewer.m_position, spritePosition, 1.0f, 0.0f, 0.0f);
-	if(inFov)
-		App::DrawPoint(spritePosition, 40.0f, 1.0f, 0.0f, 0.0f);
+	App::DrawPoint(spritePosition, 40.0f, 1.0f, 0.0f, 0.0f);
 	glViewport(0.0f, 0.0f, APP_VIRTUAL_WIDTH * 0.5f, APP_VIRTUAL_HEIGHT);
 #endif
-	
-	
 }
 
 inline CPoint CRayCaster::march(const CSimpleTileMap& map, const CPoint& position, const CPoint& direction)
