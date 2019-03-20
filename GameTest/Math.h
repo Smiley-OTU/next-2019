@@ -46,15 +46,14 @@ namespace Math {
 		return angle(direction.y, direction.x);
 	}
 
-	//Forms a two-component direction vector measured in degrees relative to the origin based on the input angle in radians.
+	//Forms a two-component direction vector measured in *RADIANS* relative to the origin based on the input angle in radians.
 	inline CPoint direction(float angle) {
 		angle = radians(angle);
-		//return CPoint{ degrees(cosf(angle)), degrees(sinf(angle)) };
 		return CPoint{ cosf(angle), sinf(angle) };
 	}
 
 	//Forms an angle in radians relative to the origin based on the input vector in radians.
-	inline float angle_r(float dy, float dx) {
+	/*inline float angle_r(float dy, float dx) {
 		return atan2f(dy, dx);
 	}
 
@@ -81,7 +80,7 @@ namespace Math {
 	//Converts a value from its original range to the desire range (think lerp).
 	inline float map(float value, float inMin, float inMax, float outMin, float outMax) {
 		return ((value - inMin) / (inMax - inMin)) * (outMax - outMin) + outMin;
-	}
+	}*/
 
 	//a.b (2d vector dot product).
 	inline float dot(const CPoint& a, const CPoint& b) {
@@ -94,7 +93,7 @@ namespace Math {
 	}
 
 	//Manhattan distance of a vector.
-	inline float l1norm(float x, float y) {
+	/*inline float l1norm(float x, float y) {
 		return fabs(x) + fabs(y);
 	}
 
@@ -106,7 +105,7 @@ namespace Math {
 	//Manhattan distance of a line.
 	inline float l1norm(const CLine& line) {
 		return l1norm(line.p2x - line.p1x, line.p2y - line.p1y);
-	}
+	}*/
 
 	//Euclidean distance of a vector.
 	inline float l2norm(float x, float y) {
@@ -127,7 +126,7 @@ namespace Math {
 	}
 
 	//Creates a point with a length of one in the direciton of the passed in point.
-	inline CPoint normalize(const CPoint& point) {
+	/*inline CPoint normalize(const CPoint& point) {
 		return CPoint{ point / l2norm(point) };
 	}
 
@@ -179,10 +178,5 @@ namespace Math {
 
 		//This is faster regardless of the memmove() due to no branch condition!
 		return CPoint{ r.x * t + a.p1.x, r.y * t + a.p1.y };
-	}
-
-	//TODO: think of a *fast* way to see if there was an intersection.
-	//Could return a "CIntersectResult", but that would be weird.
-	//Let's see if we can get by without anything more. May be able to render regardless of if there's intersection!
-
+	}*/
 }

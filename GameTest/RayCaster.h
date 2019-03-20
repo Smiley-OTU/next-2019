@@ -25,6 +25,9 @@ private:
 	//Values that depend on each other at initialization time.
 	const float m_thickness, m_step, m_rayOriginY;
 
+	//Length of adjacent side of right triangle formed by the screen and the field of view.
+	float m_projectionDistance;
+
 	inline CPoint march(const CSimpleTileMap& map, const CPoint& position, const CPoint& direction);
 };
 

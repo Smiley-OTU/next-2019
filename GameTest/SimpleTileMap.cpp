@@ -36,11 +36,11 @@ static int g_dirLookup[4][2] =
 };
 
 const CTile CTile::tiles[NUM_TILES] = {
-	CTile{0.0f, 1.0f, 0.0f, 100.0f},	//Border
+	CTile{0.0f, 1.0f, 0.0f, 10.0f},	//Border
 	CTile{0.0f, 0.0f, 0.0f, 0.0f},		//Floor (air)
-	CTile{0.0f, 1.0f, 0.0f, 100.0f},	//Wall (same as border)
-	CTile{0.8f, 0.8f, 0.0f, 25.0f},		//Pip (whatever that is)
-	CTile{0.2f, 0.2f, 0.2f, 15.0f}		//Pill
+	CTile{0.0f, 1.0f, 0.0f, 10.0f},	//Wall (same as border)
+	CTile{0.8f, 0.8f, 0.0f, 2.5f},		//Pip (whatever that is)
+	CTile{0.2f, 0.2f, 0.2f, 1.5f}		//Pill
 };
 
 void CSimpleTileMap::Create()
