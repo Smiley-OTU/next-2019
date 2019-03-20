@@ -66,6 +66,7 @@ void Render()
 
 	//Fake 3D:
 	g_rayCaster.Render(g_map, g_player);
+	g_rayCaster.RenderSprite(g_map, g_player, CPoint{ 300.0f, 300.0f });
 
 	//Grid lines:
 	/*for (float i = 0.0f; i < APP_VIRTUAL_HEIGHT; i += g_map.getTileHeight())

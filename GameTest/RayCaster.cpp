@@ -15,7 +15,7 @@ CRayCaster::CRayCaster(float thickness) :
 	assert(thickness >= 1.0f && thickness <= 31.0f);
 	m_indexBuffer.resize(m_count);
 	m_heightBuffer.resize(m_count);
-	m_positionBuffer.resize(m_count);
+	m_poiBuffer.resize(m_count);
 }
 
 CRayCaster::~CRayCaster()
@@ -34,7 +34,7 @@ void CRayCaster::Update(const CSimpleTileMap& map, const CViewer& viewer)
 
 #if DRAW_2D
 		//Store debug information.
-		m_positionBuffer[i] = poi;
+		m_poiBuffer[i] = poi;
 #endif
 	}
 }
@@ -45,7 +45,7 @@ void CRayCaster::Render(const CSimpleTileMap& map, const CViewer& viewer)
 	glViewport(APP_VIRTUAL_WIDTH * 0.5f, 0.0f, APP_VIRTUAL_WIDTH * 0.5f, APP_VIRTUAL_HEIGHT);
 	map.Render();
 	for (uint32_t i = 0; i < m_count; i++)
-		App::DrawLine(viewer.m_position.x, viewer.m_position.y, m_positionBuffer[i].x, m_positionBuffer[i].y);
+		App::DrawLine(viewer.m_position.x, viewer.m_position.y, m_poiBuffer[i].x, m_poiBuffer[i].y);
 	glViewport(0.0f, 0.0f, APP_VIRTUAL_WIDTH * 0.5f, APP_VIRTUAL_HEIGHT);
 #endif
 
@@ -67,11 +67,30 @@ void CRayCaster::Render(const CSimpleTileMap& map, const CViewer& viewer)
 
 void CRayCaster::RenderSprite(const CSimpleTileMap& map, const CViewer & viewer, const CPoint& spritePosition)
 {
-	CPoint toViewer{ spritePosition - viewer.m_position };
-	//Check if within fov here.
+	//Frustum culling:
+	CPoint toSprite{ spritePosition - viewer.m_position };
+	float toSpriteDistance = Math::l2norm(toSprite);
+	toSprite /= toSpriteDistance;
+	CPoint viewDirection{ Math::direction(viewer.m_angle) };
+	bool inFov = Math::dot(toSprite, viewDirection) > cosf(Math::radians(viewer.m_fov) * 0.5f);
 
-	//Now depth test here.
+	//Occlusion culling:
+	/*CPoint poi = march(map, viewer.m_position, viewDirection);
+	float poiDistance = Math::l2norm(poi - viewer.m_position);
 
+	//Return if the sprite is behind a wall (occluded).
+	if (poiDistance < toSpriteDistance)
+		return;*/
+
+#if DRAW_2D
+	glViewport(APP_VIRTUAL_WIDTH * 0.5f, 0.0f, APP_VIRTUAL_WIDTH * 0.5f, APP_VIRTUAL_HEIGHT);
+	App::DrawLine(viewer.m_position, spritePosition, 1.0f, 0.0f, 0.0f);
+	if(inFov)
+		App::DrawPoint(spritePosition, 40.0f, 1.0f, 0.0f, 0.0f);
+	glViewport(0.0f, 0.0f, APP_VIRTUAL_WIDTH * 0.5f, APP_VIRTUAL_HEIGHT);
+#endif
+	
+	
 }
 
 inline CPoint CRayCaster::march(const CSimpleTileMap& map, const CPoint& position, const CPoint& direction)
@@ -89,25 +108,25 @@ inline CPoint CRayCaster::march(const CSimpleTileMap& map, const CPoint& positio
 	while (tileValue == EMapValue::FLOOR) {
 		const float xRemainder = fmodf(poi.x, tileWidth);
 		const float xEdge = direction.x >= 0.0f ? poi.x + tileWidth - xRemainder : poi.x - xRemainder;
-		float xDistance = xEdge - poi.x;
+		const float xDistance = xEdge - poi.x;
 		const float xRate = xDistance / direction.x;
 
 		const float yRemainder = fmodf(poi.y, tileHeight);
 		const float yEdge = direction.y >= 0.0f ? poi.y + tileHeight - yRemainder : poi.y - yRemainder;
-		float yDistance = yEdge - poi.y;
+		const float yDistance = yEdge - poi.y;
 		const float yRate = yDistance / direction.y;
 
 		//Increase the poi by a small percentage in order to ensure its in a new cell.
 		//Move x proportional to how we moved y or vice versa based on nearest edge.
 		if (abs(yRate) < abs(xRate)) {
-			yDistance *= DISTANCE_MULTIPLIER;
-			poi.y = poi.y + yDistance;
-			poi.x = poi.x + yDistance * unitRun;
+			const float distance = yDistance * DISTANCE_MULTIPLIER;
+			poi.y = poi.y + distance;
+			poi.x = poi.x + distance * unitRun;
 		}
 		else {
-			xDistance *= DISTANCE_MULTIPLIER;
-			poi.x = poi.x + xDistance;
-			poi.y = poi.y + xDistance * unitRise;
+			const float distance = xDistance * DISTANCE_MULTIPLIER;
+			poi.x = poi.x + distance;
+			poi.y = poi.y + distance * unitRise;
 		}
 
 		//Look up cell. Break out of loop and render border if we get some weird numbers.

@@ -17,7 +17,7 @@ private:
 	std::vector<float> m_heightBuffer;
 
 	//Stores intersection points for debugging.
-	std::vector<CPoint> m_positionBuffer;
+	std::vector<CPoint> m_poiBuffer;
 
 	//Number of rays.
 	const uint32_t m_count;

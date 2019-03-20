@@ -71,8 +71,8 @@ void CPoint::operator*=(float s)
 
 void CPoint::operator/=(float s)
 {
-	x *= s;
-	y *= s;
+	x /= s;
+	y /= s;
 }
 
 float CPoint::operator[](unsigned char index) const
