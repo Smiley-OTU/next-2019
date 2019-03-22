@@ -6,6 +6,7 @@
 // If you do not use this then you should provide an alternative that represents a pac-man style map.
 //------------------------------------------------------------------------
 #include <vector>
+#include <fstream>
 
 enum EMapValue
 {
@@ -31,6 +32,8 @@ public:
     //--------------------------------------------------------------------------------------------
 	CSimpleTileMap(const int mapSize);
 	~CSimpleTileMap();
+
+	void LoadFromFile(std::ifstream file);
     //--------------------------------------------------------------------------------------------
     // This will generate a new random map.
     // targetFloorPercentage is how much floor space you want to be open (as a percentage)

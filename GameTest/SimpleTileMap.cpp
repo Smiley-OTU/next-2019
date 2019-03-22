@@ -36,9 +36,9 @@ static int g_dirLookup[4][2] =
 };
 
 const CTile CTile::tiles[NUM_TILES] = {
-	CTile{0.0f, 1.0f, 0.0f, 10.0f},	//Border
+	CTile{0.0f, 1.0f, 0.0f, 10.0f},		//Border
 	CTile{0.0f, 0.0f, 0.0f, 0.0f},		//Floor (air)
-	CTile{0.0f, 1.0f, 0.0f, 10.0f},	//Wall (same as border)
+	CTile{0.0f, 1.0f, 0.0f, 10.0f},		//Wall (same as border)
 	CTile{0.8f, 0.8f, 0.0f, 2.5f},		//Pip (whatever that is)
 	CTile{0.2f, 0.2f, 0.2f, 1.5f}		//Pill
 };
@@ -59,7 +59,7 @@ void CSimpleTileMap::Clear(EMapValue clearValue)
 {    
     for (auto &row : m_tileMap)
     {
-        row.assign(row.size(), clearValue);        
+        row.assign(row.size(), clearValue);     
     }
 }
 
@@ -132,6 +132,10 @@ CSimpleTileMap::~CSimpleTileMap()
 {
 }
 
+void CSimpleTileMap::LoadFromFile(std::ifstream file)
+{
+}
+
 //------------------------------------------------------------------------
 // Randomly creates tunnels through the map.
 // Picks a direction then moves in a random direction of length (0-maxTunnelLength)
@@ -140,10 +144,10 @@ CSimpleTileMap::~CSimpleTileMap()
 void CSimpleTileMap::RandomMap(const float targetFloorPercentage, const int maxTunnelLength)
 {
     // Clear the map as WALLs then fill the BORDERs.
+    Clear();
+
     float percentageOfFloorCovered = 0.0f;
     float oneTilesPercentage = 100.0f / (float)(m_mapSize * m_mapSize);
-
-    Clear();
 
     // Set the borders.
     for (int y = 0; y < m_mapSize; y++)

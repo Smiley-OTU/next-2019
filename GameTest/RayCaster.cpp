@@ -14,8 +14,9 @@ CRayCaster::CRayCaster(float thickness) :
 {	//Make sure thickness is between 1 and 32.
 	assert(thickness >= 1.0f && thickness <= 31.0f);
 	m_indexBuffer.resize(m_count);
-	m_heightBuffer.resize(m_count);
 	m_poiBuffer.resize(m_count);
+	m_depthBuffer.resize(m_count);
+	clearDepthBuffer();
 }
 
 CRayCaster::~CRayCaster()
@@ -33,7 +34,11 @@ void CRayCaster::Update(const CSimpleTileMap& map, const CViewer& viewer)
 		const float rayAngle = raysStart + angleStep * (float)i;
 		const CPoint poi = march(map, viewer.m_position, Math::direction(rayAngle));
 		m_indexBuffer[i] = map.GetTileMapValue(poi.x, poi.y);
-		m_heightBuffer[i] = Math::l2norm(poi - viewer.m_position) * cosf(Math::radians(viewer.m_angle - rayAngle));
+
+		const float depth = Math::l2norm(poi - viewer.m_position) * cosf(Math::radians(viewer.m_angle - rayAngle));
+		//glDepthFunc(GL_LESS) ;)
+		if (depth < m_depthBuffer[i])
+			m_depthBuffer[i] = depth;
 
 #if DRAW_2D
 		//Store debug information.
@@ -58,7 +63,7 @@ void CRayCaster::Render(const CSimpleTileMap& map, const CViewer& viewer)
 		//Read based on index found in Update() rather than read copied data.
 		const CTile& tile = CTile::tiles[m_indexBuffer[i]];
 		//Projected height = actual height / distance to poi * distance to projection plane.
-		const float projectedHeight = (tile.height / m_heightBuffer[i]) * m_projectionDistance;
+		const float projectedHeight = (tile.height / m_depthBuffer[i]) * m_projectionDistance;
 		//Fake some 3D per verticle slice!
 		App::DrawLine(x, m_rayOriginY - projectedHeight, x, m_rayOriginY + projectedHeight, tile.r, tile.g, tile.b);
 		x += m_thickness;
@@ -100,6 +105,11 @@ void CRayCaster::RenderSprite(const CSimpleTileMap& map, const CViewer& viewer, 
 	App::DrawPoint(spritePosition, 40.0f, 1.0f, 0.0f, 0.0f);
 	glViewport(0.0f, 0.0f, APP_VIRTUAL_WIDTH * 0.5f, APP_VIRTUAL_HEIGHT);
 #endif
+}
+
+void CRayCaster::clearDepthBuffer()
+{	//Over 9000 to ensure nothing will have a greater depth level.
+	m_depthBuffer.assign(m_depthBuffer.size(), 9001.0f);
 }
 
 inline CPoint CRayCaster::march(const CSimpleTileMap& map, const CPoint& position, const CPoint& direction)

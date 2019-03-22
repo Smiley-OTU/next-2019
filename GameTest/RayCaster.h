@@ -7,14 +7,17 @@ public:
 	CRayCaster(float = 1.0f);
 	~CRayCaster();
 
+
 	void Update(const CSimpleTileMap& map, const CViewer& viewer);
 	void Render(const CSimpleTileMap& map, const CViewer& viewer);
 	void RenderSprite(const CSimpleTileMap& map, const CViewer& viewer, const CPoint& spritePosition);
+	//Tempted to to name this to clear, give it bitfield argument so I could type clear(GL_DEPTH_BUFFER_BIT) xD
+	void clearDepthBuffer();
 
 private:
 	//At least I can pretend to use modern gl through naming conventions ;)
 	std::vector<EMapValue> m_indexBuffer;
-	std::vector<float> m_heightBuffer;
+	std::vector<float> m_depthBuffer;
 
 	//Stores intersection points for debugging.
 	std::vector<CPoint> m_poiBuffer;

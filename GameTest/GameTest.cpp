@@ -15,6 +15,7 @@
 #include "ColouredLine.h"
 #include "RayCaster.h"
 #include "Player.h"
+#include "Scene.h"
 
 //16x16 grid.
 static const int MAP_SIZE = 16;
@@ -24,6 +25,7 @@ static const float TUNNEL_FILL_PERCENT = 80;
 //No "Game" class so everything will be global for the sake of communicating between GLUT render and update callbacks.
 //(Use "static" to remove naming conflicts among translation units. Most likely no need so currently not worth extra keystrokes.
 CSimpleTileMap g_map(MAP_SIZE);
+CSimpleTileMap g_pickups(MAP_SIZE * 2);
 CRayCaster g_rayCaster{ 4.0f };
 CPlayer g_player;
 
@@ -36,6 +38,7 @@ void Init()
 	g_player.setFov(60.0f);
 	g_player.setPosition(390.0f, 431.0f);
 	g_player.setDirection(90.0f);
+	CScene::Init();
 }
 
 //------------------------------------------------------------------------
@@ -55,6 +58,7 @@ void Update(float deltaTime)
 
 	g_player.Update(g_map, deltaTime);
 	g_rayCaster.Update(g_map, g_player);
+	CScene::UpdateActiveScene(deltaTime);
 }
 
 //------------------------------------------------------------------------
@@ -67,6 +71,11 @@ void Render()
 	//Fake 3D:
 	g_rayCaster.Render(g_map, g_player);
 	g_rayCaster.RenderSprite(g_map, g_player, CPoint{ 300.0f, 300.0f });
+	g_rayCaster.RenderSprite(g_map, g_player, CPoint{ 400.0f, 300.0f });
+	g_rayCaster.RenderSprite(g_map, g_player, CPoint{ 500.0f, 300.0f });
+	g_rayCaster.RenderSprite(g_map, g_player, CPoint{ 600.0f, 300.0f });
+	g_rayCaster.clearDepthBuffer();
+	CScene::RenderActiveScene();
 
 	//Grid lines:
 	/*for (float i = 0.0f; i < APP_VIRTUAL_HEIGHT; i += g_map.getTileHeight())
@@ -101,4 +110,5 @@ void Render()
 //------------------------------------------------------------------------
 void Shutdown()
 {	//No leaks will be tolorated!!!
+	CScene::Shutdown();
 }
