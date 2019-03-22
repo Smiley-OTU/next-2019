@@ -31,6 +31,7 @@ public:
     // Constructor just creates a tile map of mapSize x mapSize.
     //--------------------------------------------------------------------------------------------
 	CSimpleTileMap(const int mapSize);
+	CSimpleTileMap();
 	~CSimpleTileMap();
 
 	void LoadFromFile(std::ifstream file);

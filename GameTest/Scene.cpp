@@ -36,13 +36,13 @@ void CScene::Init()
 	s_scenes[END] = new CEndScene();
 
 	s_initialized = true;
-	s_activeScene = s_scenes[MENU];
+	s_activeScene = s_scenes[MAIN];//s_scenes[MENU];
 	s_activeScene->OnEnter();
 }
 
 void CScene::UpdateActiveScene(float deltaTime)
 {
-	s_activeScene->Update();
+	s_activeScene->Update(deltaTime);
 }
 
 void CScene::RenderActiveScene()

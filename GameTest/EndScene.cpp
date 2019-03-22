@@ -10,7 +10,7 @@ CEndScene::~CEndScene()
 {
 }
 
-void CEndScene::Update()
+void CEndScene::Update(float deltaTime)
 {
 }
 

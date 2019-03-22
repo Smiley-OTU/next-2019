@@ -10,7 +10,7 @@ CMenuScene::~CMenuScene()
 {
 }
 
-void CMenuScene::Update()
+void CMenuScene::Update(float deltaTime)
 {
 }
 

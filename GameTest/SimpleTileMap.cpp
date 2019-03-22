@@ -128,6 +128,10 @@ CSimpleTileMap::CSimpleTileMap(const int mapSize) : m_mapSize(mapSize)
 	Create();
 }
 
+CSimpleTileMap::CSimpleTileMap()
+{
+}
+
 CSimpleTileMap::~CSimpleTileMap()
 {
 }

@@ -3,41 +3,13 @@
 //------------------------------------------------------------------------
 #include "stdafx.h"
 //------------------------------------------------------------------------
-#include <windows.h> 
-#include <math.h>  
-//------------------------------------------------------------------------
-#include "app\app.h"
-#include "SimpleTileMap.h"
-
-#include "Math.h"
-#include "Point.h"
-#include "Line.h"
-#include "ColouredLine.h"
-#include "RayCaster.h"
-#include "Player.h"
 #include "Scene.h"
-
-//16x16 grid.
-static const int MAP_SIZE = 16;
-static const int TUNNEL_LEN = 12;
-static const float TUNNEL_FILL_PERCENT = 80;
-
-//No "Game" class so everything will be global for the sake of communicating between GLUT render and update callbacks.
-//(Use "static" to remove naming conflicts among translation units. Most likely no need so currently not worth extra keystrokes.
-CSimpleTileMap g_map(MAP_SIZE);
-CSimpleTileMap g_pickups(MAP_SIZE * 2);
-CRayCaster g_rayCaster{ 4.0f };
-CPlayer g_player;
 
 //------------------------------------------------------------------------
 // Called before first update. Do any initial setup here.
 //------------------------------------------------------------------------
 void Init()
 {
-    g_map.RandomMap(TUNNEL_FILL_PERCENT, TUNNEL_LEN);
-	g_player.setFov(60.0f);
-	g_player.setPosition(390.0f, 431.0f);
-	g_player.setDirection(90.0f);
 	CScene::Init();
 }
 
@@ -50,14 +22,7 @@ void Update(float deltaTime)
     static const float MIN_FRAMERATE = (1000 / 20);
     if (deltaTime > MIN_FRAMERATE)
         deltaTime = MIN_FRAMERATE;
-	   
-    if (App::GetController().CheckButton(VK_PAD_A, true))
-    {
-        g_map.RandomMap(TUNNEL_FILL_PERCENT, TUNNEL_LEN);
-    }
 
-	g_player.Update(g_map, deltaTime);
-	g_rayCaster.Update(g_map, g_player);
 	CScene::UpdateActiveScene(deltaTime);
 }
 
@@ -67,41 +32,7 @@ void Update(float deltaTime)
 //------------------------------------------------------------------------
 void Render()
 {
-
-	//Fake 3D:
-	g_rayCaster.Render(g_map, g_player);
-	g_rayCaster.RenderSprite(g_map, g_player, CPoint{ 300.0f, 300.0f });
-	g_rayCaster.RenderSprite(g_map, g_player, CPoint{ 400.0f, 300.0f });
-	g_rayCaster.RenderSprite(g_map, g_player, CPoint{ 500.0f, 300.0f });
-	g_rayCaster.RenderSprite(g_map, g_player, CPoint{ 600.0f, 300.0f });
-	g_rayCaster.clearDepthBuffer();
 	CScene::RenderActiveScene();
-
-	//Grid lines:
-	/*for (float i = 0.0f; i < APP_VIRTUAL_HEIGHT; i += g_map.getTileHeight())
-		App::DrawLine(0.0f, i, APP_VIRTUAL_WIDTH, i);
-	for (float j = 0.0f; j < APP_VIRTUAL_WIDTH; j += g_map.getTileWidth())
-		App::DrawLine(j, 0.0f, j, APP_VIRTUAL_HEIGHT);*/
-
-	//Split screen:
-	/*static float halfWidth = (float)APP_VIRTUAL_WIDTH / 2.0f;
-	static float halfHeight = (float)APP_VIRTUAL_HEIGHT / 2.0f;
-	//P1, top left.
-	glViewport(0.0f, halfHeight, halfWidth, halfHeight);
-	g_rayCaster.Render();
-	//P2, top right.
-	glViewport(halfWidth, halfHeight, halfWidth, halfHeight);
-	g_rayCaster.Render();
-	//P3, bottom left.
-	glViewport(0.0f, 0.0f, halfWidth, halfHeight);
-	g_rayCaster.Render();
-	//P4, bottom right.
-	glViewport(halfWidth, 0.0f, halfWidth, halfHeight);
-	g_rayCaster.Render();*/
-
-	//Intersection algorithm doesn't take thickness into account. That would need an OOBB check!
-	//CPoint poi{ Math::intersect(l1, l2) };
-	//printf("Intersection at %f %f.\n", poi[0], poi[1]);
 }
 
 //------------------------------------------------------------------------

@@ -7,7 +7,7 @@ public:
 	CInstructionScene();
 	~CInstructionScene();
 
-	void Update() override;
+	void Update(float deltaTime) override;
 	void Render() override;
 
 private:

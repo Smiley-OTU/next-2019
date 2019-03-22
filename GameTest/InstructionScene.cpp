@@ -10,7 +10,7 @@ CInstructionScene::~CInstructionScene()
 {
 }
 
-void CInstructionScene::Update()
+void CInstructionScene::Update(float deltaTime)
 {
 }
 

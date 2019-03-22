@@ -7,7 +7,6 @@ public:
 	CRayCaster(float = 1.0f);
 	~CRayCaster();
 
-
 	void Update(const CSimpleTileMap& map, const CViewer& viewer);
 	void Render(const CSimpleTileMap& map, const CViewer& viewer);
 	void RenderSprite(const CSimpleTileMap& map, const CViewer& viewer, const CPoint& spritePosition);

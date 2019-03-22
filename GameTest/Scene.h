@@ -1,12 +1,11 @@
 #pragma once
-
 class CScene
 {
 public:
 	CScene();
 	virtual ~CScene();
 
-	virtual void Update() = 0;
+	virtual void Update(float deltaTime) = 0;
 	virtual void Render() = 0;
 
 	static void Init();
@@ -32,4 +31,3 @@ protected:
 	static CScene* s_activeScene;
 	static bool s_initialized;
 };
-
