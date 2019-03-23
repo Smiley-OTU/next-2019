@@ -34,13 +34,21 @@ void CMainScene::Render()
 	App::DrawQuad(0.0f, 0.0f, APP_VIRTUAL_WIDTH, halfHeight, 0.2f, 0.2f, 0.2f);					//Floor
 	App::DrawQuad(0.0f, halfHeight, APP_VIRTUAL_WIDTH, APP_VIRTUAL_HEIGHT, 0.3f, 0.3f, 0.3f);	//Ceiling
 
+	//Map
 	m_rayCaster.RenderMap(m_map, m_player);
 
+	//Sprites (depth sorted explicitly due to last minute improvements). A better implementation would only sort stuff that's queued for rendering.
+	std::map<float, CSprite*> depthSortedSprites;
 	for (int i = 0; i < NUM_GHOSTS; i++) {
-		m_rayCaster.RenderSprite(m_map, m_player, m_ghosts[i]);
+		float distance = Math::l1norm(CPoint{ m_player.GetPosition() - m_ghosts[i].position });
+		//Although sprites are small in size, its unnecessary to copy them so I used weak pointers. References aren't applicable in this case.
+		depthSortedSprites[distance] = &m_ghosts[i];
 	}
+	for(auto it = depthSortedSprites.rbegin(); it != depthSortedSprites.rend(); ++it)
+		m_rayCaster.RenderSprite(m_map, m_player, *it->second);
 
 	RenderMinimap();
+
 	m_rayCaster.clearDepthBuffer();
 }
 
