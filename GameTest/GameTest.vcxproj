@@ -190,6 +190,7 @@
     <ClInclude Include="App\SimpleController.h" />
     <ClInclude Include="App\SimpleSound.h" />
     <ClInclude Include="Box.h" />
+    <ClInclude Include="Sprite.h" />
     <ClInclude Include="InstructionScene.h" />
     <ClInclude Include="EndScene.h" />
     <ClInclude Include="Circle.h" />
@@ -215,6 +216,7 @@
     <ClCompile Include="App\SimpleController.cpp" />
     <ClCompile Include="App\SimpleSound.cpp" />
     <ClCompile Include="Box.cpp" />
+    <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="InstructionScene.cpp" />
     <ClCompile Include="EndScene.cpp" />
     <ClCompile Include="Circle.cpp" />

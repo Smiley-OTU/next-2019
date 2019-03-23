@@ -9,8 +9,12 @@ CViewer::~CViewer()
 {
 }
 
-void CViewer::setFov(float fov)
-{	//Gotta multiply by 0.5 rather than divide by 2.0 for the optimal setter that gets called like once ;)
-	//m_halfFov = fov *0.5f;
+float CViewer::GetFov()
+{
+	return m_fov;
+}
+
+void CViewer::SetFov(float fov)
+{
 	m_fov = fov;
 }

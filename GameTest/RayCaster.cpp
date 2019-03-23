@@ -5,9 +5,7 @@
 #include "Line.h"
 
 //Increase distance till point of intersection by 5% so that the ray is guaranteed to exceed its current cell.
-#define DISTANCE_MULTIPLIER 1.05f
-#define MAX_STEPS 32
-#define DRAW_2D true
+#define DEBUG_DRAW false
 
 CRayCaster::CRayCaster(float thickness) :
 	m_count(APP_VIRTUAL_WIDTH / (uint32_t)thickness), m_thickness(thickness), m_step((float)m_count * thickness), m_rayOriginY(APP_VIRTUAL_HEIGHT * 0.5f)
@@ -40,7 +38,7 @@ void CRayCaster::Update(const CSimpleTileMap& map, const CViewer& viewer)
 		if (depth < m_depthBuffer[i])
 			m_depthBuffer[i] = depth;
 
-#if DRAW_2D
+#if DEBUG_DRAW
 		//Store debug information.
 		m_poiBuffer[i] = poi;
 #endif
@@ -49,11 +47,27 @@ void CRayCaster::Update(const CSimpleTileMap& map, const CViewer& viewer)
 
 void CRayCaster::Render(const CSimpleTileMap& map, const CViewer& viewer)
 {
-#if DRAW_2D
+#if DEBUG_DRAW
 	glViewport(APP_VIRTUAL_WIDTH * 0.5f, 0.0f, APP_VIRTUAL_WIDTH * 0.5f, APP_VIRTUAL_HEIGHT);
+	glLineWidth(1.0f);
+
+	//Map.
 	map.Render();
+
+	//Rays.
 	for (uint32_t i = 0; i < m_count; i++)
 		App::DrawLine(viewer.m_position.x, viewer.m_position.y, m_poiBuffer[i].x, m_poiBuffer[i].y);
+
+	//Vertical lines.
+	const float tileWidth = map.getTileWidth();
+	for (int x = tileWidth; x < map.GetMapSize() * tileWidth; x += tileWidth)
+		App::DrawLine(x, 0.0f, x, APP_VIRTUAL_HEIGHT);
+
+	//Horizontal lines.
+	const float tileHeight = map.getTileHeight();
+	for (int y = tileHeight; y < map.GetMapSize() * tileHeight; y += tileHeight)
+		App::DrawLine(0.0f, y, APP_VIRTUAL_WIDTH, y);
+
 	glViewport(0.0f, 0.0f, APP_VIRTUAL_WIDTH * 0.5f, APP_VIRTUAL_HEIGHT);
 #endif
 
@@ -70,7 +84,8 @@ void CRayCaster::Render(const CSimpleTileMap& map, const CViewer& viewer)
 	}
 }
 
-void CRayCaster::RenderSprite(const CSimpleTileMap& map, const CViewer& viewer, const CPoint& spritePosition)
+void CRayCaster::RenderSprite(const CSimpleTileMap& map, const CViewer& viewer, const CPoint& spritePosition,
+	float spriteWidth, float spriteHeight, float r, float g, float b)
 {
 	//Frustum culling:
 	CPoint toSprite{ spritePosition - viewer.m_position };
@@ -93,16 +108,23 @@ void CRayCaster::RenderSprite(const CSimpleTileMap& map, const CViewer& viewer, 
 	float spriteAngle = Math::radians(viewer.m_angle - Math::angle(toSprite));
 	//Scale the sprite based on distance from the viewer.
 	float scale = m_projectionDistance / abs(cosf(spriteAngle) * toSpriteDistance);
-	//Figure out where x lies based on the sprite angle and the projection plane triangle.
+	//Figure out where the sprite lies horizontally relative to the centre of the screen based on the sprite angle and the projection plane triangle.
 	float x = tanf(spriteAngle) * m_projectionDistance;
 
 	//Eventually pass in sprite width and height here. Be sure to do x - width / 2. Also render furthest sprites first.
-	App::DrawPoint(APP_VIRTUAL_WIDTH * 0.5f + x, m_rayOriginY, scale * 40.0f, 1.0f, 0.0f, 0.0f);
+	float xCentre = APP_VIRTUAL_WIDTH * 0.5f + x;
+	float halfWidth = spriteWidth * 0.5f * scale;
+	float halfHeight = spriteHeight * 0.5f * scale;
+	App::DrawQuad(xCentre - halfWidth, m_rayOriginY - halfHeight, xCentre + halfWidth, m_rayOriginY + halfHeight, r, g, b);
 
-#if DRAW_2D
+#if DEBUG_DRAW
 	glViewport(APP_VIRTUAL_WIDTH * 0.5f, 0.0f, APP_VIRTUAL_WIDTH * 0.5f, APP_VIRTUAL_HEIGHT);
-	App::DrawLine(viewer.m_position, spritePosition, 1.0f, 0.0f, 0.0f);
-	App::DrawPoint(spritePosition, 40.0f, 1.0f, 0.0f, 0.0f);
+	App::DrawLine(viewer.m_position, spritePosition, r, g, b);
+	App::DrawQuad(
+		spritePosition.x - spriteWidth * 0.5f, spritePosition.y - spriteWidth * 0.5f,
+		spritePosition.x + spriteWidth * 0.5f, spritePosition.y + spriteWidth * 0.5f,
+		r, g, b
+	);
 	glViewport(0.0f, 0.0f, APP_VIRTUAL_WIDTH * 0.5f, APP_VIRTUAL_HEIGHT);
 #endif
 }
@@ -121,10 +143,10 @@ inline CPoint CRayCaster::march(const CSimpleTileMap& map, const CPoint& positio
 	const float unitRun = direction.x / direction.y;
 
 	//Continue searching until we find anything but a floor (air) or exceed the allowed amount of steps.
-	EMapValue tileValue = EMapValue::FLOOR;
+	EMapValue tileValue = EMapValue::AIR;
 	uint32_t stepCount = 0;
 	CPoint poi = position;
-	while (tileValue == EMapValue::FLOOR) {
+	while (tileValue == EMapValue::AIR) {
 		const float xRemainder = fmodf(poi.x, tileWidth);
 		const float xEdge = direction.x >= 0.0f ? poi.x + tileWidth - xRemainder : poi.x - xRemainder;
 		const float xDistance = xEdge - poi.x;
@@ -136,6 +158,7 @@ inline CPoint CRayCaster::march(const CSimpleTileMap& map, const CPoint& positio
 		const float yRate = yDistance / direction.y;
 
 		//Increase the poi by a small percentage in order to ensure its in a new cell.
+		static const float DISTANCE_MULTIPLIER = 1.05f;
 		//Move x proportional to how we moved y or vice versa based on nearest edge.
 		if (abs(yRate) < abs(xRate)) {
 			const float distance = yDistance * DISTANCE_MULTIPLIER;
@@ -148,11 +171,13 @@ inline CPoint CRayCaster::march(const CSimpleTileMap& map, const CPoint& positio
 			poi.y = poi.y + distance * unitRise;
 		}
 
-		//Look up cell. Break out of loop and render border if we get some weird numbers.
+		//Look up cell.
 		tileValue = map.GetTileMapValue(poi.x, poi.y);
 		stepCount++;
-		if (stepCount > MAX_STEPS) {
-			tileValue = EMapValue::WALL;
+
+		//Break out of the loop after too many steps (rare, but sometimes we get extreme numbers).
+		if (stepCount > 32U) {
+			tileValue = EMapValue::BORDER;
 			break;
 		}
 	}

@@ -16,6 +16,7 @@ public:
 
 private:
 	void OnEnter() override;
+	void RenderMinimap();
 
 	CSimpleTileMap m_map{ 16 };
 	CRayCaster m_rayCaster{ 4.0f };

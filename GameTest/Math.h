@@ -2,7 +2,9 @@
 #include "stdafx.h"
 #include "Point.h"
 #include "Line.h"
-#include "ColouredLine.h"
+
+//For RAND()
+#include "App/AppSettings.h"
 
 //Current log criteria.
 #if _DEBUG
@@ -26,6 +28,12 @@ namespace Math {
 #if LOG
 		printf("%sp1x: %f, p1y: %f, p2x: %f, p2y %f.\n", message.c_str(), line.p1x, line.p1y, line.p2x, line.p2y);
 #endif
+	}
+
+	inline void randomColour(float colour[3]) {
+		colour[0] = FRAND_RANGE(0.0f, 1.0f);
+		colour[1] = FRAND_RANGE(0.0f, 1.0f);
+		colour[2] = FRAND_RANGE(0.0f, 1.0f);
 	}
 
 	inline float degrees(float radians) {

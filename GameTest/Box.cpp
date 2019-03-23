@@ -6,7 +6,6 @@ namespace Collision {
 	{
 	}
 
-
 	CBox::~CBox()
 	{
 	}

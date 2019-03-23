@@ -6,11 +6,14 @@ public:
 	CEntity();
 	~CEntity();
 
-	void setPosition(const CPoint& position);
-	void setPosition(float x, float y);
+	CPoint GetPosition();
+	CPoint GetDirection();
 
-	void setDirection(const CPoint& direction);
-	void setDirection(float angle);
+	void SetPosition(const CPoint& position);
+	void SetPosition(float x, float y);
+
+	void SetDirection(const CPoint& direction);
+	void SetDirection(float angle);
 
 protected:
 	//Position in screen space, relative to the origin.

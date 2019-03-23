@@ -12,18 +12,12 @@
 #include "app\app.h"
 #include "SimpleTileMap.h"
 
-static const int NUM_MAP_DEFS = 6;
-
-// Color mapping for render. Indexed based on tile value.
-static float g_tileMapDef[NUM_MAP_DEFS][4]
-{
-    // Red, Green, Blue, Scale.
-    { 0.0f,0.0f,0.5f, 1.0f }, // Border
-    { 0.8f,0.8f,0.0f, 0.15f }, // Pip
-    { 0.0f,0.0f,0.5f, 1.0f }, // Wall
-    { 0.2f,0.2f,0.2f, 0.5f }, // Pill    
-    { 0.0f,1.0f,1.0f, 1.0f }, // ?
-    { 0.0f,0.0f,1.0f, 1.0f }, // ?
+// Color mapping for bird's eye view render. Indexed based on tile value.
+const CTile CTile::tiles[NUM_TILE_TYPES] = {
+	CTile{ 0.0f, 0.0f, 1.0f, 10.0f, 1.0f },		//Border
+	CTile{ 0.0f, 0.0f, 0.0f, 0.0f, 1.0f },		//Air
+	CTile{ 0.0f, 0.0f, 0.5f, 10.0f, 1.0f },		//Wall
+	CTile{ 0.8f, 0.8f, 0.0f, 2.5f, 0.25f }
 };
 
 // Direction lookup used by random map generation.
@@ -33,14 +27,6 @@ static int g_dirLookup[4][2] =
     {  1, 0 },	// Up
     {  0,-1 },	// Down
     {  0, 1 }	// Right
-};
-
-const CTile CTile::tiles[NUM_TILES] = {
-	CTile{0.0f, 1.0f, 0.0f, 10.0f},		//Border
-	CTile{0.0f, 0.0f, 0.0f, 0.0f},		//Floor (air)
-	CTile{0.0f, 1.0f, 0.0f, 10.0f},		//Wall (same as border)
-	CTile{0.8f, 0.8f, 0.0f, 2.5f},		//Pip (whatever that is)
-	CTile{0.2f, 0.2f, 0.2f, 1.5f}		//Pill
 };
 
 void CSimpleTileMap::Create()
@@ -91,24 +77,35 @@ EMapValue CSimpleTileMap::GetTileMapValue(const float fx, const float fy) const
 
 void CSimpleTileMap::Render() const
 {
-    float xStep = m_tileWidth;
-    float yStep = m_tileHeight;
+    const float xStep = m_tileWidth;
+    const float yStep = m_tileHeight;
     for (int y = 0; y < m_mapSize; y++)
     {
         for (int x = 0; x < m_mapSize; x++)
         {
-            int index = GetTileMapValue(x, y) % NUM_MAP_DEFS;
-            float scale = g_tileMapDef[index][3];
-            float xPos = (x * xStep);            
-            xPos += (xStep - (xStep*scale))/2.0f;
+			EMapValue index = GetTileMapValue(x, y);
+			if (index > EMapValue::OUTOFBOUNDS && index < EMapValue::NUM_TILE_TYPES) {
+				const CTile& tile = CTile::tiles[index];
 
-            float yPos = (y * yStep);
-            yPos += (yStep - (yStep*scale)) / 2.0f;
+				float xPos = (x * xStep);
+				xPos += (xStep - (xStep * tile.scale)) / 2.0f;
 
-            float w = xStep * g_tileMapDef[index][3];
-            float h = yStep * g_tileMapDef[index][3];
+				float yPos = (y * yStep);
+				yPos += (yStep - (yStep * tile.scale)) / 2.0f;
 
-            App::DrawQuad(xPos, yPos, xPos + w, yPos + h, g_tileMapDef[index][0], g_tileMapDef[index][1], g_tileMapDef[index][2]);
+				float w = xStep * tile.scale;
+				float h = yStep * tile.scale;
+
+				App::DrawQuad(xPos, yPos, xPos + w, yPos + h, tile.r, tile.g, tile.b);
+			}
+#if _DEBUG
+			else {
+				printf("Tried to render an invalid tile of value %i at row %i column %i.\n", index, y, x);
+				printf("Press enter to terminate the program.\n");
+				getchar();
+				exit(0);
+			}
+#endif
         }
     }
 }
@@ -133,10 +130,6 @@ CSimpleTileMap::CSimpleTileMap()
 }
 
 CSimpleTileMap::~CSimpleTileMap()
-{
-}
-
-void CSimpleTileMap::LoadFromFile(std::ifstream file)
 {
 }
 
@@ -184,12 +177,12 @@ void CSimpleTileMap::RandomMap(const float targetFloorPercentage, const int maxT
             lastDir = currentDir;
             currentRow += g_dirLookup[currentDir][0];
             currentColumn += g_dirLookup[currentDir][1];
-            if (GetTileMapValue(currentRow, currentColumn) != EMapValue::FLOOR)
+            if (GetTileMapValue(currentRow, currentColumn) != EMapValue::AIR)
             {
                 percentageOfFloorCovered += oneTilesPercentage;
             }
 
-            SetTileMapValue(currentRow, currentColumn, EMapValue::FLOOR);
+            SetTileMapValue(currentRow, currentColumn, EMapValue::AIR);
         }        
     }
 }

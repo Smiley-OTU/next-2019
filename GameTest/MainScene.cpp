@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "MainScene.h"
-#include "../glut/include/GL/freeglut.h"
+#include "App/app.h"
 
 CMainScene::CMainScene()
 {
@@ -18,22 +18,42 @@ void CMainScene::Update(float deltaTime)
 
 void CMainScene::Render()
 {	//Blue.
-	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+	glClearColor(0.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
+	glViewport(0.0f, 0.0f, APP_VIRTUAL_WIDTH, APP_VIRTUAL_HEIGHT);
 	//Fake 3D:
+	const float halfHeight = APP_VIRTUAL_HEIGHT * 0.5f;
+	App::DrawQuad(0.0f, 0.0f, APP_VIRTUAL_WIDTH, halfHeight, 0.2f, 0.2f, 0.2f);					//Floor
+	App::DrawQuad(0.0f, halfHeight, APP_VIRTUAL_WIDTH, APP_VIRTUAL_HEIGHT, 0.3f, 0.3f, 0.3f);	//Ceiling
+
 	m_rayCaster.Render(m_map, m_player);
-	m_rayCaster.RenderSprite(m_map, m_player, CPoint{ 300.0f, 300.0f });
-	m_rayCaster.RenderSprite(m_map, m_player, CPoint{ 400.0f, 300.0f });
-	m_rayCaster.RenderSprite(m_map, m_player, CPoint{ 500.0f, 300.0f });
-	m_rayCaster.RenderSprite(m_map, m_player, CPoint{ 600.0f, 300.0f });
+	RenderMinimap();
+	m_rayCaster.RenderSprite(m_map, m_player, CPoint{ 200.0f, 300.0f }, 40.0f, 30.0f, 0.0f, 0.2f, 1.0f);
+	m_rayCaster.RenderSprite(m_map, m_player, CPoint{ 300.0f, 300.0f }, 40.0f, 30.0f, 1.0f, 0.0f, 0.0f);
+	m_rayCaster.RenderSprite(m_map, m_player, CPoint{ 400.0f, 300.0f }, 40.0f, 30.0f, 1.0f, 0.5f, 0.0f);
+	m_rayCaster.RenderSprite(m_map, m_player, CPoint{ 500.0f, 300.0f }, 40.0f, 30.0f, 1.0f, 0.0f, 1.0f);
 	m_rayCaster.clearDepthBuffer();
 }
 
 void CMainScene::OnEnter()
 {
 	m_map.RandomMap(80, 12);
-	m_player.setFov(60.0f);
-	m_player.setPosition(390.0f, 431.0f);
-	m_player.setDirection(90.0f);
+	m_player.SetFov(45.0f);
+	m_player.SetPosition(390.0f, 431.0f);
+	m_player.SetDirection(90.0f);
+}
+
+void CMainScene::RenderMinimap()
+{
+	static const float mapScale = 0.2f;		//20%  screen size minimap.
+	static const float margin = 0.025f;		//2.5% screen size margin.
+	static const float scaledScreenWidth = APP_VIRTUAL_WIDTH * mapScale;
+	static const float scaledScreenHeight = APP_VIRTUAL_HEIGHT * mapScale;
+	static const float x = (APP_VIRTUAL_WIDTH - scaledScreenWidth) - APP_VIRTUAL_WIDTH * margin;
+	static const float y = APP_VIRTUAL_HEIGHT * margin;
+	glViewport(x, y, scaledScreenWidth, scaledScreenHeight);
+	m_map.Render();
+	App::DrawPoint(m_player.GetPosition(), 5.0f, 0.8f, 0.8f, 0.0f);
+	glViewport(0.0f, 0.0f, APP_VIRTUAL_WIDTH, APP_VIRTUAL_HEIGHT);
 }

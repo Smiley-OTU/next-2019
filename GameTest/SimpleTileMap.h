@@ -8,20 +8,20 @@
 #include <vector>
 #include <fstream>
 
-enum EMapValue
+enum EMapValue : int
 {
 	OUTOFBOUNDS = -1,   // If a GetTileMapValue() call is ourside the bounds of the map it will return this.
 	BORDER,
-	FLOOR,
+	AIR,
 	WALL,
-	PIP,
-	PILL,
-	NUM_TILES
+	POWER_UP,
+	NUM_TILE_TYPES
 };
 
 struct CTile {
-	const float r, g, b, height;
-	static const CTile tiles[NUM_TILES];
+	//Height is for the 3D projection, scale is for 2D.
+	const float r, g, b, height, scale;
+	static const CTile tiles[NUM_TILE_TYPES];
 };
 
 class CSimpleTileMap
@@ -34,7 +34,6 @@ public:
 	CSimpleTileMap();
 	~CSimpleTileMap();
 
-	void LoadFromFile(std::ifstream file);
     //--------------------------------------------------------------------------------------------
     // This will generate a new random map.
     // targetFloorPercentage is how much floor space you want to be open (as a percentage)

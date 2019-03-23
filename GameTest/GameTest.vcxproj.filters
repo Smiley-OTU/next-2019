@@ -111,6 +111,9 @@
     <ClInclude Include="InstructionScene.h">
       <Filter>Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>Source Files\Visuals</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -178,6 +181,9 @@
     </ClCompile>
     <ClCompile Include="InstructionScene.cpp">
       <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprite.cpp">
+      <Filter>Source Files\Visuals</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

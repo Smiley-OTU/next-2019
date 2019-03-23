@@ -12,5 +12,4 @@ public:
 private:
 	float m_rotationSpeed;
 	float m_translationSpeed;
-	CPoint m_meme;
 };

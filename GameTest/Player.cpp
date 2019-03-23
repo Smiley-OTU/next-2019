@@ -28,10 +28,6 @@ void CPlayer::Update(const CSimpleTileMap& map, float deltaTime)
 	else if (App::IsKeyPressed(Keys::S))
 		m_position -= translation;
 
-	if (App::IsKeyPressed(Keys::Space)) {
-		m_meme += translation;
-	}
-
 	//Clamp the angle between 0 and 360 (prevents overflow and gives me nice numbers).
 	m_angle += 360.0f;
 	m_angle = fmod(m_angle, 360.0f);
