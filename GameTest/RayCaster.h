@@ -10,8 +10,8 @@ public:
 
 	void Update(const CSimpleTileMap& map, const CViewer& viewer);
 	void RenderMap(const CSimpleTileMap& map, const CViewer& viewer);
-	void RenderSprite(const CSimpleTileMap& map, const CViewer& viewer, const CSprite& sprite);
-	//Tempted to to name this to clear, give it bitfield argument so I could type clear(GL_DEPTH_BUFFER_BIT) xD
+	void RenderSprites(const CSimpleTileMap& map, const CViewer& viewer, const std::vector<CSprite>& sprites);
+	//Tempted to to name this to clear and give it bitfield argument so I could type clear(GL_DEPTH_BUFFER_BIT) xD
 	void clearDepthBuffer();
 
 private:

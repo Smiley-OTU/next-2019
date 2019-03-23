@@ -84,48 +84,64 @@ void CRayCaster::RenderMap(const CSimpleTileMap& map, const CViewer& viewer)
 	}
 }
 
-void CRayCaster::RenderSprite(const CSimpleTileMap& map, const CViewer& viewer, const CSprite& sprite)
+void CRayCaster::RenderSprites(const CSimpleTileMap& map, const CViewer& viewer, const std::vector<CSprite>& sprites)
 {
-	//Frustum culling:
-	CPoint toSprite{ sprite.position - viewer.m_position };
-	float toSpriteDistance = Math::l2norm(toSprite);
-	toSprite /= toSpriteDistance;
+	std::map<float, const CSprite*> depthSortedSprites;
+	for (auto& sprite : sprites) {
+		//Frustum culling:
+		CPoint toSprite{ sprite.position - viewer.m_position };
+		float toSpriteDistance = Math::l2norm(toSprite);
+		toSprite /= toSpriteDistance;
 
-	//Return if the sprite isn't within the viewer's field of view.
-	if (Math::dot(toSprite, Math::direction(viewer.m_angle)) <= cosf(Math::radians(viewer.m_fov) * 0.5f))
-		return;
+		//Return if the sprite isn't within the viewer's field of view.
+		if (Math::dot(toSprite, Math::direction(viewer.m_angle)) <= cosf(Math::radians(viewer.m_fov) * 0.5f))
+			continue;
 
-	//Occlusion culling:
-	CPoint poi = march(map, viewer.m_position, toSprite);
-	float poiDistance = Math::l2norm(poi - viewer.m_position);
+		//Occlusion culling:
+		CPoint poi = march(map, viewer.m_position, toSprite);
+		float poiDistance = Math::l2norm(poi - viewer.m_position);
 
-	//Return if the sprite is behind a wall.
-	if (poiDistance < toSpriteDistance)
-		return;
+		//Return if the sprite is behind a wall.
+		if (poiDistance < toSpriteDistance)
+			continue;
 
-	//Angle between view direction and sprite.
-	float spriteAngle = Math::radians(viewer.m_angle - Math::angle(toSprite));
-	//Scale the sprite based on distance from the viewer.
-	float scale = m_projectionDistance / abs(cosf(spriteAngle) * toSpriteDistance);
-	//Figure out where the sprite lies horizontally relative to the centre of the screen based on the sprite angle and the projection plane triangle.
-	float x = tanf(spriteAngle) * m_projectionDistance;
+		depthSortedSprites[toSpriteDistance] = &sprite;
+	}
 
-	//Eventually pass in sprite width and height here. Be sure to do x - width / 2. Also render furthest sprites first.
-	float xCentre = APP_VIRTUAL_WIDTH * 0.5f + x;
-	float halfWidth = sprite.m_width * 0.5f * scale;
-	float halfHeight = sprite.m_height * 0.5f * scale;
-	App::DrawQuad(xCentre - halfWidth, m_rayOriginY - halfHeight, xCentre + halfWidth, m_rayOriginY + halfHeight, sprite.r, sprite.g, sprite.b);
+	for (auto it = depthSortedSprites.rbegin(); it != depthSortedSprites.rend(); ++it) {
+		const CSprite& sprite = *it->second;
+
+		//Reconstruct values.
+		CPoint toSprite{ sprite.position - viewer.m_position };
+		float toSpriteDistance = it->first;
+		toSprite /= toSpriteDistance;
+
+		//Angle between view direction and sprite.
+		float spriteAngle = Math::radians(viewer.m_angle - Math::angle(toSprite));
+
+		//Scale the sprite based on distance from the viewer.
+		float scale = m_projectionDistance / abs(cosf(spriteAngle) * toSpriteDistance);
+
+		//Figure out where the sprite lies horizontally relative to the centre of the screen based on the sprite angle and the projection plane triangle.
+		float x = tanf(spriteAngle) * m_projectionDistance;
+
+		//3D render.
+		float xCentre = APP_VIRTUAL_WIDTH * 0.5f + x;
+		float halfWidth = sprite.m_width * 0.5f * scale;
+		float halfHeight = sprite.m_height * 0.5f * scale;
+		App::DrawQuad(xCentre - halfWidth, m_rayOriginY - halfHeight, xCentre + halfWidth, m_rayOriginY + halfHeight, sprite.r, sprite.g, sprite.b);
 
 #if DEBUG_DRAW
-	glViewport(APP_VIRTUAL_WIDTH * 0.5f, 0.0f, APP_VIRTUAL_WIDTH * 0.5f, APP_VIRTUAL_HEIGHT);
-	App::DrawLine(viewer.m_position, sprite.position, sprite.r, sprite.g, sprite.b);
-	App::DrawQuad(
-		sprite.position.x - sprite.m_width * 0.5f, sprite.position.y - sprite.m_height * 0.5f,
-		sprite.position.x + sprite.m_width * 0.5f, sprite.position.y + sprite.m_height * 0.5f,
-		sprite.r, sprite.g, sprite.b
-	);
-	glViewport(0.0f, 0.0f, APP_VIRTUAL_WIDTH * 0.5f, APP_VIRTUAL_HEIGHT);
+		glViewport(APP_VIRTUAL_WIDTH * 0.5f, 0.0f, APP_VIRTUAL_WIDTH * 0.5f, APP_VIRTUAL_HEIGHT);
+		App::DrawLine(viewer.m_position, sprite.position, sprite.r, sprite.g, sprite.b);
+		App::DrawQuad(
+			sprite.position.x - sprite.m_width * 0.5f, sprite.position.y - sprite.m_height * 0.5f,
+			sprite.position.x + sprite.m_width * 0.5f, sprite.position.y + sprite.m_height * 0.5f,
+			sprite.r, sprite.g, sprite.b
+		);
+		glViewport(0.0f, 0.0f, APP_VIRTUAL_WIDTH * 0.5f, APP_VIRTUAL_HEIGHT);
 #endif
+	}
 }
 
 void CRayCaster::clearDepthBuffer()

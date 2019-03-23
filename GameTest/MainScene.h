@@ -23,5 +23,5 @@ private:
 	CRayCaster m_rayCaster{ 4.0f };
 	CPlayer m_player;
 
-	CSprite m_ghosts[4];
+	std::vector<CSprite> m_ghosts;
 };

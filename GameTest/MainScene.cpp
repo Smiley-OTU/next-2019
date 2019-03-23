@@ -6,12 +6,12 @@
 #define PINKY 1
 #define INKY 2
 #define CLYDE 3
-#define NUM_GHOSTS 4
 
 CMainScene::CMainScene()
 {
 	const float spriteWidth = 40.0f;
 	const float spriteHeight = 30.0f;
+	m_ghosts.resize(4);
 	m_ghosts[BLINKY] = CSprite{ spriteWidth, spriteHeight, 1.0f, 0.0f, 0.0f };
 	m_ghosts[PINKY] = CSprite{ spriteWidth, spriteHeight, 1.0f, 0.5f, 0.0f };
 	m_ghosts[INKY] = CSprite{ spriteWidth, spriteHeight, 0.0f, 1.0f, 1.0f };
@@ -34,19 +34,8 @@ void CMainScene::Render()
 	App::DrawQuad(0.0f, 0.0f, APP_VIRTUAL_WIDTH, halfHeight, 0.2f, 0.2f, 0.2f);					//Floor
 	App::DrawQuad(0.0f, halfHeight, APP_VIRTUAL_WIDTH, APP_VIRTUAL_HEIGHT, 0.3f, 0.3f, 0.3f);	//Ceiling
 
-	//Map
 	m_rayCaster.RenderMap(m_map, m_player);
-
-	//Sprites (depth sorted explicitly due to last minute improvements). A better implementation would only sort stuff that's queued for rendering.
-	std::map<float, CSprite*> depthSortedSprites;
-	for (int i = 0; i < NUM_GHOSTS; i++) {
-		float distance = Math::l1norm(CPoint{ m_player.GetPosition() - m_ghosts[i].position });
-		//Although sprites are small in size, its unnecessary to copy them so I used weak pointers. References aren't applicable in this case.
-		depthSortedSprites[distance] = &m_ghosts[i];
-	}
-	for(auto it = depthSortedSprites.rbegin(); it != depthSortedSprites.rend(); ++it)
-		m_rayCaster.RenderSprite(m_map, m_player, *it->second);
-
+	m_rayCaster.RenderSprites(m_map, m_player, m_ghosts);
 	RenderMinimap();
 
 	m_rayCaster.clearDepthBuffer();
