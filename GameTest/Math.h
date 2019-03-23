@@ -60,36 +60,6 @@ namespace Math {
 		return CPoint{ cosf(angle), sinf(angle) };
 	}
 
-	//Forms an angle in radians relative to the origin based on the input vector in radians.
-	/*inline float angle_r(float dy, float dx) {
-		return atan2f(dy, dx);
-	}
-
-	//Forms an angle in radians relative to the origin based on the input vector in radians.
-	inline float angle_r(const CPoint& direction) {
-		return angle_r(direction.y, direction.x);
-	}
-
-	//Forms a two-component direction vector in radians relative to the origin based on the input angle in radians.
-	inline CPoint direction_r(float angle) {
-		return CPoint{ cosf(angle), sinf(angle) };
-	}
-
-	//Convert value between (-1.0, 1.0f) to (0.0, 1.0).
-	inline float bias(float value) {
-		return (value + 1.0f) * 0.5f;
-	}
-
-	//Convert value between (0.0, 1.0f) to (-1.0, 1.0).
-	inline float unbias(float value) {
-		return value * 2.0f - 1.0f;
-	}
-
-	//Converts a value from its original range to the desire range (think lerp).
-	inline float map(float value, float inMin, float inMax, float outMin, float outMax) {
-		return ((value - inMin) / (inMax - inMin)) * (outMax - outMin) + outMin;
-	}*/
-
 	//a.b (2d vector dot product).
 	inline float dot(const CPoint& a, const CPoint& b) {
 		return a.x * b.x + a.y * b.y;
@@ -132,6 +102,59 @@ namespace Math {
 		float yDelta = line.p2y - line.p1y;
 		return sqrtf(xDelta * xDelta + yDelta * yDelta);
 	}
+
+	//Returns whether or not two circles intersect.
+	inline bool circleCollision(const CPoint& p1, const CPoint& p2, float r1, float r2) {
+		float distance = l1norm(p2 - p1);
+		float radiiSum = abs(r1) + abs(r2);
+		//If the sum of the radii is greater than the distance inbetween points, there's a collision.
+		return radiiSum >= distance;
+	}
+
+	//Returns whether or not two circles intersect and writes the minimum translation vector to separate them.
+	//The mtv will translate p1 away from p2.
+	inline bool circleCollision(const CPoint& p1, const CPoint& p2, float r1, float r2, CPoint& mtv) {
+		CPoint toP1{ p2 - p1 };
+		float distance = l1norm(toP1);
+		float radiiSum = abs(r1) + abs(r2);
+		if (radiiSum < distance)
+			return false;
+		//Make unit (direction) vector.
+		toP1 /= distance;
+		//Translate by the difference in the direction away from p2.
+		mtv = toP1 * (radiiSum - distance);
+		return true;
+	}
+
+	//Forms an angle in radians relative to the origin based on the input vector in radians.
+	/*inline float angle_r(float dy, float dx) {
+		return atan2f(dy, dx);
+	}
+
+	//Forms an angle in radians relative to the origin based on the input vector in radians.
+	inline float angle_r(const CPoint& direction) {
+		return angle_r(direction.y, direction.x);
+	}
+
+	//Forms a two-component direction vector in radians relative to the origin based on the input angle in radians.
+	inline CPoint direction_r(float angle) {
+		return CPoint{ cosf(angle), sinf(angle) };
+	}
+
+	//Convert value between (-1.0, 1.0f) to (0.0, 1.0).
+	inline float bias(float value) {
+		return (value + 1.0f) * 0.5f;
+	}
+
+	//Convert value between (0.0, 1.0f) to (-1.0, 1.0).
+	inline float unbias(float value) {
+		return value * 2.0f - 1.0f;
+	}
+
+	//Converts a value from its original range to the desire range (think lerp).
+	inline float map(float value, float inMin, float inMax, float outMin, float outMax) {
+		return ((value - inMin) / (inMax - inMin)) * (outMax - outMin) + outMin;
+	}*/
 
 	//Creates a point with a length of one in the direciton of the passed in point.
 	/*inline CPoint normalize(const CPoint& point) {

@@ -12,7 +12,6 @@
 
 #include "../Point.h"
 #include "../Line.h"
-#include "../ColouredLine.h"
 
 //---------------------------------------------------------------------------------
 // Utils and externals for system info.

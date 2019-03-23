@@ -3,7 +3,7 @@
 #include "App/app.h"
 #include "SimpleTileMap.h"
 
-CPlayer::CPlayer() : m_translationSpeed(100.0f), m_rotationSpeed(100.0f)
+CPlayer::CPlayer() : m_translationSpeed(100.0f), m_rotationSpeed(100.0f), m_radius(20.0f)
 {
 }
 
@@ -31,4 +31,9 @@ void CPlayer::Update(const CSimpleTileMap& map, float deltaTime)
 	//Clamp the angle between 0 and 360 (prevents overflow and gives me nice numbers).
 	m_angle += 360.0f;
 	m_angle = fmod(m_angle, 360.0f);
+}
+
+float CPlayer::GetRadius()
+{
+	return m_radius;
 }

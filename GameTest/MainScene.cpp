@@ -54,6 +54,10 @@ void CMainScene::RenderMinimap()
 	static const float y = APP_VIRTUAL_HEIGHT * margin;
 	glViewport(x, y, scaledScreenWidth, scaledScreenHeight);
 	m_map.Render();
-	App::DrawPoint(m_player.GetPosition(), 5.0f, 0.8f, 0.8f, 0.0f);
+	const CPoint playerPosition{ m_player.GetPosition() };
+	const CPoint playerDirection{ m_player.GetDirection() };
+	App::DrawPoint(playerPosition, m_player.GetRadius(), 0.8f, 0.8f, 0.0f);
+	glLineWidth(1.0f);
+	App::DrawLine(playerPosition.x, playerPosition.y, playerPosition.x + playerDirection.x * 50.0f, playerPosition.y + playerDirection.y * 50.0f, 0.8f, 0.8f, 0.0f);
 	glViewport(0.0f, 0.0f, APP_VIRTUAL_WIDTH, APP_VIRTUAL_HEIGHT);
 }

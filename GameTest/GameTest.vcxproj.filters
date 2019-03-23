@@ -28,9 +28,6 @@
     <Filter Include="Source Files\Visuals">
       <UniqueIdentifier>{c81b28ef-2182-40b0-9abe-35951114e435}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Collision">
-      <UniqueIdentifier>{4fd600f5-1063-4b38-84d2-cef8d4e8038a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Scenes">
       <UniqueIdentifier>{4fa87ca4-9f82-4e24-94e0-07789e679dd2}</UniqueIdentifier>
     </Filter>
@@ -78,23 +75,11 @@
     <ClInclude Include="Viewer.h">
       <Filter>Source Files\Actors</Filter>
     </ClInclude>
-    <ClInclude Include="Colour.h">
-      <Filter>Source Files\Visuals</Filter>
-    </ClInclude>
     <ClInclude Include="RayCaster.h">
       <Filter>Source Files\Visuals</Filter>
     </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>Source Files\Actors</Filter>
-    </ClInclude>
-    <ClInclude Include="Circle.h">
-      <Filter>Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="Box.h">
-      <Filter>Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="Collision.h">
-      <Filter>Collision</Filter>
     </ClInclude>
     <ClInclude Include="Scene.h">
       <Filter>Scenes</Filter>
@@ -149,23 +134,11 @@
     <ClCompile Include="Viewer.cpp">
       <Filter>Source Files\Actors</Filter>
     </ClCompile>
-    <ClCompile Include="Colour.cpp">
-      <Filter>Source Files\Visuals</Filter>
-    </ClCompile>
     <ClCompile Include="RayCaster.cpp">
       <Filter>Source Files\Visuals</Filter>
     </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>Source Files\Actors</Filter>
-    </ClCompile>
-    <ClCompile Include="Circle.cpp">
-      <Filter>Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="Box.cpp">
-      <Filter>Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="Collision.cpp">
-      <Filter>Collision</Filter>
     </ClCompile>
     <ClCompile Include="Scene.cpp">
       <Filter>Scenes</Filter>

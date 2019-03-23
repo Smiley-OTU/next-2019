@@ -7,7 +7,6 @@
 #include <windows.h> 
 //---------------------------------------------------------------------------------
 #include "../glut/include/GL/freeglut.h"
-//#include "../glut/glut.h"
 #include "AppSettings.h"
 #include "SimpleController.h"
 struct CPoint;
@@ -100,10 +99,6 @@ namespace App
 	// See SimpleController.h for more info.
 	//-------------------------------------------------------------------------------------------
 	const CController &GetController( int pad = 0 );
-
-    void CreateRandomTileMap(int dimensions = 20, int maxTunnels = 200, int maxLength = 4);
-    void RenderTileMap();
-    int GetTileMapValue(int x, int y);
 };
 
 namespace Keys {
