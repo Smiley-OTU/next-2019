@@ -5,7 +5,7 @@
 #include "Line.h"
 
 //Increase distance till point of intersection by 5% so that the ray is guaranteed to exceed its current cell.
-#define DEBUG_DRAW false
+#define DEBUG_DRAW true
 
 CRayCaster::CRayCaster(float thickness) :
 	m_count(APP_VIRTUAL_WIDTH / (uint32_t)thickness), m_thickness(thickness), m_step((float)m_count * thickness), m_rayOriginY(APP_VIRTUAL_HEIGHT * 0.5f)
@@ -45,7 +45,7 @@ void CRayCaster::Update(const CSimpleTileMap& map, const CViewer& viewer)
 	}
 }
 
-void CRayCaster::Render(const CSimpleTileMap& map, const CViewer& viewer)
+void CRayCaster::RenderMap(const CSimpleTileMap& map, const CViewer& viewer)
 {
 #if DEBUG_DRAW
 	glViewport(APP_VIRTUAL_WIDTH * 0.5f, 0.0f, APP_VIRTUAL_WIDTH * 0.5f, APP_VIRTUAL_HEIGHT);
@@ -84,11 +84,10 @@ void CRayCaster::Render(const CSimpleTileMap& map, const CViewer& viewer)
 	}
 }
 
-void CRayCaster::RenderSprite(const CSimpleTileMap& map, const CViewer& viewer, const CPoint& spritePosition,
-	float spriteWidth, float spriteHeight, float r, float g, float b)
+void CRayCaster::RenderSprite(const CSimpleTileMap& map, const CViewer& viewer, const CSprite& sprite)
 {
 	//Frustum culling:
-	CPoint toSprite{ spritePosition - viewer.m_position };
+	CPoint toSprite{ sprite.position - viewer.m_position };
 	float toSpriteDistance = Math::l2norm(toSprite);
 	toSprite /= toSpriteDistance;
 
@@ -113,17 +112,17 @@ void CRayCaster::RenderSprite(const CSimpleTileMap& map, const CViewer& viewer, 
 
 	//Eventually pass in sprite width and height here. Be sure to do x - width / 2. Also render furthest sprites first.
 	float xCentre = APP_VIRTUAL_WIDTH * 0.5f + x;
-	float halfWidth = spriteWidth * 0.5f * scale;
-	float halfHeight = spriteHeight * 0.5f * scale;
-	App::DrawQuad(xCentre - halfWidth, m_rayOriginY - halfHeight, xCentre + halfWidth, m_rayOriginY + halfHeight, r, g, b);
+	float halfWidth = sprite.m_width * 0.5f * scale;
+	float halfHeight = sprite.m_height * 0.5f * scale;
+	App::DrawQuad(xCentre - halfWidth, m_rayOriginY - halfHeight, xCentre + halfWidth, m_rayOriginY + halfHeight, sprite.r, sprite.g, sprite.b);
 
 #if DEBUG_DRAW
 	glViewport(APP_VIRTUAL_WIDTH * 0.5f, 0.0f, APP_VIRTUAL_WIDTH * 0.5f, APP_VIRTUAL_HEIGHT);
-	App::DrawLine(viewer.m_position, spritePosition, r, g, b);
+	App::DrawLine(viewer.m_position, sprite.position, sprite.r, sprite.g, sprite.b);
 	App::DrawQuad(
-		spritePosition.x - spriteWidth * 0.5f, spritePosition.y - spriteWidth * 0.5f,
-		spritePosition.x + spriteWidth * 0.5f, spritePosition.y + spriteWidth * 0.5f,
-		r, g, b
+		sprite.position.x - sprite.m_width * 0.5f, sprite.position.y - sprite.m_height * 0.5f,
+		sprite.position.x + sprite.m_width * 0.5f, sprite.position.y + sprite.m_height * 0.5f,
+		sprite.r, sprite.g, sprite.b
 	);
 	glViewport(0.0f, 0.0f, APP_VIRTUAL_WIDTH * 0.5f, APP_VIRTUAL_HEIGHT);
 #endif

@@ -2,8 +2,20 @@
 #include "MainScene.h"
 #include "App/app.h"
 
+#define BLINKY 0
+#define PINKY 1
+#define INKY 2
+#define CLYDE 3
+#define NUM_GHOSTS 4
+
 CMainScene::CMainScene()
 {
+	const float spriteWidth = 40.0f;
+	const float spriteHeight = 30.0f;
+	m_ghosts[BLINKY] = CSprite{ spriteWidth, spriteHeight, 1.0f, 0.0f, 0.0f };
+	m_ghosts[PINKY] = CSprite{ spriteWidth, spriteHeight, 1.0f, 0.5f, 0.0f };
+	m_ghosts[INKY] = CSprite{ spriteWidth, spriteHeight, 0.0f, 1.0f, 1.0f };
+	m_ghosts[CLYDE] = CSprite{ spriteWidth, spriteHeight, 1.0f, 0.5f, 1.0f };
 }
 
 CMainScene::~CMainScene()
@@ -17,22 +29,18 @@ void CMainScene::Update(float deltaTime)
 }
 
 void CMainScene::Render()
-{	//Blue.
-	glClearColor(0.0f, 1.0f, 1.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
-
-	glViewport(0.0f, 0.0f, APP_VIRTUAL_WIDTH, APP_VIRTUAL_HEIGHT);
-	//Fake 3D:
+{
 	const float halfHeight = APP_VIRTUAL_HEIGHT * 0.5f;
 	App::DrawQuad(0.0f, 0.0f, APP_VIRTUAL_WIDTH, halfHeight, 0.2f, 0.2f, 0.2f);					//Floor
 	App::DrawQuad(0.0f, halfHeight, APP_VIRTUAL_WIDTH, APP_VIRTUAL_HEIGHT, 0.3f, 0.3f, 0.3f);	//Ceiling
 
-	m_rayCaster.Render(m_map, m_player);
+	m_rayCaster.RenderMap(m_map, m_player);
+
+	for (int i = 0; i < NUM_GHOSTS; i++) {
+		m_rayCaster.RenderSprite(m_map, m_player, m_ghosts[i]);
+	}
+
 	RenderMinimap();
-	m_rayCaster.RenderSprite(m_map, m_player, CPoint{ 200.0f, 300.0f }, 40.0f, 30.0f, 0.0f, 0.2f, 1.0f);
-	m_rayCaster.RenderSprite(m_map, m_player, CPoint{ 300.0f, 300.0f }, 40.0f, 30.0f, 1.0f, 0.0f, 0.0f);
-	m_rayCaster.RenderSprite(m_map, m_player, CPoint{ 400.0f, 300.0f }, 40.0f, 30.0f, 1.0f, 0.5f, 0.0f);
-	m_rayCaster.RenderSprite(m_map, m_player, CPoint{ 500.0f, 300.0f }, 40.0f, 30.0f, 1.0f, 0.0f, 1.0f);
 	m_rayCaster.clearDepthBuffer();
 }
 
@@ -42,6 +50,16 @@ void CMainScene::OnEnter()
 	m_player.SetFov(45.0f);
 	m_player.SetPosition(390.0f, 431.0f);
 	m_player.SetDirection(90.0f);
+
+	m_ghosts[BLINKY].position = CPoint{ 200.0f, 300.0f };
+	m_ghosts[PINKY].position = CPoint{ 300.0f, 300.0f };
+	m_ghosts[INKY].position = CPoint{ 400.0f, 300.0f };
+	m_ghosts[CLYDE].position = CPoint{ 500.0f, 300.0f };
+	
+	//Replace hard coding with a function that seeks out non-wall tiles in an area otherwise we risk placing a ghost in a wall.
+	//for (int i = 0; i < NUM_GHOSTS; i++) {
+	//	m_ghosts[i].findPosition();
+	//}
 }
 
 void CMainScene::RenderMinimap()

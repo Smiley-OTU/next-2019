@@ -1,10 +1,10 @@
 #pragma once
 #include "Point.h"
 //Also give friendship to ghost behaviour or whatever so that ghosts can access colour to flicker when pacman gets a powerup.
-class RayCaster;
+class CRayCaster;
 class CSprite
 {
-	friend RayCaster;
+	friend CRayCaster;
 public:
 	CSprite(float width, float height, float a_r, float a_g, float a_b);
 	CSprite();

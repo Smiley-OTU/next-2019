@@ -1,5 +1,6 @@
 #pragma once
 #include "SimpleTileMap.h"
+#include "Sprite.h"
 class CViewer;
 class CRayCaster
 {
@@ -8,9 +9,8 @@ public:
 	~CRayCaster();
 
 	void Update(const CSimpleTileMap& map, const CViewer& viewer);
-	void Render(const CSimpleTileMap& map, const CViewer& viewer);
-	void RenderSprite(const CSimpleTileMap& map, const CViewer& viewer, const CPoint& spritePosition,
-		float spriteWidth, float spriteHeight, float r = 0.0f, float g = 0.0f, float b = 0.0f);
+	void RenderMap(const CSimpleTileMap& map, const CViewer& viewer);
+	void RenderSprite(const CSimpleTileMap& map, const CViewer& viewer, const CSprite& sprite);
 	//Tempted to to name this to clear, give it bitfield argument so I could type clear(GL_DEPTH_BUFFER_BIT) xD
 	void clearDepthBuffer();
 

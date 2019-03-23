@@ -3,6 +3,7 @@
 #include "SimpleTileMap.h"
 #include "RayCaster.h"
 #include "Player.h"
+#include "Sprite.h"
 
 class CMainScene :
 	public CScene
@@ -21,4 +22,6 @@ private:
 	CSimpleTileMap m_map{ 16 };
 	CRayCaster m_rayCaster{ 4.0f };
 	CPlayer m_player;
+
+	CSprite m_ghosts[4];
 };
