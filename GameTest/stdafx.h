@@ -32,3 +32,6 @@
 
 //Game programming is math heavy!
 #include "Math.h"
+
+//Very useful.
+#include <algorithm>
