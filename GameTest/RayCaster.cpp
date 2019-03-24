@@ -151,9 +151,6 @@ void CRayCaster::clearDepthBuffer()
 
 inline CPoint CRayCaster::march(const CSimpleTileMap& map, const CPoint& position, const CPoint& direction)
 {
-	const float tileWidth = map.getTileWidth();
-	const float tileHeight = map.getTileHeight();
-
 	const float unitRise = direction.y / direction.x;
 	const float unitRun = direction.x / direction.y;
 
@@ -162,26 +159,22 @@ inline CPoint CRayCaster::march(const CSimpleTileMap& map, const CPoint& positio
 	uint32_t stepCount = 0;
 	CPoint poi = position;
 	while (tileValue == EMapValue::AIR) {
-		const float xRemainder = fmodf(poi.x, tileWidth);
-		const float xEdge = direction.x >= 0.0f ? poi.x + tileWidth - xRemainder : poi.x - xRemainder;
-		const float xDistance = xEdge - poi.x;
-		const float xRate = xDistance / direction.x;
+		float xOverlap = Math::overlap(poi.x, direction.x, map.getTileWidth());
+		const float xRate = xOverlap / direction.x;
 
-		const float yRemainder = fmodf(poi.y, tileHeight);
-		const float yEdge = direction.y >= 0.0f ? poi.y + tileHeight - yRemainder : poi.y - yRemainder;
-		const float yDistance = yEdge - poi.y;
-		const float yRate = yDistance / direction.y;
+		float yOverlap = Math::overlap(poi.y, direction.y, map.getTileHeight());
+		const float yRate = yOverlap / direction.y;
 
 		//Increase the poi by a small percentage in order to ensure its in a new cell.
 		static const float DISTANCE_MULTIPLIER = 1.05f;
 		//Move x proportional to how we moved y or vice versa based on nearest edge.
 		if (abs(yRate) < abs(xRate)) {
-			const float distance = yDistance * DISTANCE_MULTIPLIER;
+			const float distance = yOverlap * DISTANCE_MULTIPLIER;
 			poi.y = poi.y + distance;
 			poi.x = poi.x + distance * unitRun;
 		}
 		else {
-			const float distance = xDistance * DISTANCE_MULTIPLIER;
+			const float distance = xOverlap * DISTANCE_MULTIPLIER;
 			poi.x = poi.x + distance;
 			poi.y = poi.y + distance * unitRise;
 		}

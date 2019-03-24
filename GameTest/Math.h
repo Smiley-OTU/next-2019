@@ -44,6 +44,12 @@ namespace Math {
 		return degrees * 0.0174532925199f;
 	}
 
+	inline float overlap(float position, float direction, float tileLength) {
+		const float remainder = fmodf(position, tileLength);
+		const float edge = direction >= 0.0f ? position + tileLength - remainder : position - remainder;
+		return edge - position;
+	}
+
 	//Forms an angle measured in degrees relative to the origin based on the input vector in degrees.
 	inline float angle(float dy, float dx) {
 		return degrees(atan2f(radians(dy), radians(dx)));
