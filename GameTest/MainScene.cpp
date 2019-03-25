@@ -29,11 +29,14 @@ void CMainScene::Update(float deltaTime)
 	m_rayCaster.Update(m_map, m_player);
 	Cell start = m_map.GetCell(m_ghosts[0].position);
 	Cell end = m_map.GetCell(m_player.GetPosition());
-	printf("%i %i\n", start.first, start.second);
-	printf("%i %i\n", end.first, end.second);
+	printf("Start: %i %i\n", start.first, start.second);
+	printf("End: %i %i\n\n", end.first, end.second);
 	std::vector<Cell> path = Pathing::aStar(m_map, start, end);
-	for (auto& node : path)
-		printf("%i %i\n", node.first, node.second);
+	//for (auto& node : path)
+	//	printf("%i %i\n", node.first, node.second);
+
+	printf("Pathing finished.\n");
+	printf("");
 }
 
 void CMainScene::Render()

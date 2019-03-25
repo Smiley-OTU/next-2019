@@ -5,11 +5,15 @@
 struct CPathNode {
 	CPathNode(const Cell& cell) : xIndex(cell.first), yIndex(cell.second) {}
 	float f() { return g + h; }
-	int g = 1;
-	float h = 0.0f;
+	int g = 0;
+	int h = 0;
 	int xIndex = 0;
 	int yIndex = 0;
 	CPathNode* parent = nullptr;
+
+	void print() {
+		printf("x %i y %i g %i h %i f %i ptr %p.\n", xIndex, yIndex, g, h, f(), parent);
+	}
 
 	bool operator==(const CPathNode& pathNode) {
 		return xIndex == pathNode.xIndex && yIndex == pathNode.yIndex;
@@ -37,7 +41,7 @@ inline std::vector<CPathNode> getNeighbours(const CSimpleTileMap& map, int xInde
 }
 
 //Manhattan distance as my heuristic.
-inline float hValue(const Cell& cell1, const Cell& cell2) {
+inline int hValue(const Cell& cell1, const Cell& cell2) {
 	return abs(cell2.first - cell1.first) + abs(cell2.second - cell1.second);
 }
 
@@ -54,7 +58,10 @@ std::vector<Cell> Pathing::aStar(const CSimpleTileMap& map, const Cell & start, 
 		for (auto& node : openList) {
 			if (node.f() < bestNode.f())
 				bestNode = node;
+			node.print();
 		}
+		static int count = 1;
+		printf("Count: %i.\n", count++);
 
 		//Traverse the list of path nodes from end to start then reverse it!
 		if (bestNode.xIndex == end.first && bestNode.yIndex == end.second) {
@@ -106,6 +113,8 @@ std::vector<Cell> Pathing::aStar(const CSimpleTileMap& map, const Cell & start, 
 			if (gScoreIsBest) {
 				node.parent = &bestNode;
 				node.g = gScore;
+				node.print();
+				bestNode.print();
 			}
 		}
 	}
