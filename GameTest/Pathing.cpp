@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Pathing.h"
+#include "SimpleTileMap.h"
 
 struct CPathNode {
 	CPathNode(const Cell& cell) : xIndex(cell.first), yIndex(cell.second) {}
@@ -14,11 +15,27 @@ struct CPathNode {
 	}
 };
 
-/*inline bool compareNodes(const CPathNode& a, const CPathNode& b) {
-	return a.xIndex == b.xIndex && a.yIndex == b.yIndex;
-}*/
+std::vector<CPathNode> getNeighbours(const CSimpleTileMap& map, int xIndex, int yIndex) {
+	std::vector<CPathNode> neighbours;
+	const static char numAdjacent = 4;
+	CPathNode pendingNeighbours[numAdjacent] = {
+		CPathNode{std::make_pair(xIndex - 1, yIndex)},	//Left
+		CPathNode{std::make_pair(xIndex + 1, yIndex)},	//Right
+		CPathNode{std::make_pair(xIndex, yIndex - 1)},	//Up
+		CPathNode{std::make_pair(xIndex, yIndex + 1)},	//Down
+	};
 
-const std::vector<Cell>& Pathing::aStar(const Cell & start, const Cell & end)
+	for (char i = 0; i < numAdjacent; i++) {
+		const CPathNode& pn = pendingNeighbours[i];
+		EMapValue tileValue = map.GetTileMapValue(pn.xIndex, pn.yIndex);
+		if (tileValue != EMapValue::BORDER && tileValue != EMapValue::WALL && tileValue != EMapValue::OUTOFBOUNDS)
+			neighbours.push_back(pn);
+	}
+
+	return neighbours;
+}
+
+std::vector<Cell> Pathing::aStar(const CSimpleTileMap& map, const Cell & start, const Cell & end)
 {
 	std::vector<CPathNode> closedList;
 	std::vector<CPathNode> openList{ CPathNode(start) };
@@ -44,7 +61,8 @@ const std::vector<Cell>& Pathing::aStar(const Cell & start, const Cell & end)
 			return path;
 		}
 
-		//Remove best node from the open list.
+		//Add the best node to the closed list and remove it from the open list.
+		closedList.push_back(bestNode);
 		openList.erase(std::find(openList.begin(), openList.end(), bestNode));
 
 
