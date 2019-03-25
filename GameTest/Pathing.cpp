@@ -35,6 +35,7 @@ inline std::vector<CPathNode> getNeighbours(const CSimpleTileMap& map, int xInde
 		EMapValue tileValue = map.GetTileMapValue(pn.xIndex, pn.yIndex);
 		if (tileValue != EMapValue::BORDER && tileValue != EMapValue::WALL && tileValue != EMapValue::OUTOFBOUNDS)
 			neighbours.push_back(pn);
+			//neighbours.push_back(CPathNode{ pn });
 	}
 
 	return neighbours;
@@ -58,7 +59,6 @@ std::vector<Cell> Pathing::aStar(const CSimpleTileMap& map, const Cell & start, 
 		for (auto& node : openList) {
 			if (node.f() < bestNode.f())
 				bestNode = node;
-			node.print();
 		}
 		static int count = 1;
 		printf("Count: %i.\n", count++);
@@ -76,11 +76,17 @@ std::vector<Cell> Pathing::aStar(const CSimpleTileMap& map, const Cell & start, 
 		}
 
 		//Add the best node to the closed list and remove it from the open list.
-		closedList.push_back(bestNode);
+		//closedList.push_back(bestNode);
+		closedList.push_back(CPathNode{ bestNode });
 		openList.erase(std::find(openList.begin(), openList.end(), bestNode));
+		bestNode = closedList.back();
 
 		//Fetch surrounding nodes.
 		std::vector<CPathNode> neighbours = getNeighbours(map, bestNode.xIndex, bestNode.yIndex);
+		printf("Neighbours:\n");
+		for (CPathNode& node : neighbours)
+			node.print();
+		printf("\n");
 
 		for (CPathNode& node : neighbours) {
 			//Make sure current node hasn't already been processed (ensure not in closed list).
@@ -113,8 +119,11 @@ std::vector<Cell> Pathing::aStar(const CSimpleTileMap& map, const Cell & start, 
 			if (gScoreIsBest) {
 				node.parent = &bestNode;
 				node.g = gScore;
+				printf("Node:\n");
 				node.print();
+				printf("Best node:\n");
 				bestNode.print();
+				printf("\n");
 			}
 		}
 	}
