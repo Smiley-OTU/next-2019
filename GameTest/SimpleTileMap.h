@@ -55,8 +55,8 @@ public:
     //--------------------------------------------------------------------------------------------
     EMapValue GetTileMapValue(const int x, const int y)  const;
     EMapValue GetTileMapValue(const float fx, const float fy) const;
-	Cell getCell(float x, float y);
-	Cell getCell(const CPoint& point);
+	Cell GetCell(float x, float y);
+	Cell GetCell(const CPoint& point);
     //--------------------------------------------------------------------------------------------
     // Set the tile value at give coords in grid.
     //--------------------------------------------------------------------------------------------

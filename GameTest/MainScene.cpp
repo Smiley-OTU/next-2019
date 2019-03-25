@@ -27,7 +27,7 @@ void CMainScene::Update(float deltaTime)
 {
 	m_player.Update(m_map, deltaTime);
 	m_rayCaster.Update(m_map, m_player);
-	Cell end = m_map.getCell(m_player.GetPosition());
+	Cell end = m_map.GetCell(m_player.GetPosition());
 	printf("%i %i\n", end.first, end.second);
 
 }
