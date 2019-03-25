@@ -52,10 +52,8 @@ void CScene::RenderActiveScene()
 
 void CScene::Shutdown()
 {
-	delete s_scenes[MENU];
-	delete s_scenes[INSTRUCTION];
-	delete s_scenes[MAIN];
-	delete s_scenes[END];
+	for (uint32_t i = 0; i < ESceneType::NUM_SCENES; i++)
+		delete s_scenes[i];
 	s_initialized = false;
 }
 

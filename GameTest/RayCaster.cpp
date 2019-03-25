@@ -4,7 +4,7 @@
 #include "Viewer.h"
 #include "Line.h"
 
-//Increase distance till point of intersection by 5% so that the ray is guaranteed to exceed its current cell.
+//Renders ghosts only if within the player's fov along with the vector from player to ghost, and renders all rays.
 #define DEBUG_DRAW true
 
 CRayCaster::CRayCaster(float thickness) :
@@ -12,7 +12,6 @@ CRayCaster::CRayCaster(float thickness) :
 {	//Make sure thickness is between 1 and 32.
 	assert(thickness >= 1.0f && thickness <= 31.0f);
 	m_indexBuffer.resize(m_count);
-	m_poiBuffer.resize(m_count);
 	m_depthBuffer.resize(m_count);
 	clearDepthBuffer();
 }
@@ -37,11 +36,6 @@ void CRayCaster::Update(const CSimpleTileMap& map, const CViewer& viewer)
 		//glDepthFunc(GL_LESS) ;)
 		if (depth < m_depthBuffer[i])
 			m_depthBuffer[i] = depth;
-
-#if DEBUG_DRAW
-		//Store debug information.
-		m_poiBuffer[i] = poi;
-#endif
 	}
 }
 
@@ -55,8 +49,12 @@ void CRayCaster::RenderMap(const CSimpleTileMap& map, const CViewer& viewer)
 	map.Render();
 
 	//Rays.
-	for (uint32_t i = 0; i < m_count; i++)
-		App::DrawLine(viewer.m_position.x, viewer.m_position.y, m_poiBuffer[i].x, m_poiBuffer[i].y);
+	const float angleStep = viewer.m_fov / (float)m_count;
+	const float raysStart = viewer.m_angle - viewer.m_fov * 0.5f;
+	for (uint32_t i = 0; i < m_count; i++) {
+		const CPoint direction{ Math::direction(raysStart + angleStep * (float)i) };
+		App::DrawLine(viewer.m_position.x, viewer.m_position.y, viewer.m_position.x + direction.x * m_depthBuffer[i], viewer.m_position.y + direction.y * m_depthBuffer[i]);
+	}
 
 	//Vertical lines.
 	const float tileWidth = map.getTileWidth();

@@ -19,9 +19,6 @@ private:
 	std::vector<EMapValue> m_indexBuffer;
 	std::vector<float> m_depthBuffer;
 
-	//Stores intersection points for debugging.
-	std::vector<CPoint> m_poiBuffer;
-
 	//Number of rays.
 	const uint32_t m_count;
 
