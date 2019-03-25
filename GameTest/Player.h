@@ -9,10 +9,9 @@ public:
 	~CPlayer();
 
 	void Update(const CSimpleTileMap& map, float deltaTime);
-	float GetRadius();
+	float GetSpeed();
 
 private:
 	float m_rotationSpeed;
 	float m_translationSpeed;
-	float m_radius = 10.0f;
 };

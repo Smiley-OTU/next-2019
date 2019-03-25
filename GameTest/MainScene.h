@@ -24,4 +24,5 @@ private:
 	CPlayer m_player;
 
 	std::vector<CSprite> m_ghosts;
+	const float m_actorRadius;
 };

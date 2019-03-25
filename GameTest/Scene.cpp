@@ -36,9 +36,7 @@ void CScene::Init()
 	s_scenes[END] = new CEndScene();
 
 	s_initialized = true;
-	//s_activeScene = s_scenes[MENU];
-	//s_activeScene = s_scenes[INSTRUCTION];
-	s_activeScene = s_scenes[MAIN];
+	s_activeScene = s_scenes[MENU];
 	s_activeScene->OnEnter();
 }
 

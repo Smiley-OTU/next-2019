@@ -8,7 +8,7 @@
 #define INKY 2
 #define CLYDE 3
 
-CMainScene::CMainScene()
+CMainScene::CMainScene() : m_actorRadius(50.0f)
 {
 	const float spriteWidth = 40.0f;
 	const float spriteHeight = 30.0f;
@@ -27,16 +27,13 @@ void CMainScene::Update(float deltaTime)
 {
 	m_player.Update(m_map, deltaTime);
 	m_rayCaster.Update(m_map, m_player);
-	Cell start = m_map.GetCell(m_ghosts[0].position);
-	Cell end = m_map.GetCell(m_player.GetPosition());
-	printf("Start: %i %i\n", start.first, start.second);
-	printf("End: %i %i\n\n", end.first, end.second);
-	std::vector<Cell> path = Pathing::aStar(m_map, start, end);
-	//for (auto& node : path)
-	//	printf("%i %i\n", node.first, node.second);
-
-	printf("Pathing finished.\n");
-	printf("");
+	float ghostSpeed = m_player.GetSpeed() * 0.5f *  deltaTime / 1000.0f;
+	for (CSprite& ghost : m_ghosts) {
+		CPoint toPlayer{ Math::normalize(m_player.GetPosition() - ghost.position) };
+		ghost.position += toPlayer * ghostSpeed;
+		if (Math::circleCollision(m_player.GetPosition(), ghost.position, m_actorRadius * 0.25f, m_actorRadius * 0.5f))
+			CScene::Change(ESceneType::END);
+	}
 }
 
 void CMainScene::Render()
@@ -55,19 +52,39 @@ void CMainScene::Render()
 void CMainScene::OnEnter()
 {
 	m_map.RandomMap(80, 12);
-	m_player.SetFov(45.0f);
-	m_player.SetPosition(390.0f, 431.0f);
-	m_player.SetDirection(90.0f);
 
-	m_ghosts[BLINKY].position = CPoint{ 200.0f, 300.0f };
-	m_ghosts[PINKY].position = CPoint{ 300.0f, 300.0f };
-	m_ghosts[INKY].position = CPoint{ 400.0f, 300.0f };
-	m_ghosts[CLYDE].position = CPoint{ 500.0f, 300.0f };
-	
-	//Replace hard coding with a function that seeks out non-wall tiles in an area otherwise we risk placing a ghost in a wall.
-	//for (int i = 0; i < NUM_GHOSTS; i++) {
-	//	m_ghosts[i].findPosition();
-	//}
+	//Place the player on air. If no luck, go back to main menu and try again rather than doing my convoluted algorithm.
+	CPoint playerPosition{ APP_VIRTUAL_WIDTH * 0.5f + m_map.getTileWidth() * 0.5f, APP_VIRTUAL_HEIGHT * 0.5f + m_map.getTileHeight() * 0.5f };
+	if(m_map.GetTileMapValue(playerPosition.x, playerPosition.y) != EMapValue::AIR)
+		CScene::Change(ESceneType::MENU);
+	/*
+	Cell playerCell = m_map.GetCell(playerPosition);
+	m_player.SetPosition(playerPosition);
+	EMapValue playerTile = m_map.GetTileMapValue(playerPosition.x, playerPosition.y);
+	int searchArea = 1;
+	while (playerTile != EMapValue::AIR) {
+		for (int i = -searchArea; i < searchArea; i++) {
+			for (int j = -searchArea; j < searchArea; j++) {
+				playerTile = m_map.GetTileMapValue(playerCell.first + i, playerCell.second + j);
+				if (playerTile == AIR) {
+					playerPosition = CPoint{ (playerCell.first + i) * m_map.getTileWidth() + m_map.getTileWidth() * 0.5f, (playerCell.second + j) * m_map.getTileHeight() + m_map.getTileHeight() * 0.5f };
+					break;
+				}
+			}
+		}
+		searchArea++;
+		//If this somehow fails, simply go back to the main menu as if nothing happened.
+		if (searchArea >= m_map.GetMapSize() / 2)
+			CScene::Change(ESceneType::MENU);
+	}*/
+	m_player.SetPosition(playerPosition);
+	m_player.SetDirection(90.0f);
+	m_player.SetFov(75.0f);
+
+	m_ghosts[BLINKY].position = CPoint{ 100.0f, 100.0f };
+	m_ghosts[PINKY].position = CPoint{ APP_VIRTUAL_WIDTH - 100.0f, 100.0f };
+	m_ghosts[INKY].position = CPoint{ 100.0f, APP_VIRTUAL_HEIGHT - 100.0f };
+	m_ghosts[CLYDE].position = CPoint{ APP_VIRTUAL_WIDTH - 100.0f, APP_VIRTUAL_HEIGHT - 100.0f };
 }
 
 void CMainScene::RenderMinimap()
@@ -78,12 +95,19 @@ void CMainScene::RenderMinimap()
 	static const float scaledScreenHeight = APP_VIRTUAL_HEIGHT * mapScale;
 	static const float x = (APP_VIRTUAL_WIDTH - scaledScreenWidth) - APP_VIRTUAL_WIDTH * margin;
 	static const float y = APP_VIRTUAL_HEIGHT * margin;
+
 	glViewport(x, y, scaledScreenWidth, scaledScreenHeight);
+
 	m_map.Render();
+
 	const CPoint playerPosition{ m_player.GetPosition() };
 	const CPoint playerDirection{ m_player.GetDirection() };
-	App::DrawPoint(playerPosition, m_player.GetRadius(), 0.8f, 0.8f, 0.0f);
+	App::DrawPoint(playerPosition, m_actorRadius, 0.8f, 0.8f, 0.0f);
 	glLineWidth(1.0f);
 	App::DrawLine(playerPosition.x, playerPosition.y, playerPosition.x + playerDirection.x * 50.0f, playerPosition.y + playerDirection.y * 50.0f, 0.8f, 0.8f, 0.0f);
+
+	for (const CSprite& ghost : m_ghosts)
+		App::DrawPoint(ghost.position, m_actorRadius, ghost.r, ghost.g, ghost.b);
+
 	glViewport(0.0f, 0.0f, APP_VIRTUAL_WIDTH, APP_VIRTUAL_HEIGHT);
 }

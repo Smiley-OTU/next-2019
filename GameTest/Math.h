@@ -163,7 +163,7 @@ namespace Math {
 	}*/
 
 	//Creates a point with a length of one in the direciton of the passed in point.
-	/*inline CPoint normalize(const CPoint& point) {
+	inline CPoint normalize(const CPoint& point) {
 		return CPoint{ point / l2norm(point) };
 	}
 
@@ -184,7 +184,7 @@ namespace Math {
 	}
 
 	//Writes the point of intersection to the output point (poi), returns a boolean to indicate intersection.
-	inline bool intersect(const CLine& a, const CLine& b, CPoint& poi) {
+	/*inline bool intersect(const CLine& a, const CLine& b, CPoint& poi) {
 		const CPoint r{ a.p2.x - a.p1.x, a.p2.y - a.p1.y };
 		const CPoint s{ b.p2.x - b.p1.x, b.p2.y - b.p1.y };
 

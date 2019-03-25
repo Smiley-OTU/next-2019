@@ -4,7 +4,7 @@
 #include "SimpleTileMap.h"
 #include "App/SimpleController.h"
 
-CPlayer::CPlayer() : m_translationSpeed(100.0f), m_rotationSpeed(100.0f), m_radius(20.0f)
+CPlayer::CPlayer() : m_translationSpeed(100.0f), m_rotationSpeed(100.0f)
 {
 }
 
@@ -21,10 +21,10 @@ void CPlayer::Update(const CSimpleTileMap& map, float deltaTime)
 
 	//if(App::IsKeyPressed(Keys::A))
 	if(controller.CheckButton(XINPUT_GAMEPAD_DPAD_LEFT, false))
-		m_angle += rotationVelocity;
+		m_angle -= rotationVelocity;
 	//else if (App::IsKeyPressed(Keys::D))
 	else if (controller.CheckButton(XINPUT_GAMEPAD_DPAD_RIGHT, false))
-		m_angle -= rotationVelocity;
+		m_angle += rotationVelocity;
 
 	const float translationVelocity = m_translationSpeed * deltaTime;
 	const CPoint direction{ Math::direction(m_angle) };
@@ -66,7 +66,7 @@ void CPlayer::Update(const CSimpleTileMap& map, float deltaTime)
 	m_angle = fmod(m_angle, 360.0f);
 }
 
-float CPlayer::GetRadius()
+float CPlayer::GetSpeed()
 {
-	return m_radius;
+	return m_translationSpeed;
 }

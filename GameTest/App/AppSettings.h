@@ -14,7 +14,7 @@
 #define APP_WINDOW_TITLE		("Game")
 
 #define APP_ENABLE_DEBUG_INFO_BUTTON		(XINPUT_GAMEPAD_DPAD_UP)
-#define APP_QUIT_KEY						(VK_ESCAPE)
+#define APP_QUIT_KEY						(VK_NUMPAD3)
 
 // Pad emulation. (Uses keyboard if no pad is present) Maps the following keys to the pad inputs.
 // Note analog inputs are either 0 or 1 when emulated. 
@@ -22,8 +22,8 @@
 #define APP_PAD_EMUL_LEFT_THUMB_RIGHT	(VK_DOWN)
 #define APP_PAD_EMUL_LEFT_THUMB_UP		(VK_LEFT)
 #define APP_PAD_EMUL_LEFT_THUMB_DOWN	(VK_RIGHT)
-#define APP_PAD_EMUL_BUTTON_ALT_A		(VK_SPACE)
-#define APP_PAD_EMUL_START				(VK_RETURN)
+#define APP_PAD_EMUL_BUTTON_ALT_A		(VK_NUMPAD2)
+#define APP_PAD_EMUL_START				(VK_NUMPAD1)
 
 #define APP_PAD_EMUL_RIGHT_THUMB_LEFT	(VK_NUMPAD4)
 #define APP_PAD_EMUL_RIGHT_THUMB_RIGHT	(VK_NUMPAD6)
@@ -36,10 +36,10 @@
 #define APP_PAD_EMUL_DPAD_RIGHT			('D')
 	
 #define APP_PAD_EMUL_BUTTON_BACK		(VK_BACK)
-#define APP_PAD_EMUL_BUTTON_A			(VK_DELETE)
-#define APP_PAD_EMUL_BUTTON_B			(VK_END)
+#define APP_PAD_EMUL_BUTTON_A			(VK_RETURN)
+#define APP_PAD_EMUL_BUTTON_B			(VK_ESCAPE)
 #define APP_PAD_EMUL_BUTTON_X			(VK_INSERT)
-#define APP_PAD_EMUL_BUTTON_Y			(VK_HOME)
+#define APP_PAD_EMUL_BUTTON_Y			(VK_BACK)
 
 #define APP_PAD_EMUL_LEFT_TRIGGER		(VK_NEXT)
 #define APP_PAD_EMUL_RIGHT_TRIGGER		(VK_PRIOR)

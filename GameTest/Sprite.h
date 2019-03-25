@@ -11,9 +11,9 @@ public:
 	~CSprite();
 
 	CPoint position;
+	float r, g, b;
 private:
 	float m_width;
 	float m_height;
-	float r, g, b;
 };
 
