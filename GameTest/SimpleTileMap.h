@@ -6,7 +6,9 @@
 // If you do not use this then you should provide an alternative that represents a pac-man style map.
 //------------------------------------------------------------------------
 #include <vector>
-#include <fstream>
+#include <utility>
+
+using Cell = std::pair<int, int>;
 
 enum EMapValue : int
 {
@@ -53,6 +55,8 @@ public:
     //--------------------------------------------------------------------------------------------
     EMapValue GetTileMapValue(const int x, const int y)  const;
     EMapValue GetTileMapValue(const float fx, const float fy) const;
+	Cell getCell(float x, float y);
+	Cell getCell(const CPoint& point);
     //--------------------------------------------------------------------------------------------
     // Set the tile value at give coords in grid.
     //--------------------------------------------------------------------------------------------

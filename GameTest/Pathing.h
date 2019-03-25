@@ -1,9 +1,5 @@
 #pragma once
-#include <vector>
-#include <utility>
-
-using Cell = std::pair<int, int>;
-class CSimpleTileMap;
+#include "SimpleTileMap.h"
 
 namespace Pathing {
 	//Returns a vector of tile grid indices to traverse to get from start to end.
