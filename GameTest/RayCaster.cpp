@@ -8,7 +8,7 @@
 #define DEBUG_DRAW false
 
 CRayCaster::CRayCaster(float thickness) :
-	m_count(APP_VIRTUAL_WIDTH / (uint32_t)thickness), m_thickness(thickness), m_step((float)m_count * thickness), m_rayOriginY(APP_VIRTUAL_HEIGHT * 0.5f)
+	m_count(APP_VIRTUAL_WIDTH / (uint32_t)thickness), m_thickness(thickness), m_rayOriginY(APP_VIRTUAL_HEIGHT * 0.5f)
 {	//Make sure thickness is between 1 and 32.
 	assert(thickness >= 1.0f && thickness <= 31.0f);
 	m_indexBuffer.resize(m_count);
@@ -32,6 +32,7 @@ void CRayCaster::Update(const CSimpleTileMap& map, const CViewer& viewer)
 		const CPoint poi = march(map, viewer.m_position, Math::direction(rayAngle));
 		m_indexBuffer[i] = map.GetTileMapValue(poi.x, poi.y);
 
+		//Form depth buffer based off fisheye-corrected nearest surface. Used for debug rendering, would be more useful for multi-pass rendering.
 		const float depth = Math::l2norm(poi - viewer.m_position) * cosf(Math::radians(viewer.m_angle - rayAngle));
 		//glDepthFunc(GL_LESS) ;)
 		if (depth < m_depthBuffer[i])

@@ -23,7 +23,7 @@ private:
 	const uint32_t m_count;
 
 	//Values that depend on each other at initialization time.
-	const float m_thickness, m_step, m_rayOriginY;
+	const float m_thickness, m_rayOriginY;
 
 	//Length of adjacent side of right triangle formed by the screen and the field of view.
 	float m_projectionDistance;
