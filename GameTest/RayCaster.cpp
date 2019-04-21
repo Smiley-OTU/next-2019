@@ -5,7 +5,7 @@
 #include "Line.h"
 
 //Renders ghosts only if within the player's fov along with the vector from player to ghost, and renders all rays.
-#define DEBUG_DRAW true
+#define DEBUG_DRAW false
 
 CRayCaster::CRayCaster(float thickness) :
 	m_count(APP_VIRTUAL_WIDTH / (uint32_t)thickness), m_thickness(thickness), m_step((float)m_count * thickness), m_rayOriginY(APP_VIRTUAL_HEIGHT * 0.5f)
