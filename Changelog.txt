@@ -1,0 +1,2 @@
+There was some weird command line (xcopy $(SolutionDir)\GameTest\glut\bin\x64\*.dll $(OutputPath) /Y) under Project Properties -> Build Events -> Post-Build Event.
+Its intention is smart cause it copies the dll from the source directory to the executable directory. Idk why its failing but imma just move shit manually.
