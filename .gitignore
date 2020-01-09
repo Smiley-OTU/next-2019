@@ -17,10 +17,11 @@
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
-x64/
-x86/
+#There was a post-build command line to move from the bin folder to the exe folders but its broken for some reason so we're doing this manually.
+#x64/
+#x86/
 bld/
-[Bb]in/
+#[Bb]in/#Needed for Glut dlls.
 [Oo]bj/
 [Ll]og/
 
