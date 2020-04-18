@@ -31,8 +31,8 @@ void CMainScene::Update(float deltaTime)
 	for (CSprite& ghost : m_ghosts) {
 		CPoint toPlayer{ Math::normalize(m_player.GetPosition() - ghost.position) };
 		ghost.position += toPlayer * ghostSpeed;
-		//if (Math::circleCollision(m_player.GetPosition(), ghost.position, m_actorRadius * 0.25f, m_actorRadius * 0.5f))
-		//	CScene::Change(ESceneType::END);
+		if (Math::circleCollision(m_player.GetPosition(), ghost.position, m_actorRadius * 0.25f, m_actorRadius * 0.5f))
+			CScene::Change(ESceneType::END);
 	}
 }
 
