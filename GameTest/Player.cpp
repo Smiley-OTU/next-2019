@@ -3,6 +3,7 @@
 #include "App/app.h"
 #include "SimpleTileMap.h"
 #include "App/SimpleController.h"
+#include "Pathing.h"
 
 CPlayer::CPlayer() : m_translationSpeed(100.0f), m_rotationSpeed(100.0f)
 {
@@ -34,15 +35,7 @@ void CPlayer::Update(const CSimpleTileMap& map, float deltaTime)
 	else
 		translation *= 0.0f;
 
-	//Negate the translation component if it will move the player to an invalid tile.
-	CPoint destination{ m_position + translation };
-	EMapValue xTile = map.GetTileMapValue(destination.x, m_position.y);
-	EMapValue yTile = map.GetTileMapValue(m_position.x, destination.y);
-	if (yTile == EMapValue::BORDER || yTile == EMapValue::WALL || yTile == EMapValue::OUTOFBOUNDS)
-		destination.y -= translation.y;
-	if (xTile == EMapValue::BORDER || xTile == EMapValue::WALL || xTile == EMapValue::OUTOFBOUNDS)
-		destination.x -= translation.x;
-	m_position = destination;
+	m_position = Pathing::Ricochet(map, m_position, translation);
 
 	//Clamp the angle between 0 and 360 (prevents overflow and gives me nice numbers).
 	m_angle += 360.0f;

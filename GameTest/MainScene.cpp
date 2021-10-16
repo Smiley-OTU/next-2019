@@ -27,10 +27,10 @@ void CMainScene::Update(float deltaTime)
 {
 	m_player.Update(m_map, deltaTime);
 	m_rayCaster.Update(m_map, m_player);
-	float ghostSpeed = m_player.GetSpeed() * 0.5f *  deltaTime / 1000.0f;
+	float ghostSpeed = m_player.GetSpeed() * 0.5f * deltaTime / 1000.0f;
 	for (CSprite& ghost : m_ghosts) {
 		CPoint toPlayer{ Math::normalize(m_player.GetPosition() - ghost.position) };
-		ghost.position += toPlayer * ghostSpeed;
+		ghost.position = Pathing::Ricochet(m_map, ghost.position, toPlayer * ghostSpeed);
 		if (Math::circleCollision(m_player.GetPosition(), ghost.position, m_actorRadius * 0.25f, m_actorRadius * 0.5f))
 			CScene::Change(ESceneType::END);
 	}
@@ -77,14 +77,15 @@ void CMainScene::OnEnter()
 		if (searchArea >= m_map.GetMapSize() / 2)
 			CScene::Change(ESceneType::MENU);
 	}*/
+
 	m_player.SetPosition(playerPosition);
 	m_player.SetDirection(90.0f);
 	m_player.SetFov(75.0f);
 
-	m_ghosts[BLINKY].position = CPoint{ 100.0f, 100.0f };
-	m_ghosts[PINKY].position = CPoint{ APP_VIRTUAL_WIDTH - 100.0f, 100.0f };
-	m_ghosts[INKY].position = CPoint{ 100.0f, APP_VIRTUAL_HEIGHT - 100.0f };
-	m_ghosts[CLYDE].position = CPoint{ APP_VIRTUAL_WIDTH - 100.0f, APP_VIRTUAL_HEIGHT - 100.0f };
+	m_ghosts[BLINKY].position = CPoint{ float(m_map.getTileWidth()) * 1.5f, float(m_map.getTileHeight()) * 1.5f };
+	m_ghosts[PINKY].position = CPoint{ float(m_map.getTileWidth()) * 1.5f, float(APP_VIRTUAL_HEIGHT) - float(m_map.getTileHeight()) * 3.5f };
+	m_ghosts[INKY].position = CPoint{ float(APP_VIRTUAL_WIDTH) - float(m_map.getTileWidth()) * 1.5f, float(APP_VIRTUAL_HEIGHT) - float(m_map.getTileHeight()) * 1.5f };
+	m_ghosts[CLYDE].position = CPoint{ float(APP_VIRTUAL_WIDTH) - float(m_map.getTileWidth()) * 3.5f, float(m_map.getTileHeight()) * 3.5f };
 }
 
 void CMainScene::RenderMinimap()
@@ -95,9 +96,8 @@ void CMainScene::RenderMinimap()
 	static const float scaledScreenHeight = APP_VIRTUAL_HEIGHT * mapScale;
 	static const float x = (APP_VIRTUAL_WIDTH - scaledScreenWidth) - APP_VIRTUAL_WIDTH * margin;
 	static const float y = APP_VIRTUAL_HEIGHT * margin;
-
 	glViewport(x, y, scaledScreenWidth, scaledScreenHeight);
-
+	
 	m_map.Render();
 
 	const CPoint playerPosition{ m_player.GetPosition() };
