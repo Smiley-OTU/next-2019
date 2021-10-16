@@ -53,32 +53,7 @@ void CMainScene::OnEnter()
 {
 	m_map.RandomMap(80, 12);
 
-	//Place the player on air. If no luck, go back to main menu and try again rather than doing my convoluted algorithm.
-	CPoint playerPosition{ APP_VIRTUAL_WIDTH * 0.5f + m_map.getTileWidth() * 0.5f, APP_VIRTUAL_HEIGHT * 0.5f + m_map.getTileHeight() * 0.5f };
-	if(m_map.GetTileMapValue(playerPosition.x, playerPosition.y) != EMapValue::AIR)
-		CScene::Change(ESceneType::MENU);
-	/*
-	Cell playerCell = m_map.GetCell(playerPosition);
-	m_player.SetPosition(playerPosition);
-	EMapValue playerTile = m_map.GetTileMapValue(playerPosition.x, playerPosition.y);
-	int searchArea = 1;
-	while (playerTile != EMapValue::AIR) {
-		for (int i = -searchArea; i < searchArea; i++) {
-			for (int j = -searchArea; j < searchArea; j++) {
-				playerTile = m_map.GetTileMapValue(playerCell.first + i, playerCell.second + j);
-				if (playerTile == AIR) {
-					playerPosition = CPoint{ (playerCell.first + i) * m_map.getTileWidth() + m_map.getTileWidth() * 0.5f, (playerCell.second + j) * m_map.getTileHeight() + m_map.getTileHeight() * 0.5f };
-					break;
-				}
-			}
-		}
-		searchArea++;
-		//If this somehow fails, simply go back to the main menu as if nothing happened.
-		if (searchArea >= m_map.GetMapSize() / 2)
-			CScene::Change(ESceneType::MENU);
-	}*/
-
-	m_player.SetPosition(playerPosition);
+	m_player.SetPosition({ APP_VIRTUAL_WIDTH * 0.5f + m_map.getTileWidth() * 0.5f, APP_VIRTUAL_HEIGHT * 0.5f + m_map.getTileHeight() * 0.5f });
 	m_player.SetDirection(90.0f);
 	m_player.SetFov(75.0f);
 
