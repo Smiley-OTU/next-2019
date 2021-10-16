@@ -10,6 +10,7 @@
 
 CMainScene::CMainScene() : m_actorRadius(50.0f)
 {
+	m_map.RandomMap(80, 12);
 	const float spriteWidth = 40.0f;
 	const float spriteHeight = 30.0f;
 	m_ghosts.resize(4);
@@ -51,8 +52,6 @@ void CMainScene::Render()
 
 void CMainScene::OnEnter()
 {
-	m_map.RandomMap(80, 12);
-
 	m_player.SetPosition({ APP_VIRTUAL_WIDTH * 0.5f + m_map.getTileWidth() * 0.5f, APP_VIRTUAL_HEIGHT * 0.5f + m_map.getTileHeight() * 0.5f });
 	m_player.SetDirection(90.0f);
 	m_player.SetFov(75.0f);
