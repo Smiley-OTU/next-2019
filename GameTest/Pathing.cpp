@@ -21,6 +21,20 @@ namespace Pathing {
 
 	}
 
+	inline std::vector<Cell> neighbours(const CSimpleTileMap& map, Cell cell)
+	{
+		std::vector<Cell> cells;
+		for (int i = cell.x - 1; i <= cell.x + 1 && i >= 0 && i < map.GetMapSize(); i++)
+		{
+			for (int j = cell.y - 1; j <= cell.y + 1 && j >= 0 && j < map.GetMapSize(); j++)
+			{
+				if (map.GetTileMapValue(i, j) == EMapValue::AIR)
+					cells.push_back({ i, j });
+			}
+		}
+		return cells;
+	}
+
 	std::vector<Cell> Pathing::aStar(const CSimpleTileMap& map, Cell start, Cell end)
 	{
 		
