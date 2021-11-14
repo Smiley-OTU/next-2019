@@ -49,6 +49,11 @@ void CMainScene::Render()
 
 	m_rayCaster.clearDepthBuffer();*/
 	m_map.Render();
+
+	Cell startCell = m_map.GetCell(m_ghosts[0].position);
+	Cell endCell = m_map.GetCell(m_player.GetPosition());
+	App::DrawQuad(startCell.x * m_map.getTileWidth(), startCell.y * m_map.getTileHeight(), (startCell.x + 1) * m_map.getTileWidth(), (startCell.y + 1) * m_map.getTileHeight(), 1.0f, 0.0f, 0.0f);
+	App::DrawQuad(endCell.x * m_map.getTileWidth(), endCell.y * m_map.getTileHeight(), (endCell.x + 1) * m_map.getTileWidth(), (endCell.y + 1) * m_map.getTileHeight(), 0.0f, 1.0f, 0.0f);
 }
 
 void CMainScene::OnEnter()
