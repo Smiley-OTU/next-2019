@@ -26,7 +26,7 @@ CMainScene::~CMainScene()
 
 void CMainScene::Update(float deltaTime)
 {
-	m_player.Update(m_map, deltaTime);
+	/*m_player.Update(m_map, deltaTime);
 	m_rayCaster.Update(m_map, m_player);
 	float ghostSpeed = m_player.GetSpeed() * 0.5f * deltaTime / 1000.0f;
 	for (CSprite& ghost : m_ghosts) {
@@ -34,12 +34,12 @@ void CMainScene::Update(float deltaTime)
 		ghost.position = Pathing::Ricochet(m_map, ghost.position, toPlayer * ghostSpeed);
 		if (Math::circleCollision(m_player.GetPosition(), ghost.position, m_actorRadius * 0.25f, m_actorRadius * 0.5f))
 			CScene::Change(ESceneType::END);
-	}
+	}*/
 }
 
 void CMainScene::Render()
 {
-	const float halfHeight = APP_VIRTUAL_HEIGHT * 0.5f;
+	/*const float halfHeight = APP_VIRTUAL_HEIGHT * 0.5f;
 	App::DrawQuad(0.0f, 0.0f, APP_VIRTUAL_WIDTH, halfHeight, 0.2f, 0.2f, 0.2f);					//Floor
 	App::DrawQuad(0.0f, halfHeight, APP_VIRTUAL_WIDTH, APP_VIRTUAL_HEIGHT, 0.3f, 0.3f, 0.3f);	//Ceiling
 
@@ -47,7 +47,8 @@ void CMainScene::Render()
 	m_rayCaster.RenderSprites(m_map, m_player, m_ghosts);
 	RenderMinimap();
 
-	m_rayCaster.clearDepthBuffer();
+	m_rayCaster.clearDepthBuffer();*/
+	m_map.Render();
 }
 
 void CMainScene::OnEnter()

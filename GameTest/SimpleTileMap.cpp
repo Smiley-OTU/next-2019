@@ -77,10 +77,10 @@ EMapValue CSimpleTileMap::GetTileMapValue(const float fx, const float fy) const
 
 Cell CSimpleTileMap::GetCell(float x, float y)
 {
-	return std::make_pair((int)(x / m_tileWidth), (int)(y / m_tileHeight));
+	return { int(x / m_tileWidth), int(y / m_tileHeight) };
 }
 
-Cell CSimpleTileMap::GetCell(const CPoint & point)
+Cell CSimpleTileMap::GetCell(const CPoint& point)
 {
 	return GetCell(point.x, point.y);
 }

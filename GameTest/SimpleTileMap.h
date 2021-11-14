@@ -5,10 +5,8 @@
 // Feel free to use this for your entry if you want but you don't have to.
 // If you do not use this then you should provide an alternative that represents a pac-man style map.
 //------------------------------------------------------------------------
+#include "Cell.h"
 #include <vector>
-#include <utility>
-
-using Cell = std::pair<int, int>;
 
 enum EMapValue : int
 {

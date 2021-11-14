@@ -189,6 +189,7 @@
     <ClInclude Include="App\main.h" />
     <ClInclude Include="App\SimpleController.h" />
     <ClInclude Include="App\SimpleSound.h" />
+    <ClInclude Include="Cell.h" />
     <ClInclude Include="Pathing.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="InstructionScene.h" />
