@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "Pathing.h"
+#include "App/app.h"
 #include "Point.h"
 #include "SimpleTileMap.h"
+#define DISPLAY 1
 
 namespace Pathing {
 	CPoint Pathing::Ricochet(const CSimpleTileMap& map, const CPoint& position, const CPoint& translation)
@@ -28,7 +30,8 @@ namespace Pathing {
 		{
 			for (int j = cell.y - 1; j <= cell.y + 1 && j >= 0 && j < map.GetMapSize(); j++)
 			{
-				if (map.GetTileMapValue(i, j) == EMapValue::AIR)
+
+				if ( !(i == cell.x && j == cell.y) && map.GetTileMapValue(i, j) == EMapValue::AIR)
 					cells.push_back({ i, j });
 			}
 		}
@@ -37,7 +40,15 @@ namespace Pathing {
 
 	std::vector<Cell> Pathing::aStar(const CSimpleTileMap& map, Cell start, Cell end)
 	{
-		
+#if DISPLAY
+		std::vector<Cell> startNeighbours = neighbours(map, start);
+		for (const Cell& cell : startNeighbours)
+			map.DrawTile(cell, 0.5f, 0.0f, 0.0f);
+
+		std::vector<Cell> endNeighbours = neighbours(map, end);
+		for (const Cell& cell : endNeighbours)
+			map.DrawTile(cell, 0.0f, 0.5f, 0.0f);
+#endif
 
 		//Path finding failed if we've hit this point.
 		return std::vector<Cell>{};

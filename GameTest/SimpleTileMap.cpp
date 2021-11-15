@@ -75,14 +75,19 @@ EMapValue CSimpleTileMap::GetTileMapValue(const float fx, const float fy) const
     return GetTileMapValue(x, y);
 }
 
-Cell CSimpleTileMap::GetCell(float x, float y)
+Cell CSimpleTileMap::GetCell(float x, float y) const
 {
 	return { int(x / m_tileWidth), int(y / m_tileHeight) };
 }
 
-Cell CSimpleTileMap::GetCell(const CPoint& point)
+Cell CSimpleTileMap::GetCell(const CPoint& point) const
 {
 	return GetCell(point.x, point.y);
+}
+
+void CSimpleTileMap::DrawTile(Cell cell, float r, float g, float b) const
+{
+	App::DrawQuad(cell.x * getTileWidth(), cell.y * getTileHeight(), (cell.x + 1) * getTileWidth(), (cell.y + 1) * getTileHeight(), r, g, b);
 }
 
 void CSimpleTileMap::Render() const
