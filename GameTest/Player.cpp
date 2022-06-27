@@ -3,7 +3,6 @@
 #include "App/app.h"
 #include "SimpleTileMap.h"
 #include "App/SimpleController.h"
-#include "Pathing.h"
 
 CPlayer::CPlayer() : m_translationSpeed(100.0f), m_rotationSpeed(100.0f)
 {
@@ -35,7 +34,7 @@ void CPlayer::Update(const CSimpleTileMap& map, float deltaTime)
 	else
 		translation *= 0.0f;
 
-	m_position = Pathing::Ricochet(map, m_position, translation);
+	m_position = map.Ricochet(m_position, translation);
 
 	//Clamp the angle between 0 and 360 (prevents overflow and gives me nice numbers).
 	m_angle += 360.0f;

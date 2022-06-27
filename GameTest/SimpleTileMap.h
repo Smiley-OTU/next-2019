@@ -31,8 +31,15 @@ public:
     // Constructor just creates a tile map of mapSize x mapSize.
     //--------------------------------------------------------------------------------------------
 	CSimpleTileMap(const int mapSize);
-	CSimpleTileMap();
-	~CSimpleTileMap();
+
+    //Returns the collision response given a point and its desired translation.
+    CPoint Ricochet(const CPoint& position, const CPoint& translation) const;
+
+    //Returns a vector of tile grid indices to traverse to get from start to end (using A*).
+    std::vector<Cell> FindPath(const Cell& start, const Cell& end);
+
+    //Returns adjacent cells which can be moved to (tiles who's value is EMapValue::AIR).
+    std::vector<Cell> CSimpleTileMap::Neighbours(const Cell& cell) const;
 
     //--------------------------------------------------------------------------------------------
     // This will generate a new random map.
@@ -42,12 +49,14 @@ public:
     // Just randomly creates tunnels through the map.
     // Picks a direction then moves in a random direction of length (0-maxTunnelLength)
     // Pick new direction and repeat until we have filled the map with the targetFloorPercentage of FLOOR tiles.
+    // 
     //--------------------------------------------------------------------------------------------
     void RandomMap(const float targetFloorPercentage, const int maxTunnelLength);    
     //--------------------------------------------------------------------------------------------
     // Clear the map to give value.
     //--------------------------------------------------------------------------------------------
     void Clear(EMapValue clearValue = EMapValue::WALL );
+
     //--------------------------------------------------------------------------------------------
     // Get the tile value at give coords in grid.
     //--------------------------------------------------------------------------------------------
@@ -55,29 +64,33 @@ public:
     EMapValue GetTileMapValue(const float fx, const float fy) const;
 	Cell GetCell(float x, float y) const;
 	Cell GetCell(const CPoint& point) const;
-	void DrawTile(Cell cell, float r, float g, float b) const;
+	void DrawTile(const Cell& cell, float r, float g, float b) const;
+
     //--------------------------------------------------------------------------------------------
     // Set the tile value at give coords in grid.
     //--------------------------------------------------------------------------------------------
     bool SetTileMapValue(const int x, const int y, EMapValue v);
+
     //--------------------------------------------------------------------------------------------
     // Render the tile map using quads. Fills the entire screen.
     //--------------------------------------------------------------------------------------------
     void Render() const;
-    // Return size of the map.
-    int GetMapSize() const { return m_mapSize; }
 
-	float getTileWidth() const;
-	float getTileHeight() const;
+    // Returns the number of tiles per row/column (ie dimensions of 16x16 returns 16).
+    int GetMapSize() const { return m_mapSize; }
+	float GetTileWidth() const;
+	float GetTileHeight() const;
 
 private:
     // Create a new map.
     void Create();
+
     // Get a new direction. Used by the RandomMap method.
     int GetNewDirection(const int currentRow, const int currentColumn, int currentDir) const;
-    int m_mapSize;                                  // Keep map size for convenience.
+
+    const int m_mapSize;
     float m_tileWidth;
     float m_tileHeight;
-    std::vector<std::vector<EMapValue>> m_tileMap;  //Vector of vectors of map values, Holds the tile map data.
+    std::vector<std::vector<EMapValue>> m_tileValues;
 };
 #endif

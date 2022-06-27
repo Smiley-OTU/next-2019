@@ -11,6 +11,7 @@
 //------------------------------------------------------------------------
 #include "app\app.h"
 #include "SimpleTileMap.h"
+#include "PathUtils.h"
 
 // Color mapping for bird's eye view render. Indexed based on tile value.
 const CTile CTile::tiles[NUM_TILE_TYPES] = {
@@ -31,10 +32,10 @@ static int g_dirLookup[4][2] =
 
 void CSimpleTileMap::Create()
 {    
-    m_tileMap.clear();
-    m_tileMap.resize(m_mapSize);
+    m_tileValues.clear();
+    m_tileValues.resize(m_mapSize);
     for (int i = 0; i < m_mapSize; i++)
-        m_tileMap[i].resize(m_mapSize, EMapValue::WALL);
+        m_tileValues[i].resize(m_mapSize, EMapValue::WALL);
 
 	//This doesn't take resize events into account so I'm guessing its safe to use these defines without being penalized in my code.
     m_tileWidth = (float)APP_VIRTUAL_WIDTH / (float)m_mapSize;
@@ -43,7 +44,7 @@ void CSimpleTileMap::Create()
 
 void CSimpleTileMap::Clear(EMapValue clearValue)
 {    
-    for (auto &row : m_tileMap)
+    for (auto &row : m_tileValues)
     {
         row.assign(row.size(), clearValue);     
     }
@@ -53,7 +54,7 @@ bool CSimpleTileMap::SetTileMapValue(const int x, const int y, const EMapValue v
 {
     if ((x >= 0 && x < m_mapSize) && (y >= 0 && y < m_mapSize))
     {
-        m_tileMap[x][y] = v;
+        m_tileValues[x][y] = v;
         return true;
     }
     return false;
@@ -63,7 +64,7 @@ EMapValue CSimpleTileMap::GetTileMapValue(const int x, const int y) const
 {
     if ((x >= 0 && x < m_mapSize) && (y >= 0 && y < m_mapSize))
     {
-        return m_tileMap[x][y];
+        return m_tileValues[x][y];
     }
     return EMapValue::OUTOFBOUNDS;
 }
@@ -85,9 +86,9 @@ Cell CSimpleTileMap::GetCell(const CPoint& point) const
 	return GetCell(point.x, point.y);
 }
 
-void CSimpleTileMap::DrawTile(Cell cell, float r, float g, float b) const
+void CSimpleTileMap::DrawTile(const Cell& cell, float r, float g, float b) const
 {
-	App::DrawQuad(cell.x * getTileWidth(), cell.y * getTileHeight(), (cell.x + 1) * getTileWidth(), (cell.y + 1) * getTileHeight(), r, g, b);
+	App::DrawQuad(cell.x * GetTileWidth(), cell.y * GetTileHeight(), (cell.x + 1) * GetTileWidth(), (cell.y + 1) * GetTileHeight(), r, g, b);
 }
 
 void CSimpleTileMap::Render() const
@@ -125,12 +126,12 @@ void CSimpleTileMap::Render() const
     }
 }
 
-float CSimpleTileMap::getTileWidth() const
+float CSimpleTileMap::GetTileWidth() const
 {
 	return m_tileWidth;
 }
 
-float CSimpleTileMap::getTileHeight() const
+float CSimpleTileMap::GetTileHeight() const
 {
 	return m_tileHeight;
 }
@@ -140,12 +141,49 @@ CSimpleTileMap::CSimpleTileMap(const int mapSize) : m_mapSize(mapSize)
 	Create();
 }
 
-CSimpleTileMap::CSimpleTileMap()
+CPoint CSimpleTileMap::Ricochet(const CPoint& position, const CPoint& translation) const
 {
+    CPoint destination{ position + translation };
+    EMapValue xTile = GetTileMapValue(destination.x, position.y);
+    EMapValue yTile = GetTileMapValue(position.x, destination.y);
+    if (yTile == EMapValue::BORDER || yTile == EMapValue::WALL || yTile == EMapValue::OUTOFBOUNDS)
+        destination.y -= translation.y;
+    if (xTile == EMapValue::BORDER || xTile == EMapValue::WALL || xTile == EMapValue::OUTOFBOUNDS)
+        destination.x -= translation.x;
+    return destination;
 }
 
-CSimpleTileMap::~CSimpleTileMap()
+std::vector<Cell> CSimpleTileMap::FindPath(const Cell& start, const Cell& end)
 {
+#if DISPLAY
+    std::vector<Cell> startNeighbours = Neighbours(start);
+    for (const Cell& cell : startNeighbours)
+        DrawTile(cell, 0.5f, 0.0f, 0.0f);
+
+    std::vector<Cell> endNeighbours = Neighbours(end);
+    for (const Cell& cell : endNeighbours)
+        DrawTile(cell, 0.0f, 0.5f, 0.0f);
+#endif
+    const int tileCount = GetMapSize() * GetMapSize();
+    std::vector<Node> cameFrom(tileCount);
+
+    //Path finding failed if we've hit this point.
+    return std::vector<Cell>{};
+}
+
+std::vector<Cell> CSimpleTileMap::Neighbours(const Cell& cell) const
+{
+    std::vector<Cell> cells;
+    for (int i = cell.x - 1; i <= cell.x + 1 && i >= 0 && i < GetMapSize(); i++)
+    {
+        for (int j = cell.y - 1; j <= cell.y + 1 && j >= 0 && j < GetMapSize(); j++)
+        {
+
+            if (!(i == cell.x && j == cell.y) && GetTileMapValue(i, j) == EMapValue::AIR)
+                cells.push_back({ i, j });
+        }
+    }
+    return cells;
 }
 
 //------------------------------------------------------------------------

@@ -23,6 +23,6 @@ private:
 	CRayCaster m_rayCaster{ 4.0f };
 	CPlayer m_player;
 
-	std::vector<CSprite> m_ghosts;
+	std::array<CSprite, 4> m_ghosts;
 	const float m_actorRadius;
 };

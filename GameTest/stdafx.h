@@ -8,6 +8,7 @@
 // TODO: reference additional headers your program requires here
 #include <stdio.h>
 #include <tchar.h>
+#include <array>
 #include <vector>
 #define _USE_MATH_DEFINES
 #include <math.h>

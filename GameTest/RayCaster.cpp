@@ -157,10 +157,10 @@ inline CPoint CRayCaster::march(const CSimpleTileMap& map, const CPoint& positio
 	uint32_t stepCount = 0;
 	CPoint poi = position;
 	while (tileValue == EMapValue::AIR) {
-		float xOverlap = Math::overlap(poi.x, direction.x, map.getTileWidth());
+		float xOverlap = Math::overlap(poi.x, direction.x, map.GetTileWidth());
 		const float xRate = xOverlap / direction.x;
 
-		float yOverlap = Math::overlap(poi.y, direction.y, map.getTileHeight());
+		float yOverlap = Math::overlap(poi.y, direction.y, map.GetTileHeight());
 		const float yRate = yOverlap / direction.y;
 
 		//Increase the poi by a small percentage in order to ensure its in a new cell.
