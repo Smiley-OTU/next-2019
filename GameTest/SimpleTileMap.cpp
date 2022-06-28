@@ -167,6 +167,7 @@ std::vector<MCell> CSimpleTileMap::FindPath(const MCell& start, const MCell& end
     m_tileNodes[GetCellIndex(start)].parentCell = start;
     m_closedList.resize(m_tileCount, false);
     m_openList.push({ start });
+    int iteration = 0;
 
     while (!m_openList.empty())
     {
@@ -174,7 +175,10 @@ std::vector<MCell> CSimpleTileMap::FindPath(const MCell& start, const MCell& end
 
         // End condition (destination reached)
         if (currentCell == end)
+        {
+            printf("Destination {%i,%i} found!\n", currentCell.x, currentCell.y);
             break;
+        }
 
         // Otherwise, add current cell to closed list and update g & h values of its neighbours
         m_openList.pop();
@@ -204,12 +208,21 @@ std::vector<MCell> CSimpleTileMap::FindPath(const MCell& start, const MCell& end
             hNew = true ? manhattan(neighbour, end) : euclidean(neighbour, end);
 
             // Append if unvisited or best score
-            if (m_tileNodes[neighbourIndex].f() == 0 || gNew + hNew < m_tileNodes[neighbourIndex].f())
+            if (m_tileNodes[neighbourIndex].f() == 0 || (gNew + hNew) < m_tileNodes[neighbourIndex].f())
             {
                 m_openList.push({ neighbour, gNew, hNew });
                 m_tileNodes[neighbourIndex] = { neighbour, currentCell, gNew, hNew};
             }
         }
+        printf("\nIteration %i:\n", iteration);
+        std::priority_queue<Node> copyList = m_openList;
+        while (!copyList.empty())
+        {
+            Node node = copyList.top();
+            node.Print();
+            copyList.pop();
+        }
+        iteration++;
     }
 
     // Generate path by traversing parents then inverting
@@ -251,11 +264,6 @@ void CSimpleTileMap::DrawPath(const std::vector<MCell>& path) const
 
     DrawTile(path.front().ToCell(), 0.5f, 0.0f, 0.0f);
     DrawTile(path.back().ToCell(), 0.0f, 0.5f, 0.0f);
-    //for (const MCell& cell : GetNeighbours(path.front()))
-    //    DrawTile(cell.ToCell(), 0.5f, 0.0f, 0.0f);
-    //
-    //for (const MCell& cell : GetNeighbours(path.back()))
-    //    DrawTile(cell.ToCell(), 0.0f, 0.5f, 0.0f);
 }
 
 int CSimpleTileMap::GetCellIndex(const MCell& cell) const

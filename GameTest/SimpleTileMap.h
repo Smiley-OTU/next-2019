@@ -133,6 +133,11 @@ private:
 
         bool operator<(const Node& node) const { return f() < node.f(); }
 
+        void Print()
+        {
+            printf("Cell {%i,%i}: f = %i (%ig + %ih)\n", cell.x, cell.y, f(), g, h);
+        }
+
         MCell cell, parentCell;
         int g, h;
     };
