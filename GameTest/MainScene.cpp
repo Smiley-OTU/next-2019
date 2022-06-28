@@ -52,7 +52,7 @@ void CMainScene::Render()
 	Cell endCell = m_map.GetCell(m_player.GetPosition());
 	m_map.DrawTile(startCell, 1.0f, 0.0f, 0.0f);
 	m_map.DrawTile(endCell, 0.0f, 1.0f, 0.0f);
-	std::vector<Cell> path = m_map.FindPath(startCell, endCell);
+	std::vector<MCell> path = m_map.FindPath(startCell.ToMCell(), endCell.ToMCell());
 }
 
 void CMainScene::OnEnter()

@@ -6,6 +6,7 @@
 // If you do not use this then you should provide an alternative that represents a pac-man style map.
 //------------------------------------------------------------------------
 #include "Cell.h"
+#include "MutCell.h"
 #include <vector>
 
 enum EMapValue : int
@@ -36,10 +37,12 @@ public:
     CPoint Ricochet(const CPoint& position, const CPoint& translation) const;
 
     //Returns a vector of tile grid indices to traverse to get from start to end (using A*).
-    std::vector<Cell> FindPath(const Cell& start, const Cell& end);
+    std::vector<MCell> FindPath(const MCell& start, const MCell& end);
 
     //Returns adjacent cells which can be moved to (tiles who's value is EMapValue::AIR).
-    std::vector<Cell> CSimpleTileMap::Neighbours(const Cell& cell) const;
+    std::vector<MCell> CSimpleTileMap::GetNeighbours(const MCell& cell) const;
+
+    int GetCellIndex(const MCell& cell) const;
 
     //--------------------------------------------------------------------------------------------
     // This will generate a new random map.
@@ -88,9 +91,52 @@ private:
     // Get a new direction. Used by the RandomMap method.
     int GetNewDirection(const int currentRow, const int currentColumn, int currentDir) const;
 
+    const int m_tileCount;
     const int m_mapSize;
     float m_tileWidth;
     float m_tileHeight;
     std::vector<std::vector<EMapValue>> m_tileValues;
+
+    struct Node
+    {
+        Node()
+        {
+            init();
+        }
+
+        Node(const MCell& cell)
+        {
+            init(cell);
+        }
+
+        Node(const MCell& cell, int g, int h)
+        {
+            init(cell, { -1, -1 }, g, h);
+        }
+
+        Node(const MCell& cell, const MCell& parentCell, int g, int h)
+        {
+            init(cell, parentCell, g, h);
+        }
+
+        void init(const MCell& cell = { -1, -1 }, const MCell& parentCell = { -1, -1 }, int g = 0, int h = 0)
+        {
+            this->cell = cell;
+            this->parentCell = parentCell;
+            this->g = g;
+            this->h = h;
+        }
+
+        int f() const { return g + h; }
+
+        bool operator<(const Node& node) const { return f() < node.f(); }
+
+        MCell cell, parentCell;
+        int g, h;
+    };
+
+    std::vector<Node> m_tileNodes;
+    std::priority_queue<Node> m_openList;
+    std::vector<bool> m_closedList;
 };
 #endif

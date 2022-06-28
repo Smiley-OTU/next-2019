@@ -102,7 +102,7 @@
     <ClInclude Include="Cell.h">
       <Filter>Source Files\Math</Filter>
     </ClInclude>
-    <ClInclude Include="PathUtils.h">
+    <ClInclude Include="MutCell.h">
       <Filter>Source Files\Math</Filter>
     </ClInclude>
   </ItemGroup>
@@ -163,6 +163,12 @@
     </ClCompile>
     <ClCompile Include="Sprite.cpp">
       <Filter>Source Files\Visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="Cell.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="MutCell.cpp">
+      <Filter>Source Files\Math</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

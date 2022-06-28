@@ -15,6 +15,7 @@
 #include <string> 
 #include <list>
 #include <map>
+#include <queue>
 #include <stdlib.h>     /* srand, rand */
 #include <time.h>       /* time */
 #include <iostream>

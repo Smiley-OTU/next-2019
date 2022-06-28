@@ -11,7 +11,6 @@
 //------------------------------------------------------------------------
 #include "app\app.h"
 #include "SimpleTileMap.h"
-#include "PathUtils.h"
 
 // Color mapping for bird's eye view render. Indexed based on tile value.
 const CTile CTile::tiles[NUM_TILE_TYPES] = {
@@ -37,7 +36,6 @@ void CSimpleTileMap::Create()
     for (int i = 0; i < m_mapSize; i++)
         m_tileValues[i].resize(m_mapSize, EMapValue::WALL);
 
-	//This doesn't take resize events into account so I'm guessing its safe to use these defines without being penalized in my code.
     m_tileWidth = (float)APP_VIRTUAL_WIDTH / (float)m_mapSize;
     m_tileHeight = (float)APP_VIRTUAL_HEIGHT / (float)m_mapSize;
 }
@@ -136,7 +134,7 @@ float CSimpleTileMap::GetTileHeight() const
 	return m_tileHeight;
 }
 
-CSimpleTileMap::CSimpleTileMap(const int mapSize) : m_mapSize(mapSize)
+CSimpleTileMap::CSimpleTileMap(const int mapSize) : m_tileCount(mapSize * mapSize), m_mapSize(mapSize)
 {
 	Create();
 }
@@ -153,27 +151,99 @@ CPoint CSimpleTileMap::Ricochet(const CPoint& position, const CPoint& translatio
     return destination;
 }
 
-std::vector<Cell> CSimpleTileMap::FindPath(const Cell& start, const Cell& end)
+/////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////PATHING BEGIN/////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
+
+#define HEURISTIC 1
+#define DISPLAY 1
+std::vector<MCell> CSimpleTileMap::FindPath(const MCell& start, const MCell& end)
 {
 #if DISPLAY
-    std::vector<Cell> startNeighbours = Neighbours(start);
-    for (const Cell& cell : startNeighbours)
-        DrawTile(cell, 0.5f, 0.0f, 0.0f);
+    for (const MCell& cell: GetNeighbours(start))
+        DrawTile(cell.ToCell(), 0.5f, 0.0f, 0.0f);
 
-    std::vector<Cell> endNeighbours = Neighbours(end);
-    for (const Cell& cell : endNeighbours)
-        DrawTile(cell, 0.0f, 0.5f, 0.0f);
+    for (const MCell& cell: GetNeighbours(end))
+        DrawTile(cell.ToCell(), 0.0f, 0.5f, 0.0f);
 #endif
-    const int tileCount = GetMapSize() * GetMapSize();
-    std::vector<Node> cameFrom(tileCount);
 
-    //Path finding failed if we've hit this point.
-    return std::vector<Cell>{};
+    // Reset nodes, mark all nodes as unvisited (closed list = false) and append start to open list
+    m_tileNodes.clear();
+    m_tileNodes.resize(m_tileCount);
+    m_tileNodes[GetCellIndex(start)].parentCell = start;
+    m_closedList.resize(m_tileCount, false);
+    m_openList.push({ start });
+
+    while (!m_openList.empty())
+    {
+        const MCell currentCell = m_openList.top().cell;
+
+        // End condition (destination reached)
+        if (currentCell == end)
+            break;
+
+        // Otherwise, add current cell to closed list and update g & h values of its neighbours
+        m_openList.pop();
+        m_closedList[GetCellIndex(currentCell)] = true;
+
+        int gNew, hNew;
+        for (const MCell& neighbour: GetNeighbours(currentCell))
+        {
+            const int neighbourIndex = GetCellIndex(neighbour);
+
+            // Skip if already visited
+            if (m_closedList[neighbourIndex])
+                continue;
+
+            auto manhattan = [](const MCell& a, const MCell& b) -> int {
+                return abs(a.x - b.x) + abs(a.y - b.y);
+            };
+
+            auto euclidean = [](const MCell& a, const MCell& b) -> int {
+                int dx = a.x - b.x;
+                int dy = a.y - b.y;
+                return (int)sqrt(dx * dx + dy * dy);
+            };
+
+            // Calculate scores
+            gNew = m_tileNodes[GetCellIndex(currentCell)].g + 1;
+            hNew = HEURISTIC == 0 ? manhattan(neighbour, end) : euclidean(neighbour, end);
+
+            // Append if unvisited or best score
+            if (m_tileNodes[neighbourIndex].f() == 0 || gNew + hNew < m_tileNodes[neighbourIndex].f())
+            {
+                m_openList.push({ neighbour, gNew, hNew });
+                m_tileNodes[neighbourIndex] = { neighbour, currentCell, gNew, hNew};
+            }
+        }
+    }
+
+    // Generate path by traversing parents then inverting
+    std::vector<MCell> path;
+    MCell currentCell = end;
+    int currentIndex = GetCellIndex(currentCell);
+
+    while (!(m_tileNodes[currentIndex].parentCell == currentCell))
+    {
+        path.push_back(currentCell);
+        currentCell = m_tileNodes[currentIndex].parentCell;
+        currentIndex = GetCellIndex(currentCell);
+    }
+    std::reverse(path.begin(), path.end());
+
+#if DISPLAY
+    for (const MCell& cell : path)
+        DrawTile(cell.ToCell(), 0.5f, 0.5f, 0.5f);
+#endif
+
+    return path;
 }
+#undef DISPLAY
+#undef HEURISTIC
 
-std::vector<Cell> CSimpleTileMap::Neighbours(const Cell& cell) const
+std::vector<MCell> CSimpleTileMap::GetNeighbours(const MCell& cell) const
 {
-    std::vector<Cell> cells;
+    std::vector<MCell> cells;
     for (int i = cell.x - 1; i <= cell.x + 1 && i >= 0 && i < GetMapSize(); i++)
     {
         for (int j = cell.y - 1; j <= cell.y + 1 && j >= 0 && j < GetMapSize(); j++)
@@ -185,6 +255,14 @@ std::vector<Cell> CSimpleTileMap::Neighbours(const Cell& cell) const
     }
     return cells;
 }
+
+int CSimpleTileMap::GetCellIndex(const MCell& cell) const
+{
+    return cell.y * m_mapSize + cell.x;
+}
+/////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////PATHING END///////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////
 
 //------------------------------------------------------------------------
 // Randomly creates tunnels through the map.

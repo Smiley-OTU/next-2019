@@ -190,7 +190,7 @@
     <ClInclude Include="App\SimpleController.h" />
     <ClInclude Include="App\SimpleSound.h" />
     <ClInclude Include="Cell.h" />
-    <ClInclude Include="PathUtils.h" />
+    <ClInclude Include="MutCell.h" />
     <ClInclude Include="Sprite.h" />
     <ClInclude Include="InstructionScene.h" />
     <ClInclude Include="EndScene.h" />
@@ -213,6 +213,14 @@
     <ClCompile Include="App\main.cpp" />
     <ClCompile Include="App\SimpleController.cpp" />
     <ClCompile Include="App\SimpleSound.cpp" />
+    <ClCompile Include="Cell.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="MutCell.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Sprite.cpp" />
     <ClCompile Include="InstructionScene.cpp" />
     <ClCompile Include="EndScene.cpp" />
