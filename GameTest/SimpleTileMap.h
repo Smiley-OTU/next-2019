@@ -40,7 +40,9 @@ public:
     std::vector<MCell> FindPath(const MCell& start, const MCell& end);
 
     //Returns adjacent cells which can be moved to (tiles who's value is EMapValue::AIR).
-    std::vector<MCell> CSimpleTileMap::GetNeighbours(const MCell& cell) const;
+    std::vector<MCell> GetNeighbours(const MCell& cell) const;
+
+    void DrawPath(const std::vector<MCell>& path) const;
 
     int GetCellIndex(const MCell& cell) const;
 

@@ -110,9 +110,6 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="App\app.cpp">
-      <Filter>Source Files\Out of the box API</Filter>
-    </ClCompile>
     <ClCompile Include="App\main.cpp">
       <Filter>Source Files\Out of the box API</Filter>
     </ClCompile>
@@ -168,6 +165,9 @@
       <Filter>Source Files\Math</Filter>
     </ClCompile>
     <ClCompile Include="MutCell.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="App\app.cpp">
       <Filter>Source Files\Math</Filter>
     </ClCompile>
   </ItemGroup>

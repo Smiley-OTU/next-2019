@@ -25,4 +25,6 @@ private:
 
 	std::array<CSprite, 4> m_ghosts;
 	const float m_actorRadius;
+
+	std::vector<MCell> m_path;
 };

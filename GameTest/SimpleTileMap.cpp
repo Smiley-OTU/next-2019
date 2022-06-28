@@ -14,10 +14,14 @@
 
 // Color mapping for bird's eye view render. Indexed based on tile value.
 const CTile CTile::tiles[NUM_TILE_TYPES] = {
-	CTile{ 0.0f, 0.0f, 1.0f, 10.0f, 1.0f },		//Border
-	CTile{ 0.0f, 0.0f, 0.0f, 0.0f, 1.0f },		//Air
-	CTile{ 0.0f, 0.0f, 0.5f, 10.0f, 1.0f },		//Wall
-	CTile{ 0.8f, 0.8f, 0.0f, 2.5f, 0.25f }
+	//CTile{ 0.0f, 0.0f, 1.0f, 10.0f, 1.0f },		//Border
+	//CTile{ 0.0f, 0.0f, 0.0f, 0.0f, 1.0f },		//Air
+	//CTile{ 0.0f, 0.0f, 0.5f, 10.0f, 1.0f },		//Wall
+	//CTile{ 0.8f, 0.8f, 0.0f, 2.5f, 0.25f }      //Coin (unused)
+    CTile{ 0.0f, 0.0f, 1.0f, 10.0f, 1.0f },		//Border
+    CTile{ 0.0f, 1.0f, 0.0f, 0.0f, 1.0f },		//Air
+    CTile{ 0.0f, 0.0f, 0.0f, 10.0f, 1.0f },		//Wall
+    CTile{ 0.8f, 0.8f, 0.0f, 2.5f, 0.25f }      //Coin (unused)
 };
 
 // Direction lookup used by random map generation.
@@ -155,18 +159,8 @@ CPoint CSimpleTileMap::Ricochet(const CPoint& position, const CPoint& translatio
 ///////////////////////////////PATHING BEGIN/////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-#define HEURISTIC 1
-#define DISPLAY 1
 std::vector<MCell> CSimpleTileMap::FindPath(const MCell& start, const MCell& end)
 {
-#if DISPLAY
-    for (const MCell& cell: GetNeighbours(start))
-        DrawTile(cell.ToCell(), 0.5f, 0.0f, 0.0f);
-
-    for (const MCell& cell: GetNeighbours(end))
-        DrawTile(cell.ToCell(), 0.0f, 0.5f, 0.0f);
-#endif
-
     // Reset nodes, mark all nodes as unvisited (closed list = false) and append start to open list
     m_tileNodes.clear();
     m_tileNodes.resize(m_tileCount);
@@ -207,7 +201,7 @@ std::vector<MCell> CSimpleTileMap::FindPath(const MCell& start, const MCell& end
 
             // Calculate scores
             gNew = m_tileNodes[GetCellIndex(currentCell)].g + 1;
-            hNew = HEURISTIC == 0 ? manhattan(neighbour, end) : euclidean(neighbour, end);
+            hNew = true ? manhattan(neighbour, end) : euclidean(neighbour, end);
 
             // Append if unvisited or best score
             if (m_tileNodes[neighbourIndex].f() == 0 || gNew + hNew < m_tileNodes[neighbourIndex].f())
@@ -231,15 +225,8 @@ std::vector<MCell> CSimpleTileMap::FindPath(const MCell& start, const MCell& end
     }
     std::reverse(path.begin(), path.end());
 
-#if DISPLAY
-    for (const MCell& cell : path)
-        DrawTile(cell.ToCell(), 0.5f, 0.5f, 0.5f);
-#endif
-
     return path;
 }
-#undef DISPLAY
-#undef HEURISTIC
 
 std::vector<MCell> CSimpleTileMap::GetNeighbours(const MCell& cell) const
 {
@@ -254,6 +241,21 @@ std::vector<MCell> CSimpleTileMap::GetNeighbours(const MCell& cell) const
         }
     }
     return cells;
+}
+
+void CSimpleTileMap::DrawPath(const std::vector<MCell>& path) const
+{
+    assert(path.size() > 1);
+    for (const MCell& cell : path)
+        DrawTile(cell.ToCell(), 1.0f, 0.0f, 0.0f);
+
+    DrawTile(path.front().ToCell(), 0.5f, 0.0f, 0.0f);
+    DrawTile(path.back().ToCell(), 0.0f, 0.5f, 0.0f);
+    //for (const MCell& cell : GetNeighbours(path.front()))
+    //    DrawTile(cell.ToCell(), 0.5f, 0.0f, 0.0f);
+    //
+    //for (const MCell& cell : GetNeighbours(path.back()))
+    //    DrawTile(cell.ToCell(), 0.0f, 0.5f, 0.0f);
 }
 
 int CSimpleTileMap::GetCellIndex(const MCell& cell) const
