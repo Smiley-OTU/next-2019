@@ -17,7 +17,7 @@ CMainScene::CMainScene() : m_actorRadius(50.0f)
 	m_ghosts[INKY] = CSprite{ spriteWidth, spriteHeight, 0.0f, 1.0f, 1.0f };
 	m_ghosts[CLYDE] = CSprite{ spriteWidth, spriteHeight, 1.0f, 0.5f, 1.0f };
 
-	m_path = m_map.FindPath({ 1, 1 }, { 8, 8 });
+	m_path = m_map.FindPath({ 1, 1 }, { 10, 7 });
 }
 
 CMainScene::~CMainScene()

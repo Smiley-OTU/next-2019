@@ -131,7 +131,9 @@ private:
 
         int f() const { return g + h; }
 
-        bool operator<(const Node& node) const { return f() < node.f(); }
+        // priority_queue orders its elements *GREATEST* to least, so we have to invert this 
+        // to order our elements least-to-greatest, creating the best rather than worst path!
+        bool operator< (const Node& node) const { return f() > node.f(); }
 
         void Print()
         {

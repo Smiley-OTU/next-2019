@@ -169,6 +169,7 @@ std::vector<MCell> CSimpleTileMap::FindPath(const MCell& start, const MCell& end
     m_openList.push({ start });
     int iteration = 0;
 
+    // issue is a sub-optimal path is found (loop ends) before optimal path is found
     while (!m_openList.empty())
     {
         const MCell currentCell = m_openList.top().cell;
@@ -176,13 +177,13 @@ std::vector<MCell> CSimpleTileMap::FindPath(const MCell& start, const MCell& end
         // End condition (destination reached)
         if (currentCell == end)
         {
-            printf("Destination {%i,%i} found!\n", currentCell.x, currentCell.y);
             break;
         }
 
         // Otherwise, add current cell to closed list and update g & h values of its neighbours
         m_openList.pop();
         m_closedList[GetCellIndex(currentCell)] = true;
+        m_tileNodes[GetCellIndex(currentCell)].Print();
 
         int gNew, hNew;
         for (const MCell& neighbour: GetNeighbours(currentCell))
@@ -212,16 +213,10 @@ std::vector<MCell> CSimpleTileMap::FindPath(const MCell& start, const MCell& end
             {
                 m_openList.push({ neighbour, gNew, hNew });
                 m_tileNodes[neighbourIndex] = { neighbour, currentCell, gNew, hNew};
+                m_tileNodes[neighbourIndex].Print();
             }
         }
-        printf("\nIteration %i:\n", iteration);
-        std::priority_queue<Node> copyList = m_openList;
-        while (!copyList.empty())
-        {
-            Node node = copyList.top();
-            node.Print();
-            copyList.pop();
-        }
+        
         iteration++;
     }
 
@@ -248,7 +243,6 @@ std::vector<MCell> CSimpleTileMap::GetNeighbours(const MCell& cell) const
     {
         for (int j = cell.y - 1; j <= cell.y + 1 && j >= 0 && j < GetMapSize(); j++)
         {
-
             if (!(i == cell.x && j == cell.y) && GetTileMapValue(i, j) == EMapValue::AIR)
                 cells.push_back({ i, j });
         }
