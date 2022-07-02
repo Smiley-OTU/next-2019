@@ -145,9 +145,5 @@ private:
         MCell cell, parentCell;
         int g, h;
     };
-
-    std::vector<Node> m_tileNodes;
-    std::priority_queue<Node> m_openList;
-    std::vector<bool> m_closedList;
 };
 #endif

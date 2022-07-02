@@ -48,7 +48,7 @@ void CMainScene::Render()
 	m_rayCaster.clearDepthBuffer();*/
 	m_map.Render();
 
-	static Path path = m_map.FindPath({ 1, 1 }, { 10, 7 });
+	Path path = m_map.FindPath({ 1, 1 }, { 10, 7 });
 	m_map.DrawPath(path);
 }
 

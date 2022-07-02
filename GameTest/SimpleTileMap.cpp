@@ -162,15 +162,16 @@ CPoint CSimpleTileMap::Ricochet(const CPoint& position, const CPoint& translatio
 Path CSimpleTileMap::FindPath(const MCell& start, const MCell& end)
 {
     // Reset nodes, mark all nodes as unvisited (closed list = false) and append start to open list
-    m_tileNodes.clear();
-    m_tileNodes.resize(m_tileCount);
-    m_tileNodes[GetCellIndex(start)].parentCell = start;
-    m_closedList.resize(m_tileCount, false);
-    m_openList.push({ start });
 
-    while (!m_openList.empty())
+    std::vector<Node> tileNodes(m_tileCount);
+    std::priority_queue<Node> openList;
+    std::vector<bool> closedList(m_tileCount, false);
+    tileNodes[GetCellIndex(start)].parentCell = start;
+    openList.push({ start });
+
+    while (!openList.empty())
     {
-        const MCell currentCell = m_openList.top().cell;
+        const MCell currentCell = openList.top().cell;
 
         // End condition (destination reached)
         if (currentCell == end)
@@ -179,8 +180,8 @@ Path CSimpleTileMap::FindPath(const MCell& start, const MCell& end)
         }
 
         // Otherwise, add current cell to closed list and update g & h values of its neighbours
-        m_openList.pop();
-        m_closedList[GetCellIndex(currentCell)] = true;
+        openList.pop();
+        closedList[GetCellIndex(currentCell)] = true;
 
         int gNew, hNew;
         for (const MCell& neighbour: GetNeighbours(currentCell))
@@ -188,7 +189,7 @@ Path CSimpleTileMap::FindPath(const MCell& start, const MCell& end)
             const int neighbourIndex = GetCellIndex(neighbour);
 
             // Skip if already visited
-            if (m_closedList[neighbourIndex])
+            if (closedList[neighbourIndex])
                 continue;
 
             auto manhattan = [](const MCell& a, const MCell& b) -> int {
@@ -202,14 +203,14 @@ Path CSimpleTileMap::FindPath(const MCell& start, const MCell& end)
             };
 
             // Calculate scores
-            gNew = m_tileNodes[GetCellIndex(currentCell)].g + 1;
+            gNew = tileNodes[GetCellIndex(currentCell)].g + 1;
             hNew = false ? manhattan(neighbour, end) : euclidean(neighbour, end);
 
             // Append if unvisited or best score
-            if (m_tileNodes[neighbourIndex].f() == 0 || (gNew + hNew) < m_tileNodes[neighbourIndex].f())
+            if (tileNodes[neighbourIndex].f() == 0 || (gNew + hNew) < tileNodes[neighbourIndex].f())
             {
-                m_openList.push({ neighbour, gNew, hNew });
-                m_tileNodes[neighbourIndex] = { neighbour, currentCell, gNew, hNew};
+                openList.push({ neighbour, gNew, hNew });
+                tileNodes[neighbourIndex] = { neighbour, currentCell, gNew, hNew};
             }
         }
     }
@@ -219,10 +220,10 @@ Path CSimpleTileMap::FindPath(const MCell& start, const MCell& end)
     MCell currentCell = end;
     int currentIndex = GetCellIndex(currentCell);
 
-    while (!(m_tileNodes[currentIndex].parentCell == currentCell))
+    while (!(tileNodes[currentIndex].parentCell == currentCell))
     {
         path.push_back(currentCell);
-        currentCell = m_tileNodes[currentIndex].parentCell;
+        currentCell = tileNodes[currentIndex].parentCell;
         currentIndex = GetCellIndex(currentCell);
     }
     std::reverse(path.begin(), path.end());
