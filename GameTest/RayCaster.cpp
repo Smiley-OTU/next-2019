@@ -6,17 +6,17 @@
 
 #define DEBUG_DRAW false
 
+CRayCaster::~CRayCaster()
+{
+}
+
 CRayCaster::CRayCaster(float thickness) :
 	m_count(APP_VIRTUAL_WIDTH / (uint32_t)thickness), m_thickness(thickness), m_rayOriginY(APP_VIRTUAL_HEIGHT * 0.5f)
 {	//Make sure thickness is between 1 and 32.
 	assert(thickness >= 1.0f && thickness <= 31.0f);
 	m_indexBuffer.resize(m_count);
 	m_depthBuffer.resize(m_count);
-	clearDepthBuffer();
-}
-
-CRayCaster::~CRayCaster()
-{
+	ClearDepthBuffer();
 }
 
 void CRayCaster::Update(const CSimpleTileMap& map, const CViewer& viewer)
@@ -28,7 +28,7 @@ void CRayCaster::Update(const CSimpleTileMap& map, const CViewer& viewer)
 	const float raysStart = viewer.m_angle - viewer.m_fov * 0.5f;
 	for (uint32_t i = 0; i < m_count; i++) {
 		const float rayAngle = raysStart + angleStep * (float)i;
-		const CPoint poi = march(map, viewer.m_position, Math::direction(rayAngle));
+		const CPoint poi = March(map, viewer.m_position, Math::direction(rayAngle));
 		m_indexBuffer[i] = map.GetTileMapValue(poi.x, poi.y);
 
 		//Form depth buffer based off fisheye-corrected nearest surface. Used for debug rendering, would be more useful for multi-pass rendering.
@@ -82,10 +82,10 @@ void CRayCaster::RenderMap(const CSimpleTileMap& map, const CViewer& viewer)
 	}
 }
 
-void CRayCaster::RenderSprites(const CSimpleTileMap& map, const CViewer& viewer, const std::vector<CSprite>& sprites)
+void CRayCaster::RenderSprites(const CSimpleTileMap& map, const CViewer& viewer, const Sprites& sprites)
 {
 	std::map<float, const CSprite*> depthSortedSprites;
-	for (auto& sprite : sprites) {
+	for (const CSprite& sprite : sprites) {
 		//Frustum culling:
 		CPoint toSprite{ sprite.position - viewer.m_position };
 		float toSpriteDistance = Math::l2norm(toSprite);
@@ -96,7 +96,7 @@ void CRayCaster::RenderSprites(const CSimpleTileMap& map, const CViewer& viewer,
 			continue;
 
 		//Occlusion culling:
-		CPoint poi = march(map, viewer.m_position, toSprite);
+		CPoint poi = March(map, viewer.m_position, toSprite);
 		float poiDistance = Math::l2norm(poi - viewer.m_position);
 
 		//Return if the sprite is behind a wall.
@@ -142,12 +142,12 @@ void CRayCaster::RenderSprites(const CSimpleTileMap& map, const CViewer& viewer,
 	}
 }
 
-void CRayCaster::clearDepthBuffer()
+void CRayCaster::ClearDepthBuffer()
 {	//Over 9000 to ensure nothing will have a greater depth level.
 	m_depthBuffer.assign(m_depthBuffer.size(), 9001.0f);
 }
 
-inline CPoint CRayCaster::march(const CSimpleTileMap& map, const CPoint& position, const CPoint& direction)
+inline CPoint CRayCaster::March(const CSimpleTileMap& map, const CPoint& position, const CPoint& direction)
 {
 	const float unitRise = direction.y / direction.x;
 	const float unitRun = direction.x / direction.y;

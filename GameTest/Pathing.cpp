@@ -24,12 +24,12 @@ namespace Pathing {
             init(cell, parentCell, g, h);
         }
 
-        void init(const Cell& cell = { -1, -1 }, const Cell& parentCell = { -1, -1 }, int g = 0, int h = 0)
+        void init(const Cell& a_cell = { -1, -1 }, const Cell& a_parentCell = { -1, -1 }, int a_g = 0, int a_h = 0)
         {
-            this->cell = cell;
-            this->parentCell = parentCell;
-            this->g = g;
-            this->h = h;
+            cell = a_cell;
+            parentCell = a_parentCell;
+            g = a_g;
+            h = a_h;
         }
 
         int f() const { return g + h; }

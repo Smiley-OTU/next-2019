@@ -1,6 +1,7 @@
 #pragma once
 #include "Point.h"
-//Also give friendship to ghost behaviour or whatever so that ghosts can access colour to flicker when pacman gets a powerup.
+#include <array>
+
 class CRayCaster;
 class CSprite
 {
@@ -17,3 +18,4 @@ private:
 	float m_height;
 };
 
+using Sprites = std::array<CSprite, 4>;

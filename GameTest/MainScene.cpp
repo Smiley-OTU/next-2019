@@ -24,31 +24,31 @@ CMainScene::~CMainScene()
 
 void CMainScene::Update(float deltaTime)
 {
-	/*m_player.Update(m_map, deltaTime);
-	m_rayCaster.Update(m_map, m_player);
-	float ghostSpeed = m_player.GetSpeed() * 0.5f * deltaTime / 1000.0f;
-	for (CSprite& ghost : m_ghosts) {
-		CPoint toPlayer{ Math::normalize(m_player.GetPosition() - ghost.position) };
-		ghost.position = Pathing::Ricochet(m_map, ghost.position, toPlayer * ghostSpeed);
-		if (Math::circleCollision(m_player.GetPosition(), ghost.position, m_actorRadius * 0.25f, m_actorRadius * 0.5f))
-			CScene::Change(ESceneType::END);
-	}*/
+	//m_player.Update(m_map, deltaTime);
+	//m_rayCaster.Update(m_map, m_player);
+	//float ghostSpeed = m_player.GetSpeed() * 0.5f * deltaTime / 1000.0f;
+	//for (CSprite& ghost : m_ghosts) {
+	//	CPoint toPlayer{ Math::normalize(m_player.GetPosition() - ghost.position) };
+	//	ghost.position = Pathing::Ricochet(ghost.position, toPlayer * ghostSpeed, m_map);
+	//	if (Math::circleCollision(m_player.GetPosition(), ghost.position, m_actorRadius * 0.25f, m_actorRadius * 0.5f))
+	//		CScene::Change(ESceneType::END);
+	//}
 }
 
 void CMainScene::Render()
 {
-	/*const float halfHeight = APP_VIRTUAL_HEIGHT * 0.5f;
-	App::DrawQuad(0.0f, 0.0f, APP_VIRTUAL_WIDTH, halfHeight, 0.2f, 0.2f, 0.2f);					//Floor
-	App::DrawQuad(0.0f, halfHeight, APP_VIRTUAL_WIDTH, APP_VIRTUAL_HEIGHT, 0.3f, 0.3f, 0.3f);	//Ceiling
-
-	m_rayCaster.RenderMap(m_map, m_player);
-	m_rayCaster.RenderSprites(m_map, m_player, m_ghosts);
-	RenderMinimap();
-
-	m_rayCaster.clearDepthBuffer();*/
-	m_map.Render();
+	//const float halfHeight = APP_VIRTUAL_HEIGHT * 0.5f;
+	//App::DrawQuad(0.0f, 0.0f, APP_VIRTUAL_WIDTH, halfHeight, 0.2f, 0.2f, 0.2f);				//Floor
+	//App::DrawQuad(0.0f, halfHeight, APP_VIRTUAL_WIDTH, APP_VIRTUAL_HEIGHT, 0.3f, 0.3f, 0.3f);	//Ceiling
+	//
+	//m_rayCaster.RenderMap(m_map, m_player);
+	//m_rayCaster.RenderSprites(m_map, m_player, m_ghosts);
+	//RenderMinimap();
+	//
+	//m_rayCaster.ClearDepthBuffer();
 
 	using namespace Pathing;
+	m_map.Render();
 	for (const CSprite& ghost : m_ghosts)
 	{
 		DrawPath(FindPath(
@@ -75,10 +75,10 @@ void CMainScene::RenderMinimap()
 {
 	static const float mapScale = 0.2f;		//20%  screen size minimap.
 	static const float margin = 0.025f;		//2.5% screen size margin.
-	static const float scaledScreenWidth = APP_VIRTUAL_WIDTH * mapScale;
-	static const float scaledScreenHeight = APP_VIRTUAL_HEIGHT * mapScale;
-	static const float x = (APP_VIRTUAL_WIDTH - scaledScreenWidth) - APP_VIRTUAL_WIDTH * margin;
-	static const float y = APP_VIRTUAL_HEIGHT * margin;
+	static const GLsizei scaledScreenWidth = GLsizei((float)APP_VIRTUAL_WIDTH * mapScale);
+	static const GLsizei scaledScreenHeight = GLsizei((float)APP_VIRTUAL_HEIGHT * mapScale);
+	static const GLint x = GLint((APP_VIRTUAL_WIDTH - scaledScreenWidth) - (float)APP_VIRTUAL_WIDTH * margin);
+	static const GLint y = GLint((float)APP_VIRTUAL_HEIGHT * margin);
 	glViewport(x, y, scaledScreenWidth, scaledScreenHeight);
 	
 	m_map.Render();
@@ -92,5 +92,5 @@ void CMainScene::RenderMinimap()
 	for (const CSprite& ghost : m_ghosts)
 		App::DrawPoint(ghost.position, m_actorRadius, ghost.r, ghost.g, ghost.b);
 
-	glViewport(0.0f, 0.0f, APP_VIRTUAL_WIDTH, APP_VIRTUAL_HEIGHT);
+	glViewport(0, 0, APP_VIRTUAL_WIDTH, APP_VIRTUAL_HEIGHT);
 }

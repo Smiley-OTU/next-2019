@@ -1,9 +1,5 @@
 #include "stdafx.h"
 #include "Line.h"
-//Make this sentinel more obscure if we run into trouble.
-#define DEFAULT_VALUE 9002.0f
-
-const unsigned char CLine::s_components = 4;
 
 CLine::CLine(const CPoint & a_p1, const CPoint & a_p2) :
 	p1(a_p1), p2(a_p2)
@@ -15,29 +11,7 @@ CLine::CLine(float a_p1x, float a_p1y, float a_p2x, float a_p2y) :
 {
 }
 
-//Not safe and not useful at the moment.
-/*CLine::CLine(float a_values[4])
+float CLine::operator[](size_t index) const
 {
-	memcpy(a_values, values, sizeof(float) * s_components);
-}*/
-
-CLine::CLine() : p1(CPoint{}), p2(CPoint{})
-{
-}
-
-CLine::~CLine()
-{
-}
-
-bool CLine::initialized() const
-{
-	return p1.initialized() && p2.initialized();
-}
-
-float CLine::operator[](unsigned char index) const
-{
-#if _DEBUG
-	assert(index < s_components);
-#endif
 	return values[index];
 }

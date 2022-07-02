@@ -8,7 +8,7 @@
 
 enum EMapValue : int
 {
-	OUTOFBOUNDS = -1,   // If a GetTileMapValue() call is ourside the bounds of the map it will return this.
+	OUTOFBOUNDS = -1,
 	BORDER,
 	AIR,
 	WALL,
@@ -28,17 +28,16 @@ public:
     // Creates a tile map of mapSize by mapSize.
 	CSimpleTileMap(const int mapSize);
 
-    // Clear each tile of the map
+    // Clear each tile of the map.
     void Clear(EMapValue clearValue = EMapValue::WALL );
 
-    // Bird's eye view of the map
+    // Draws the map from a bird's eye view.
     void Render() const;
 
     EMapValue GetTileMapValue(const int x, const int y)  const;
     EMapValue GetTileMapValue(const float fx, const float fy) const;
     bool SetTileMapValue(const int x, const int y, EMapValue v);
 
-	Cell GetCell(float x, float y) const;
 	Cell GetCell(const CPoint& point) const; 
     int GetCellIndex(const Cell& cell) const;
     CPoint GetCellCentre(const Cell& cell) const;
@@ -49,14 +48,7 @@ public:
 	float GetTileHeight() const;
 
 private:
-    //--------------------------------------------------------------------------------------------
-    // This will generate a new random map.
-    // targetFloorPercentage is how much floor space you want to be open (as a percentage)
-    // maxTunnelLength is how long you want tunnels. 
-    //--------------------------------------------------------------------------------------------
     void RandomMap(const float targetFloorPercentage, const int maxTunnelLength);
-
-    // Get a new direction. Used by the RandomMap method.
     int GetNewDirection(const int currentRow, const int currentColumn, int currentDir) const;
 
     const int m_mapSize;

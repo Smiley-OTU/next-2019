@@ -10,9 +10,8 @@ public:
 
 	void Update(const CSimpleTileMap& map, const CViewer& viewer);
 	void RenderMap(const CSimpleTileMap& map, const CViewer& viewer);
-	void RenderSprites(const CSimpleTileMap& map, const CViewer& viewer, const std::vector<CSprite>& sprites);
-	//Tempted to to name this to clear and give it bitfield argument so I could type clear(GL_DEPTH_BUFFER_BIT) xD
-	void clearDepthBuffer();
+	void RenderSprites(const CSimpleTileMap& map, const CViewer& viewer, const Sprites& sprites);
+	void ClearDepthBuffer();
 
 private:
 	//At least I can pretend to use modern gl through naming conventions ;)
@@ -28,6 +27,5 @@ private:
 	//Length of adjacent side of right triangle formed by the screen and the field of view.
 	float m_projectionDistance;
 
-	inline CPoint march(const CSimpleTileMap& map, const CPoint& position, const CPoint& direction);
+	inline CPoint March(const CSimpleTileMap& map, const CPoint& position, const CPoint& direction);
 };
-

@@ -38,11 +38,100 @@ CSimpleTileMap::CSimpleTileMap(const int mapSize) :
     RandomMap(80, 12);
 }
 
-//------------------------------------------------------------------------
-// Randomly creates tunnels through the map.
-// Picks a direction then moves in a random direction of length (0-maxTunnelLength)
-// Picks new direction and repeats until we have filled the map with the targetFloorPercentage of FLOOR tiles.
-//------------------------------------------------------------------------
+void CSimpleTileMap::Clear(EMapValue clearValue)
+{    
+    for (auto& row : m_tileValues)
+    {
+        for (EMapValue& value : row)
+            value = clearValue;
+    }
+}
+
+void CSimpleTileMap::Render() const
+{
+    const float xStep = m_tileWidth;
+    const float yStep = m_tileHeight;
+    for (int y = 0; y < m_mapSize; y++)
+    {
+        for (int x = 0; x < m_mapSize; x++)
+        {
+            const CTile& tile = CTile::tiles[GetTileMapValue(x, y)];
+
+            float xPos = (x * xStep);
+            xPos += (xStep - (xStep * tile.scale)) / 2.0f;
+
+            float yPos = (y * yStep);
+            yPos += (yStep - (yStep * tile.scale)) / 2.0f;
+
+            float w = xStep * tile.scale;
+            float h = yStep * tile.scale;
+
+            App::DrawQuad(xPos, yPos, xPos + w, yPos + h, tile.r, tile.g, tile.b);
+        }
+    }
+}
+
+EMapValue CSimpleTileMap::GetTileMapValue(const int x, const int y) const
+{
+    if ((x >= 0 && x < m_mapSize) && (y >= 0 && y < m_mapSize))
+    {
+        return m_tileValues[x][y];
+    }
+    return EMapValue::OUTOFBOUNDS;
+}
+
+EMapValue CSimpleTileMap::GetTileMapValue(const float fx, const float fy) const
+{
+    int x = (int)(fx / m_tileWidth);
+    int y = (int)(fy / m_tileHeight);
+    return GetTileMapValue(x, y);
+}
+
+bool CSimpleTileMap::SetTileMapValue(const int x, const int y, const EMapValue v)
+{
+    if ((x >= 0 && x < m_mapSize) && (y >= 0 && y < m_mapSize))
+    {
+        m_tileValues[x][y] = v;
+        return true;
+    }
+    return false;
+}
+
+Cell CSimpleTileMap::GetCell(const CPoint& point) const
+{
+	return { int(point.x / m_tileWidth), int(point.y / m_tileHeight) };
+}
+
+int CSimpleTileMap::GetCellIndex(const Cell& cell) const
+{
+    return cell.y * m_mapSize + cell.x;
+}
+
+CPoint CSimpleTileMap::GetCellCentre(const Cell& cell) const
+{
+    return { (float)cell.x * m_tileWidth + m_tileWidth * 0.5f, (float)cell.y * m_tileHeight + m_tileHeight * 0.5f };
+}
+
+void CSimpleTileMap::DrawTile(const Cell& cell, float r, float g, float b) const
+{
+	App::DrawQuad(cell.x * GetTileWidth(), cell.y * GetTileHeight(), (cell.x + 1) * GetTileWidth(), (cell.y + 1) * GetTileHeight(), r, g, b);
+}
+
+int CSimpleTileMap::GetMapSize() const
+{
+    return m_mapSize;
+}
+
+float CSimpleTileMap::GetTileWidth() const
+{
+	return m_tileWidth;
+}
+
+float CSimpleTileMap::GetTileHeight() const
+{
+	return m_tileHeight;
+}
+
 void CSimpleTileMap::RandomMap(const float targetFloorPercentage, const int maxTunnelLength)
 {
     // Clear the map as WALLs then fill the BORDERs.
@@ -92,122 +181,13 @@ void CSimpleTileMap::RandomMap(const float targetFloorPercentage, const int maxT
     }
 }
 
-void CSimpleTileMap::Clear(EMapValue clearValue)
-{    
-    for (auto& row : m_tileValues)
-    {
-        for (EMapValue& value : row)
-            value = clearValue;
-    }
-}
-
-void CSimpleTileMap::Render() const
-{
-    const float xStep = m_tileWidth;
-    const float yStep = m_tileHeight;
-    for (int y = 0; y < m_mapSize; y++)
-    {
-        for (int x = 0; x < m_mapSize; x++)
-        {
-            EMapValue index = GetTileMapValue(x, y);
-            if (index > EMapValue::OUTOFBOUNDS && index < EMapValue::NUM_TILE_TYPES) {
-                const CTile& tile = CTile::tiles[index];
-
-                float xPos = (x * xStep);
-                xPos += (xStep - (xStep * tile.scale)) / 2.0f;
-
-                float yPos = (y * yStep);
-                yPos += (yStep - (yStep * tile.scale)) / 2.0f;
-
-                float w = xStep * tile.scale;
-                float h = yStep * tile.scale;
-
-                App::DrawQuad(xPos, yPos, xPos + w, yPos + h, tile.r, tile.g, tile.b);
-            }
-#if _DEBUG
-            else {
-                printf("Tried to render an invalid tile of value %i at row %i column %i.\n", index, y, x);
-                printf("Press enter to terminate the program.\n");
-                getchar();
-                exit(0);
-            }
-#endif
-        }
-    }
-}
-
-EMapValue CSimpleTileMap::GetTileMapValue(const int x, const int y) const
-{
-    if ((x >= 0 && x < m_mapSize) && (y >= 0 && y < m_mapSize))
-    {
-        return m_tileValues[x][y];
-    }
-    return EMapValue::OUTOFBOUNDS;
-}
-
-EMapValue CSimpleTileMap::GetTileMapValue(const float fx, const float fy) const
-{
-    int x = (int)(fx / m_tileWidth);
-    int y = (int)(fy / m_tileHeight);
-    return GetTileMapValue(x, y);
-}
-
-bool CSimpleTileMap::SetTileMapValue(const int x, const int y, const EMapValue v)
-{
-    if ((x >= 0 && x < m_mapSize) && (y >= 0 && y < m_mapSize))
-    {
-        m_tileValues[x][y] = v;
-        return true;
-    }
-    return false;
-}
-
-Cell CSimpleTileMap::GetCell(float x, float y) const
-{
-	return { int(x / m_tileWidth), int(y / m_tileHeight) };
-}
-
-Cell CSimpleTileMap::GetCell(const CPoint& point) const
-{
-	return GetCell(point.x, point.y);
-}
-
-int CSimpleTileMap::GetCellIndex(const Cell& cell) const
-{
-    return cell.y * m_mapSize + cell.x;
-}
-
-CPoint CSimpleTileMap::GetCellCentre(const Cell& cell) const
-{
-    return { (float)cell.x * m_tileWidth + m_tileWidth * 0.5f, (float)cell.y * m_tileHeight + m_tileHeight * 0.5f };
-}
-
-void CSimpleTileMap::DrawTile(const Cell& cell, float r, float g, float b) const
-{
-	App::DrawQuad(cell.x * GetTileWidth(), cell.y * GetTileHeight(), (cell.x + 1) * GetTileWidth(), (cell.y + 1) * GetTileHeight(), r, g, b);
-}
-
-int CSimpleTileMap::GetMapSize() const
-{
-    return m_mapSize;
-}
-
-float CSimpleTileMap::GetTileWidth() const
-{
-	return m_tileWidth;
-}
-
-float CSimpleTileMap::GetTileHeight() const
-{
-	return m_tileHeight;
-}
-
 int CSimpleTileMap::GetNewDirection(const int currentRow, const int currentColumn, int currentDir) const
 {
     // Get random direction. Perp to the last direction.
     int newDir = rand() % 2;
     if (currentDir < 2)
         newDir += 2;
+
     //If the new tile direction would hit a border then go in the opposite direction.
     if (GetTileMapValue(currentRow + g_dirLookup[newDir][0], currentColumn + g_dirLookup[newDir][1]) == EMapValue::BORDER)
     {
@@ -223,5 +203,6 @@ int CSimpleTileMap::GetNewDirection(const int currentRow, const int currentColum
             return 2;
         }
     }
+
     return newDir;
 }

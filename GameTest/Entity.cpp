@@ -1,14 +1,6 @@
 #include "stdafx.h"
 #include "Entity.h"
 
-CEntity::CEntity()
-{
-}
-
-CEntity::~CEntity()
-{
-}
-
 CPoint CEntity::GetPosition()
 {
 	return m_position;
