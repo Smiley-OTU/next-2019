@@ -102,9 +102,6 @@
     <ClInclude Include="Cell.h">
       <Filter>Source Files\Math</Filter>
     </ClInclude>
-    <ClInclude Include="MutableCell.h">
-      <Filter>Source Files\Math</Filter>
-    </ClInclude>
     <ClInclude Include="Pathing.h">
       <Filter>Source Files\Math</Filter>
     </ClInclude>
@@ -165,9 +162,6 @@
       <Filter>Source Files\Visuals</Filter>
     </ClCompile>
     <ClCompile Include="Cell.cpp">
-      <Filter>Source Files\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="MutableCell.cpp">
       <Filter>Source Files\Math</Filter>
     </ClCompile>
     <ClCompile Include="App\app.cpp">

@@ -2,13 +2,13 @@
 #include "SimpleTileMap.h"
 
 namespace Pathing {
-    using Path = std::vector<MCell>;
+    using Path = std::vector<Cell>;
 
     // Returns the resultant position based on speeed along a path from start to end
     CPoint FollowPath(const CPoint& start, const CPoint& end, float speed, const CSimpleTileMap& map);
 
     // Returns a vector of tile grid indices to traverse to get from start to end (using A*).
-    Path FindPath(const MCell& start, const MCell& end, const CSimpleTileMap& map);
+    Path FindPath(const Cell& start, const Cell& end, const CSimpleTileMap& map);
 
     // Render path tiles
     void DrawPath(const Path& path, const CSimpleTileMap& map);
@@ -17,8 +17,8 @@ namespace Pathing {
     CPoint Ricochet(const CPoint& position, const CPoint& translation, const CSimpleTileMap& map);
 
     // Returns adjacent cells which can be moved to (tiles who's value is EMapValue::AIR).
-    std::vector<MCell> GetNeighbours(const MCell& cell, const CSimpleTileMap& map);
+    std::vector<Cell> GetNeighbours(const Cell& cell, const CSimpleTileMap& map);
 
     // Flatten 2d position into 1d index on an NxN grid
-    int GetCellIndex(const MCell& cell, const CSimpleTileMap& map);
+    int GetCellIndex(const Cell& cell, const CSimpleTileMap& map);
 };

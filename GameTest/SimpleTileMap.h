@@ -5,7 +5,7 @@
 // Feel free to use this for your entry if you want but you don't have to.
 // If you do not use this then you should provide an alternative that represents a pac-man style map.
 //------------------------------------------------------------------------
-#include "MutableCell.h"
+#include "Cell.h"
 #include "Point.h"
 #include <vector>
 
@@ -54,9 +54,9 @@ public:
     //--------------------------------------------------------------------------------------------
     EMapValue GetTileMapValue(const int x, const int y)  const;
     EMapValue GetTileMapValue(const float fx, const float fy) const;
-	MCell GetCell(float x, float y) const;
-	MCell GetCell(const CPoint& point) const;
-	void DrawTile(const MCell& cell, float r, float g, float b) const;
+	Cell GetCell(float x, float y) const;
+	Cell GetCell(const CPoint& point) const;
+	void DrawTile(const Cell& cell, float r, float g, float b) const;
 
     //--------------------------------------------------------------------------------------------
     // Set the tile value at give coords in grid.

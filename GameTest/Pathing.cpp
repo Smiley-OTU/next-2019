@@ -9,22 +9,22 @@ namespace Pathing {
             init();
         }
 
-        Node(const MCell& cell)
+        Node(const Cell& cell)
         {
             init(cell);
         }
 
-        Node(const MCell& cell, int g, int h)
+        Node(const Cell& cell, int g, int h)
         {
             init(cell, { -1, -1 }, g, h);
         }
 
-        Node(const MCell& cell, const MCell& parentCell, int g, int h)
+        Node(const Cell& cell, const Cell& parentCell, int g, int h)
         {
             init(cell, parentCell, g, h);
         }
 
-        void init(const MCell& cell = { -1, -1 }, const MCell& parentCell = { -1, -1 }, int g = 0, int h = 0)
+        void init(const Cell& cell = { -1, -1 }, const Cell& parentCell = { -1, -1 }, int g = 0, int h = 0)
         {
             this->cell = cell;
             this->parentCell = parentCell;
@@ -39,7 +39,7 @@ namespace Pathing {
             printf("Cell {%i,%i}: f = %i (%ig + %ih)\n", cell.x, cell.y, f(), g, h);
         }
 
-        MCell cell, parentCell;
+        Cell cell, parentCell;
         int g, h;
     };
 
@@ -48,15 +48,15 @@ namespace Pathing {
         return CPoint();
     }
 
-    Path FindPath(const MCell& start, const MCell& end, const CSimpleTileMap& map)
+    Path FindPath(const Cell& start, const Cell& end, const CSimpleTileMap& map)
     {
         // computationally cheap but treats diagonals the same as adjacents
-        auto manhattan = [](const MCell& a, const MCell& b) -> int {
+        auto manhattan = [](const Cell& a, const Cell& b) -> int {
             return abs(a.x - b.x) + abs(a.y - b.y);
         };
 
         // computationally expensive but treats diagonals as more expensive than adjacents
-        auto euclidean = [](const MCell& a, const MCell& b) -> int {
+        auto euclidean = [](const Cell& a, const Cell& b) -> int {
             int dx = a.x - b.x;
             int dy = a.y - b.y;
             return (int)sqrt(dx * dx + dy * dy);
@@ -76,7 +76,7 @@ namespace Pathing {
 
         while (!openList.empty())
         {
-            const MCell currentCell = openList.top().cell;
+            const Cell currentCell = openList.top().cell;
 
             // End condition (destination reached)
             if (currentCell == end)
@@ -89,7 +89,7 @@ namespace Pathing {
             closedList[GetCellIndex(currentCell, map)] = true;
 
             int gNew, hNew;
-            for (const MCell& neighbour : GetNeighbours(currentCell, map))
+            for (const Cell& neighbour : GetNeighbours(currentCell, map))
             {
                 const int neighbourIndex = GetCellIndex(neighbour, map);
 
@@ -112,7 +112,7 @@ namespace Pathing {
 
         // Generate path by traversing parents then inverting
         Path path;
-        MCell currentCell = end;
+        Cell currentCell = end;
         int currentIndex = GetCellIndex(currentCell, map);
 
         while (!(tileNodes[currentIndex].parentCell == currentCell))
@@ -130,7 +130,7 @@ namespace Pathing {
     {
         if (path.size() > 1)
         {
-            for (const MCell& cell : path)
+            for (const Cell& cell : path)
                 map.DrawTile(cell, 1.0f, 0.0f, 0.0f);
 
             map.DrawTile(path.front(), 0.5f, 0.0f, 0.0f);
@@ -150,9 +150,9 @@ namespace Pathing {
         return destination;
     }
 
-    std::vector<MCell> GetNeighbours(const MCell& cell, const CSimpleTileMap& map)
+    std::vector<Cell> GetNeighbours(const Cell& cell, const CSimpleTileMap& map)
     {
-        std::vector<MCell> cells;
+        std::vector<Cell> cells;
         for (int i = cell.x - 1; i <= cell.x + 1 && i >= 0 && i < map.GetMapSize(); i++)
         {
             for (int j = cell.y - 1; j <= cell.y + 1 && j >= 0 && j < map.GetMapSize(); j++)
@@ -164,7 +164,7 @@ namespace Pathing {
         return cells;
     }
 
-    int GetCellIndex(const MCell& cell, const CSimpleTileMap& map)
+    int GetCellIndex(const Cell& cell, const CSimpleTileMap& map)
     {
         return cell.y * map.GetMapSize() + cell.x;
     }
