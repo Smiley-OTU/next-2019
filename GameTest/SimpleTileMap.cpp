@@ -158,11 +158,9 @@ CPoint CSimpleTileMap::Ricochet(const CPoint& position, const CPoint& translatio
 /////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////PATHING BEGIN/////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-
 Path CSimpleTileMap::FindPath(const MCell& start, const MCell& end)
 {
     // Reset nodes, mark all nodes as unvisited (closed list = false) and append start to open list
-
     std::vector<Node> tileNodes(m_tileCount);
     std::priority_queue<Node> openList;
     std::vector<bool> closedList(m_tileCount, false);
