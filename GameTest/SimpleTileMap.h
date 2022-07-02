@@ -69,8 +69,8 @@ public:
     //--------------------------------------------------------------------------------------------
     EMapValue GetTileMapValue(const int x, const int y)  const;
     EMapValue GetTileMapValue(const float fx, const float fy) const;
-	Cell GetCell(float x, float y) const;
-	Cell GetCell(const CPoint& point) const;
+	MCell GetCell(float x, float y) const;
+	MCell GetCell(const CPoint& point) const;
 	void DrawTile(const Cell& cell, float r, float g, float b) const;
 
     //--------------------------------------------------------------------------------------------

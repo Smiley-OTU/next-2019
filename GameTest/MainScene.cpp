@@ -48,13 +48,13 @@ void CMainScene::Render()
 	m_rayCaster.clearDepthBuffer();*/
 	m_map.Render();
 
-	std::array<MCell, 4> origins;
-	origins[0] = { 1, 1 };
-	origins[1] = { 1, 10 };
-	origins[2] = { 10, 1 };
-	origins[3] = { 14, 14 };
-	for (const MCell& start: origins)
-		m_map.DrawPath(m_map.FindPath(start, { 6, 7 }));
+	for (const CSprite& ghost : m_ghosts)
+	{
+		m_map.DrawPath(m_map.FindPath(
+			m_map.GetCell(ghost.position),
+			m_map.GetCell(m_player.GetPosition())
+		));
+	}
 }
 
 void CMainScene::OnEnter()
