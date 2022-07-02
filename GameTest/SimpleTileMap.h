@@ -35,18 +35,25 @@ public:
     //--------------------------------------------------------------------------------------------
 	CSimpleTileMap(const int mapSize);
 
-    //Returns the collision response given a point and its desired translation.
-    CPoint Ricochet(const CPoint& position, const CPoint& translation) const;
+    // Returns the resultant position based on speeed along a path from start to end
+    CPoint FollowPath(const CPoint& start, const CPoint& end, float speed);
 
-    //Returns a vector of tile grid indices to traverse to get from start to end (using A*).
+//Pathing helpers begin
+    // Returns a vector of tile grid indices to traverse to get from start to end (using A*).
     Path FindPath(const MCell& start, const MCell& end);
 
-    //Returns adjacent cells which can be moved to (tiles who's value is EMapValue::AIR).
-    std::vector<MCell> GetNeighbours(const MCell& cell) const;
-
+    // Render path tiles
     void DrawPath(const Path& path) const;
 
+    // Returns the collision response given a point and its desired translation.
+    CPoint Ricochet(const CPoint& position, const CPoint& translation) const;
+
+    // Returns adjacent cells which can be moved to (tiles who's value is EMapValue::AIR).
+    std::vector<MCell> GetNeighbours(const MCell& cell) const;
+
+    // Flatten 2d position into 1d index on 16x16 grid
     int GetCellIndex(const MCell& cell) const;
+//Pathing helpers end
 
     //--------------------------------------------------------------------------------------------
     // This will generate a new random map.
@@ -100,50 +107,5 @@ private:
     float m_tileWidth;
     float m_tileHeight;
     std::vector<std::vector<EMapValue>> m_tileValues;
-
-    struct Node
-    {
-        Node()
-        {
-            init();
-        }
-
-        Node(const MCell& cell)
-        {
-            init(cell);
-        }
-
-        Node(const MCell& cell, int g, int h)
-        {
-            init(cell, { -1, -1 }, g, h);
-        }
-
-        Node(const MCell& cell, const MCell& parentCell, int g, int h)
-        {
-            init(cell, parentCell, g, h);
-        }
-
-        void init(const MCell& cell = { -1, -1 }, const MCell& parentCell = { -1, -1 }, int g = 0, int h = 0)
-        {
-            this->cell = cell;
-            this->parentCell = parentCell;
-            this->g = g;
-            this->h = h;
-        }
-
-        int f() const { return g + h; }
-
-        // priority_queue orders its elements *GREATEST* to least, so we have to invert this 
-        // to order our elements least-to-greatest, creating the best rather than worst path!
-        bool operator< (const Node& node) const { return f() > node.f(); }
-
-        void Print()
-        {
-            printf("Cell {%i,%i}: f = %i (%ig + %ih)\n", cell.x, cell.y, f(), g, h);
-        }
-
-        MCell cell, parentCell;
-        int g, h;
-    };
 };
 #endif
