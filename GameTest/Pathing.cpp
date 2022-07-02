@@ -45,6 +45,9 @@ namespace Pathing {
 
     CPoint FollowPath(const CPoint& start, const CPoint& end, float speed, const CSimpleTileMap& map)
     {
+        Path path = FindPath(map.GetCell(start), map.GetCell(end), map);
+        //CPoint destination = 
+
         return CPoint();
     }
 
@@ -71,7 +74,7 @@ namespace Pathing {
         std::vector<Node> tileNodes(tileCount);
         std::priority_queue<Node, std::vector<Node>, decltype(predicate)> openList(predicate);
         std::vector<bool> closedList(tileCount, false);
-        tileNodes[GetCellIndex(start, map)].parentCell = start;
+        tileNodes[map.GetCellIndex(start)].parentCell = start;
         openList.push({ start });
 
         while (!openList.empty())
@@ -86,19 +89,19 @@ namespace Pathing {
 
             // Otherwise, add current cell to closed list and update g & h values of its neighbours
             openList.pop();
-            closedList[GetCellIndex(currentCell, map)] = true;
+            closedList[map.GetCellIndex(currentCell)] = true;
 
             int gNew, hNew;
             for (const Cell& neighbour : GetNeighbours(currentCell, map))
             {
-                const int neighbourIndex = GetCellIndex(neighbour, map);
+                const int neighbourIndex = map.GetCellIndex(neighbour);
 
                 // Skip if already visited
                 if (closedList[neighbourIndex])
                     continue;
 
                 // Calculate scores
-                gNew = tileNodes[GetCellIndex(currentCell, map)].g + 1;
+                gNew = tileNodes[map.GetCellIndex(currentCell)].g + 1;
                 hNew = false ? manhattan(neighbour, end) : euclidean(neighbour, end);
 
                 // Append if unvisited or best score
@@ -113,13 +116,13 @@ namespace Pathing {
         // Generate path by traversing parents then inverting
         Path path;
         Cell currentCell = end;
-        int currentIndex = GetCellIndex(currentCell, map);
+        int currentIndex = map.GetCellIndex(currentCell);
 
         while (!(tileNodes[currentIndex].parentCell == currentCell))
         {
             path.push_back(currentCell);
             currentCell = tileNodes[currentIndex].parentCell;
-            currentIndex = GetCellIndex(currentCell, map);
+            currentIndex = map.GetCellIndex(currentCell);
         }
         std::reverse(path.begin(), path.end());
 
@@ -162,10 +165,5 @@ namespace Pathing {
             }
         }
         return cells;
-    }
-
-    int GetCellIndex(const Cell& cell, const CSimpleTileMap& map)
-    {
-        return cell.y * map.GetMapSize() + cell.x;
     }
 }

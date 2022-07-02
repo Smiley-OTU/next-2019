@@ -10,8 +10,6 @@
 
 CMainScene::CMainScene() : m_actorRadius(50.0f)
 {
-	m_map.RandomMap(80, 12);
-
 	const float spriteWidth = 40.0f;
 	const float spriteHeight = 30.0f;
 	m_ghosts[BLINKY] = CSprite{ spriteWidth, spriteHeight, 1.0f, 0.0f, 0.0f };

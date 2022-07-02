@@ -1,5 +1,6 @@
 #pragma once
 #include "SimpleTileMap.h"
+#include <vector>
 
 namespace Pathing {
     using Path = std::vector<Cell>;
@@ -18,7 +19,4 @@ namespace Pathing {
 
     // Returns adjacent cells which can be moved to (tiles who's value is EMapValue::AIR).
     std::vector<Cell> GetNeighbours(const Cell& cell, const CSimpleTileMap& map);
-
-    // Flatten 2d position into 1d index on an NxN grid
-    int GetCellIndex(const Cell& cell, const CSimpleTileMap& map);
 };
