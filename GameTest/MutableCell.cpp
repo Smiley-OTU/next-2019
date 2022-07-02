@@ -1,4 +1,4 @@
-#include "MutCell.h"
+#include "MutableCell.h"
 #include "Cell.h"
 
 Cell MCell::ToCell() const

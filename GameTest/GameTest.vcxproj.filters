@@ -102,7 +102,10 @@
     <ClInclude Include="Cell.h">
       <Filter>Source Files\Math</Filter>
     </ClInclude>
-    <ClInclude Include="MutCell.h">
+    <ClInclude Include="MutableCell.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Pathing.h">
       <Filter>Source Files\Math</Filter>
     </ClInclude>
   </ItemGroup>
@@ -164,10 +167,13 @@
     <ClCompile Include="Cell.cpp">
       <Filter>Source Files\Math</Filter>
     </ClCompile>
-    <ClCompile Include="MutCell.cpp">
+    <ClCompile Include="MutableCell.cpp">
       <Filter>Source Files\Math</Filter>
     </ClCompile>
     <ClCompile Include="App\app.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Pathing.cpp">
       <Filter>Source Files\Math</Filter>
     </ClCompile>
   </ItemGroup>

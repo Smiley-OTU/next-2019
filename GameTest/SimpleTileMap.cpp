@@ -3,14 +3,10 @@
 // Feel free to use this for your entry if you want but you don't have to.
 // If you do not use this then you should provide an alternative that represents a pac-man style map.
 //------------------------------------------------------------------------
-#include "stdafx.h"
-//------------------------------------------------------------------------
-#include <windows.h> 
-#include <math.h>  
-#include <assert.h>  
-//------------------------------------------------------------------------
-#include "app\app.h"
+
 #include "SimpleTileMap.h"
+#include "app\app.h"
+#include <stdlib.h>
 
 // Color mapping for bird's eye view render. Indexed based on tile value.
 const CTile CTile::tiles[NUM_TILE_TYPES] = {
@@ -88,7 +84,7 @@ MCell CSimpleTileMap::GetCell(const CPoint& point) const
 	return GetCell(point.x, point.y);
 }
 
-void CSimpleTileMap::DrawTile(const Cell& cell, float r, float g, float b) const
+void CSimpleTileMap::DrawTile(const MCell& cell, float r, float g, float b) const
 {
 	App::DrawQuad(cell.x * GetTileWidth(), cell.y * GetTileHeight(), (cell.x + 1) * GetTileWidth(), (cell.y + 1) * GetTileHeight(), r, g, b);
 }
@@ -220,171 +216,3 @@ int CSimpleTileMap::GetNewDirection(const int currentRow, const int currentColum
     }
     return newDir;
 }
-
-/////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////PATHING BEGIN/////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////
-struct Node
-{
-    Node()
-    {
-        init();
-    }
-
-    Node(const MCell& cell)
-    {
-        init(cell);
-    }
-
-    Node(const MCell& cell, int g, int h)
-    {
-        init(cell, { -1, -1 }, g, h);
-    }
-
-    Node(const MCell& cell, const MCell& parentCell, int g, int h)
-    {
-        init(cell, parentCell, g, h);
-    }
-
-    void init(const MCell& cell = { -1, -1 }, const MCell& parentCell = { -1, -1 }, int g = 0, int h = 0)
-    {
-        this->cell = cell;
-        this->parentCell = parentCell;
-        this->g = g;
-        this->h = h;
-    }
-
-    int f() const { return g + h; }
-
-    // priority_queue orders its elements *GREATEST* to least, so we have to invert this 
-    // to order our elements least-to-greatest, creating the best rather than worst path!
-    bool operator< (const Node& node) const { return f() > node.f(); }
-
-    void Print()
-    {
-        printf("Cell {%i,%i}: f = %i (%ig + %ih)\n", cell.x, cell.y, f(), g, h);
-    }
-
-    MCell cell, parentCell;
-    int g, h;
-};
-
-CPoint CSimpleTileMap::FollowPath(const CPoint& start, const CPoint& end, float speed)
-{
-    return CPoint();
-}
-
-Path CSimpleTileMap::FindPath(const MCell& start, const MCell& end)
-{
-    // Reset nodes, mark all nodes as unvisited (closed list = false) and append start to open list
-    std::vector<Node> tileNodes(m_tileCount);
-    std::priority_queue<Node> openList;
-    std::vector<bool> closedList(m_tileCount, false);
-    tileNodes[GetCellIndex(start)].parentCell = start;
-    openList.push({ start });
-
-    while (!openList.empty())
-    {
-        const MCell currentCell = openList.top().cell;
-
-        // End condition (destination reached)
-        if (currentCell == end)
-        {
-            break;
-        }
-
-        // Otherwise, add current cell to closed list and update g & h values of its neighbours
-        openList.pop();
-        closedList[GetCellIndex(currentCell)] = true;
-
-        int gNew, hNew;
-        for (const MCell& neighbour : GetNeighbours(currentCell))
-        {
-            const int neighbourIndex = GetCellIndex(neighbour);
-
-            // Skip if already visited
-            if (closedList[neighbourIndex])
-                continue;
-
-            auto manhattan = [](const MCell& a, const MCell& b) -> int {
-                return abs(a.x - b.x) + abs(a.y - b.y);
-            };
-
-            auto euclidean = [](const MCell& a, const MCell& b) -> int {
-                int dx = a.x - b.x;
-                int dy = a.y - b.y;
-                return (int)sqrt(dx * dx + dy * dy);
-            };
-
-            // Calculate scores
-            gNew = tileNodes[GetCellIndex(currentCell)].g + 1;
-            hNew = false ? manhattan(neighbour, end) : euclidean(neighbour, end);
-
-            // Append if unvisited or best score
-            if (tileNodes[neighbourIndex].f() == 0 || (gNew + hNew) < tileNodes[neighbourIndex].f())
-            {
-                openList.push({ neighbour, gNew, hNew });
-                tileNodes[neighbourIndex] = { neighbour, currentCell, gNew, hNew };
-            }
-        }
-    }
-
-    // Generate path by traversing parents then inverting
-    Path path;
-    MCell currentCell = end;
-    int currentIndex = GetCellIndex(currentCell);
-
-    while (!(tileNodes[currentIndex].parentCell == currentCell))
-    {
-        path.push_back(currentCell);
-        currentCell = tileNodes[currentIndex].parentCell;
-        currentIndex = GetCellIndex(currentCell);
-    }
-    std::reverse(path.begin(), path.end());
-
-    return path;
-}
-
-void CSimpleTileMap::DrawPath(const Path& path) const
-{
-    assert(path.size() > 1);
-    for (const MCell& cell : path)
-        DrawTile(cell.ToCell(), 1.0f, 0.0f, 0.0f);
-
-    DrawTile(path.front().ToCell(), 0.5f, 0.0f, 0.0f);
-    DrawTile(path.back().ToCell(), 0.0f, 0.5f, 0.0f);
-}
-
-CPoint CSimpleTileMap::Ricochet(const CPoint& position, const CPoint& translation) const
-{
-    CPoint destination{ position + translation };
-    EMapValue xTile = GetTileMapValue(destination.x, position.y);
-    EMapValue yTile = GetTileMapValue(position.x, destination.y);
-    if (yTile == EMapValue::BORDER || yTile == EMapValue::WALL || yTile == EMapValue::OUTOFBOUNDS)
-        destination.y -= translation.y;
-    if (xTile == EMapValue::BORDER || xTile == EMapValue::WALL || xTile == EMapValue::OUTOFBOUNDS)
-        destination.x -= translation.x;
-    return destination;
-}
-
-std::vector<MCell> CSimpleTileMap::GetNeighbours(const MCell& cell) const
-{
-    std::vector<MCell> cells;
-    for (int i = cell.x - 1; i <= cell.x + 1 && i >= 0 && i < GetMapSize(); i++)
-    {
-        for (int j = cell.y - 1; j <= cell.y + 1 && j >= 0 && j < GetMapSize(); j++)
-        {
-            if (!(i == cell.x && j == cell.y) && GetTileMapValue(i, j) == EMapValue::AIR)
-                cells.push_back({ i, j });
-        }
-    }
-    return cells;
-}
-
-int CSimpleTileMap::GetCellIndex(const MCell& cell) const
-{
-    return cell.y * m_mapSize + cell.x;
-}
-/////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////PATHING END///////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////

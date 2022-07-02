@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "MainScene.h"
+#include "Pathing.h"
 #include "App/app.h"
 
 #define BLINKY 0
@@ -10,6 +11,7 @@
 CMainScene::CMainScene() : m_actorRadius(50.0f)
 {
 	m_map.RandomMap(80, 12);
+
 	const float spriteWidth = 40.0f;
 	const float spriteHeight = 30.0f;
 	m_ghosts[BLINKY] = CSprite{ spriteWidth, spriteHeight, 1.0f, 0.0f, 0.0f };
@@ -48,12 +50,14 @@ void CMainScene::Render()
 	m_rayCaster.clearDepthBuffer();*/
 	m_map.Render();
 
+	using namespace Pathing;
 	for (const CSprite& ghost : m_ghosts)
 	{
-		m_map.DrawPath(m_map.FindPath(
+		DrawPath(FindPath(
 			m_map.GetCell(ghost.position),
-			m_map.GetCell(m_player.GetPosition())
-		));
+			m_map.GetCell(m_player.GetPosition()),
+			m_map
+		), m_map);
 	}
 }
 

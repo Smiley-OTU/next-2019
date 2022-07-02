@@ -5,9 +5,9 @@
 // Feel free to use this for your entry if you want but you don't have to.
 // If you do not use this then you should provide an alternative that represents a pac-man style map.
 //------------------------------------------------------------------------
-#include "Cell.h"
-#include "MutCell.h"
-#include "stdafx.h"
+#include "MutableCell.h"
+#include "Point.h"
+#include <vector>
 
 enum EMapValue : int
 {
@@ -25,8 +25,6 @@ struct CTile {
 	static const CTile tiles[NUM_TILE_TYPES];
 };
 
-using Path = std::vector<MCell>;
-
 class CSimpleTileMap
 {
 public:
@@ -34,26 +32,6 @@ public:
     // Constructor just creates a tile map of mapSize x mapSize.
     //--------------------------------------------------------------------------------------------
 	CSimpleTileMap(const int mapSize);
-
-    // Returns the resultant position based on speeed along a path from start to end
-    CPoint FollowPath(const CPoint& start, const CPoint& end, float speed);
-
-//Pathing helpers begin
-    // Returns a vector of tile grid indices to traverse to get from start to end (using A*).
-    Path FindPath(const MCell& start, const MCell& end);
-
-    // Render path tiles
-    void DrawPath(const Path& path) const;
-
-    // Returns the collision response given a point and its desired translation.
-    CPoint Ricochet(const CPoint& position, const CPoint& translation) const;
-
-    // Returns adjacent cells which can be moved to (tiles who's value is EMapValue::AIR).
-    std::vector<MCell> GetNeighbours(const MCell& cell) const;
-
-    // Flatten 2d position into 1d index on 16x16 grid
-    int GetCellIndex(const MCell& cell) const;
-//Pathing helpers end
 
     //--------------------------------------------------------------------------------------------
     // This will generate a new random map.
@@ -78,7 +56,7 @@ public:
     EMapValue GetTileMapValue(const float fx, const float fy) const;
 	MCell GetCell(float x, float y) const;
 	MCell GetCell(const CPoint& point) const;
-	void DrawTile(const Cell& cell, float r, float g, float b) const;
+	void DrawTile(const MCell& cell, float r, float g, float b) const;
 
     //--------------------------------------------------------------------------------------------
     // Set the tile value at give coords in grid.
