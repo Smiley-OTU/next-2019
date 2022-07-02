@@ -16,8 +16,6 @@ CMainScene::CMainScene() : m_actorRadius(50.0f)
 	m_ghosts[PINKY] = CSprite{ spriteWidth, spriteHeight, 1.0f, 0.5f, 0.0f };
 	m_ghosts[INKY] = CSprite{ spriteWidth, spriteHeight, 0.0f, 1.0f, 1.0f };
 	m_ghosts[CLYDE] = CSprite{ spriteWidth, spriteHeight, 1.0f, 0.5f, 1.0f };
-
-	m_path = m_map.FindPath({ 1, 1 }, { 10, 7 });
 }
 
 CMainScene::~CMainScene()
@@ -49,7 +47,9 @@ void CMainScene::Render()
 
 	m_rayCaster.clearDepthBuffer();*/
 	m_map.Render();
-	m_map.DrawPath(m_path);
+
+	static Path path = m_map.FindPath({ 1, 1 }, { 10, 7 });
+	m_map.DrawPath(path);
 }
 
 void CMainScene::OnEnter()
@@ -62,11 +62,6 @@ void CMainScene::OnEnter()
 	m_ghosts[PINKY].position = CPoint{ float(m_map.GetTileWidth()) * 1.5f, float(APP_VIRTUAL_HEIGHT) - float(m_map.GetTileHeight()) * 3.5f };
 	m_ghosts[INKY].position = CPoint{ float(APP_VIRTUAL_WIDTH) - float(m_map.GetTileWidth()) * 1.5f, float(APP_VIRTUAL_HEIGHT) - float(m_map.GetTileHeight()) * 1.5f };
 	m_ghosts[CLYDE].position = CPoint{ float(APP_VIRTUAL_WIDTH) - float(m_map.GetTileWidth()) * 3.5f, float(m_map.GetTileHeight()) * 3.5f };
-
-	// Lifted to constructor for testing
-	//const MCell start = m_map.GetCell(m_ghosts[0].position).ToMCell();
-	//const MCell end = m_map.GetCell(m_player.GetPosition()).ToMCell();
-	//m_path = m_map.FindPath(start, end);
 }
 
 void CMainScene::RenderMinimap()

@@ -159,7 +159,7 @@ CPoint CSimpleTileMap::Ricochet(const CPoint& position, const CPoint& translatio
 ///////////////////////////////PATHING BEGIN/////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
 
-std::vector<MCell> CSimpleTileMap::FindPath(const MCell& start, const MCell& end)
+Path CSimpleTileMap::FindPath(const MCell& start, const MCell& end)
 {
     // Reset nodes, mark all nodes as unvisited (closed list = false) and append start to open list
     m_tileNodes.clear();
@@ -215,7 +215,7 @@ std::vector<MCell> CSimpleTileMap::FindPath(const MCell& start, const MCell& end
     }
 
     // Generate path by traversing parents then inverting
-    std::vector<MCell> path;
+    Path path;
     MCell currentCell = end;
     int currentIndex = GetCellIndex(currentCell);
 
@@ -244,7 +244,7 @@ std::vector<MCell> CSimpleTileMap::GetNeighbours(const MCell& cell) const
     return cells;
 }
 
-void CSimpleTileMap::DrawPath(const std::vector<MCell>& path) const
+void CSimpleTileMap::DrawPath(const Path& path) const
 {
     assert(path.size() > 1);
     for (const MCell& cell : path)

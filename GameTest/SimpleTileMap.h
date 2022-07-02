@@ -7,7 +7,7 @@
 //------------------------------------------------------------------------
 #include "Cell.h"
 #include "MutCell.h"
-#include <vector>
+#include "stdafx.h"
 
 enum EMapValue : int
 {
@@ -25,6 +25,8 @@ struct CTile {
 	static const CTile tiles[NUM_TILE_TYPES];
 };
 
+using Path = std::vector<MCell>;
+
 class CSimpleTileMap
 {
 public:
@@ -37,12 +39,12 @@ public:
     CPoint Ricochet(const CPoint& position, const CPoint& translation) const;
 
     //Returns a vector of tile grid indices to traverse to get from start to end (using A*).
-    std::vector<MCell> FindPath(const MCell& start, const MCell& end);
+    Path FindPath(const MCell& start, const MCell& end);
 
     //Returns adjacent cells which can be moved to (tiles who's value is EMapValue::AIR).
     std::vector<MCell> GetNeighbours(const MCell& cell) const;
 
-    void DrawPath(const std::vector<MCell>& path) const;
+    void DrawPath(const Path& path) const;
 
     int GetCellIndex(const MCell& cell) const;
 
