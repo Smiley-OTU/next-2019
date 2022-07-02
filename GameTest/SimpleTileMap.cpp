@@ -167,9 +167,7 @@ std::vector<MCell> CSimpleTileMap::FindPath(const MCell& start, const MCell& end
     m_tileNodes[GetCellIndex(start)].parentCell = start;
     m_closedList.resize(m_tileCount, false);
     m_openList.push({ start });
-    int iteration = 0;
 
-    // issue is a sub-optimal path is found (loop ends) before optimal path is found
     while (!m_openList.empty())
     {
         const MCell currentCell = m_openList.top().cell;
@@ -183,7 +181,6 @@ std::vector<MCell> CSimpleTileMap::FindPath(const MCell& start, const MCell& end
         // Otherwise, add current cell to closed list and update g & h values of its neighbours
         m_openList.pop();
         m_closedList[GetCellIndex(currentCell)] = true;
-        m_tileNodes[GetCellIndex(currentCell)].Print();
 
         int gNew, hNew;
         for (const MCell& neighbour: GetNeighbours(currentCell))
@@ -206,18 +203,15 @@ std::vector<MCell> CSimpleTileMap::FindPath(const MCell& start, const MCell& end
 
             // Calculate scores
             gNew = m_tileNodes[GetCellIndex(currentCell)].g + 1;
-            hNew = true ? manhattan(neighbour, end) : euclidean(neighbour, end);
+            hNew = false ? manhattan(neighbour, end) : euclidean(neighbour, end);
 
             // Append if unvisited or best score
             if (m_tileNodes[neighbourIndex].f() == 0 || (gNew + hNew) < m_tileNodes[neighbourIndex].f())
             {
                 m_openList.push({ neighbour, gNew, hNew });
                 m_tileNodes[neighbourIndex] = { neighbour, currentCell, gNew, hNew};
-                m_tileNodes[neighbourIndex].Print();
             }
         }
-        
-        iteration++;
     }
 
     // Generate path by traversing parents then inverting
