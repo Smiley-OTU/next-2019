@@ -1,4 +1,5 @@
 #include "Pathing.h"
+#include "Math.h"
 #include <queue>
 
 namespace Pathing {
@@ -46,9 +47,8 @@ namespace Pathing {
     CPoint FollowPath(const CPoint& start, const CPoint& end, float speed, const CSimpleTileMap& map)
     {
         Path path = FindPath(map.GetCell(start), map.GetCell(end), map);
-        //CPoint destination = 
-
-        return CPoint();
+        CPoint destination = path.empty() ? end : map.GetCellCentre(path.front());
+        return Ricochet(start, Math::normalize(destination - start) * speed, map);
     }
 
     Path FindPath(const Cell& start, const Cell& end, const CSimpleTileMap& map)

@@ -24,39 +24,29 @@ CMainScene::~CMainScene()
 
 void CMainScene::Update(float deltaTime)
 {
-	//m_player.Update(m_map, deltaTime);
-	//m_rayCaster.Update(m_map, m_player);
-	//float ghostSpeed = m_player.GetSpeed() * 0.5f * deltaTime / 1000.0f;
-	//for (CSprite& ghost : m_ghosts) {
-	//	CPoint toPlayer{ Math::normalize(m_player.GetPosition() - ghost.position) };
-	//	ghost.position = Pathing::Ricochet(ghost.position, toPlayer * ghostSpeed, m_map);
-	//	if (Math::circleCollision(m_player.GetPosition(), ghost.position, m_actorRadius * 0.25f, m_actorRadius * 0.5f))
-	//		CScene::Change(ESceneType::END);
-	//}
+	m_player.Update(m_map, deltaTime);
+	m_rayCaster.Update(m_map, m_player);
+	
+	const float ghostSpeed = m_player.GetSpeed() * 0.5f * deltaTime / 1000.0f;
+	for (CSprite& ghost : m_ghosts)
+	{
+		ghost.position = Pathing::FollowPath(ghost.position, m_player.GetPosition(), ghostSpeed, m_map);
+		if (Math::circleCollision(m_player.GetPosition(), ghost.position, m_actorRadius * 0.25f, m_actorRadius * 0.5f))
+			CScene::Change(ESceneType::END);
+	}
 }
 
 void CMainScene::Render()
 {
-	//const float halfHeight = APP_VIRTUAL_HEIGHT * 0.5f;
-	//App::DrawQuad(0.0f, 0.0f, APP_VIRTUAL_WIDTH, halfHeight, 0.2f, 0.2f, 0.2f);				//Floor
-	//App::DrawQuad(0.0f, halfHeight, APP_VIRTUAL_WIDTH, APP_VIRTUAL_HEIGHT, 0.3f, 0.3f, 0.3f);	//Ceiling
-	//
-	//m_rayCaster.RenderMap(m_map, m_player);
-	//m_rayCaster.RenderSprites(m_map, m_player, m_ghosts);
-	//RenderMinimap();
-	//
-	//m_rayCaster.ClearDepthBuffer();
-
-	using namespace Pathing;
-	m_map.Render();
-	for (const CSprite& ghost : m_ghosts)
-	{
-		DrawPath(FindPath(
-			m_map.GetCell(ghost.position),
-			m_map.GetCell(m_player.GetPosition()),
-			m_map
-		), m_map);
-	}
+	const float halfHeight = APP_VIRTUAL_HEIGHT * 0.5f;
+	App::DrawQuad(0.0f, 0.0f, APP_VIRTUAL_WIDTH, halfHeight, 0.2f, 0.2f, 0.2f);				//Floor
+	App::DrawQuad(0.0f, halfHeight, APP_VIRTUAL_WIDTH, APP_VIRTUAL_HEIGHT, 0.3f, 0.3f, 0.3f);	//Ceiling
+	
+	m_rayCaster.RenderMap(m_map, m_player);
+	m_rayCaster.RenderSprites(m_map, m_player, m_ghosts);
+	RenderMinimap();
+	
+	m_rayCaster.ClearDepthBuffer();
 }
 
 void CMainScene::OnEnter()
