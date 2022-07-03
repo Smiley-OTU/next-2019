@@ -1,4 +1,6 @@
 #pragma once
+#include <array>
+
 class CScene
 {
 public:
@@ -27,7 +29,7 @@ protected:
 
 	static void Change(ESceneType sceneType);
 
-	static CScene* s_scenes[NUM_SCENES];
+	static std::array<CScene*, NUM_SCENES> s_scenes;
 	static CScene* s_activeScene;
 	static bool s_initialized;
 };

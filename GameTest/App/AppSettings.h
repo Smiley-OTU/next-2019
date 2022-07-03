@@ -14,7 +14,7 @@
 #define APP_WINDOW_TITLE		("Game")
 
 #define APP_ENABLE_DEBUG_INFO_BUTTON		(XINPUT_GAMEPAD_DPAD_UP)
-#define APP_QUIT_KEY						(VK_NUMPAD3)
+#define APP_QUIT_KEY						(VK_ESCAPE)
 
 // Pad emulation. (Uses keyboard if no pad is present) Maps the following keys to the pad inputs.
 // Note analog inputs are either 0 or 1 when emulated. 
@@ -52,7 +52,7 @@
 #ifdef _DEBUG
 #define APP_RENDER_UPDATE_TIMES				true
 #else
-#define APP_RENDER_UPDATE_TIMES				false
+#define APP_RENDER_UPDATE_TIMES				true
 #endif
 
 #define FRAND	(static_cast <float> (rand()) / static_cast <float> (RAND_MAX))

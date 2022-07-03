@@ -11,14 +11,14 @@
 
 // Color mapping for bird's eye view render. Indexed based on tile value.
 const CTile CTile::tiles[NUM_TILE_TYPES] = {
-	//CTile{ 0.0f, 0.0f, 1.0f, 10.0f, 1.0f },		//Border
-	//CTile{ 0.0f, 0.0f, 0.0f, 0.0f, 1.0f },		//Air
-	//CTile{ 0.0f, 0.0f, 0.5f, 10.0f, 1.0f },		//Wall
-	//CTile{ 0.8f, 0.8f, 0.0f, 2.5f, 0.25f }      //Coin (unused)
-    CTile{ 0.0f, 0.0f, 1.0f, 10.0f, 1.0f },		//Border
-    CTile{ 0.0f, 1.0f, 0.0f, 0.0f, 1.0f },		//Air
-    CTile{ 0.0f, 0.0f, 0.0f, 10.0f, 1.0f },		//Wall
-    CTile{ 0.8f, 0.8f, 0.0f, 2.5f, 0.25f }      //Coin (unused)
+	CTile{ 0.0f, 0.0f, 1.0f, 10.0f, 1.0f },		//Border
+	CTile{ 0.0f, 0.0f, 0.0f, 0.0f, 1.0f },		//Air
+	CTile{ 0.0f, 0.0f, 0.5f, 10.0f, 1.0f },		//Wall
+	CTile{ 0.8f, 0.8f, 0.0f, 2.5f, 0.25f }      //Coin (unused)
+    //CTile{ 0.0f, 0.0f, 1.0f, 10.0f, 1.0f },		//Border
+    //CTile{ 0.0f, 1.0f, 0.0f, 0.0f, 1.0f },		//Air
+    //CTile{ 0.0f, 0.0f, 0.0f, 10.0f, 1.0f },		//Wall
+    //CTile{ 0.8f, 0.8f, 0.0f, 2.5f, 0.25f }      //Coin (unused)
 };
 
 // Direction lookup used by random map generation.

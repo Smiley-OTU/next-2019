@@ -5,7 +5,7 @@
 #include "MainScene.h"
 #include "EndScene.h"
 
-CScene* CScene::s_scenes[NUM_SCENES];
+std::array<CScene*, CScene::NUM_SCENES> CScene::s_scenes;
 CScene* CScene::s_activeScene = nullptr;
 bool CScene::s_initialized = false;
 
@@ -19,10 +19,6 @@ CScene::~CScene()
 
 void CScene::Change(ESceneType sceneType)
 {
-#if _DEBUG
-	assert(s_initialized);
-	assert(sceneType < ESceneType::NUM_SCENES);
-#endif
 	s_activeScene->OnExit();
 	s_activeScene = s_scenes[sceneType];
 	s_activeScene->OnEnter();

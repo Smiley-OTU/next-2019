@@ -32,7 +32,7 @@ private:
 	};
 
 public:
-	static CSimpleSound &CSimpleSound::GetInstance();
+	static CSimpleSound& GetInstance();
 	CSimpleSound();	
 	~CSimpleSound();
 

@@ -108,12 +108,12 @@ void Display()
 	if (gRenderUpdateTimes)
 	{
 		glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-		App::DrawQuad(0.0f, 0.0f, 220.0f, 60.0f, 0.5f, 0.5f, 0.5f);
-		gUpdateDeltaTime.Print	 (10, 40, "Update");
-		gUserRenderProfiler.Print(10, 25, "User Render");
-		gUserUpdateProfiler.Print(10, 10, "User Update");
+		App::DrawQuad(0.0f, WINDOW_HEIGHT, 220.0f, WINDOW_HEIGHT - 50.0f, 0.5f, 0.5f, 0.5f);
+		//gUpdateDeltaTime.Print	 (10.0f, WINDOW_HEIGHT - 15.0f, "Update");
+		gUserRenderProfiler.Print(16.0f, WINDOW_HEIGHT - 16.0f, "Render");
+		gUserUpdateProfiler.Print(16.0f, WINDOW_HEIGHT - 32.0f, "Update");
 	}
-	glFlush();  // Render now						 
+	glFlush();  // Render now
 }
 
 //---------------------------------------------------------------------------------
@@ -127,7 +127,7 @@ void Idle()
 	double deltaTime = currentTime - gLastTime;
 	// Update.
 	if (deltaTime > (UPDATE_MAX))
-	{	
+	{
 		gUpdateDeltaTime.Stop();
 		glutPostRedisplay(); //everytime you are done 
 		CSimpleControllers::GetInstance().Update();
@@ -166,7 +166,7 @@ void CheckMemCallback()
 //---------------------------------------------------------------------------------
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance, 	_In_opt_ HINSTANCE hPrevInstance,	_In_ LPWSTR    lpCmdLine, _In_ int       nCmdShow)
 {	
-	int argc = 0;	char* argv = "";
+	int argc = 0;	char* argv = (char*)"";
 
 	// Exit handler to check memory on exit.
 	const int result_1 = std::atexit(CheckMemCallback);
